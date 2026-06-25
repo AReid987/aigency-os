@@ -1,0 +1,196 @@
+// ─── Floating Toolbar ───────────────────────────────────────────────────────
+
+import React, { useState, useCallback } from 'react';
+import type { CardType, ZoneType } from '@vscp/shared-types';
+import { useCanvasStore } from '../stores/canvasStore';
+import { useUserStore } from '../stores/userStore';
+import { Button } from '@vscp/ui';
+import {
+  Plus,
+  Minus,
+  RotateCcw,
+  FileText,
+  Image as ImageIcon,
+  ExternalLink,
+  Code,
+  LayoutGrid,
+  X,
+} from 'lucide-react';
+
+interface ToolbarProps {
+  onAddCard?: (type: CardType, zoneId: string) => void;
+}
+
+const CARD_TYPES: { type: CardType; label: string; icon: React.ReactNode }[] = [
+  { type: 'text', label: 'Text', icon: <FileText size={16} /> },
+  { type: 'image', label: 'Image', icon: <ImageIcon size={16} /> },
+  { type: 'link', label: 'Link', icon: <ExternalLink size={16} /> },
+  { type: 'embed', label: 'Embed', icon: <Code size={16} /> },
+];
+
+export function Toolbar({ onAddCard }: ToolbarProps) {
+  const [expanded, setExpanded] = useState(false);
+  const { zones, createCard, createZone, pan, zoom, setZoom, setPan } = useCanvasStore();
+  const { role } = useUserStore();
+
+  const handleAddCard = useCallback(
+    (type: CardType) => {
+      // Find the first editable zone
+      const editableZone =
+        zones.find((z) => {
+          if (role === 'technical_founder') return true;
+          if (role === 'domain_expert') return z.type === 'business' || z.type === 'shared';
+          return false;
+        }) || zones[0];
+
+      if (!editableZone) return;
+
+      // Place new card at center of current viewport with slight random offset
+      const centerX = (-pan.x / zoom + 400) + Math.random() * 100;
+      const centerY = (-pan.y / zoom + 300) + Math.random() * 100;
+
+      createCard(type, editableZone.id, { x: centerX, y: centerY });
+      onAddCard?.(type, editableZone.id);
+      setExpanded(false);
+    },
+    [zones, role, pan, zoom, createCard, onAddCard],
+  );
+
+  const handleAddZone = useCallback(
+    (type: ZoneType) => {
+      const name =
+        type === 'business'
+          ? 'New Business Zone'
+          : type === 'engineering'
+            ? 'New Engineering Zone'
+            : 'Shared Zone';
+      createZone(type, name, { x: 0, y: 0 });
+      setExpanded(false);
+    },
+    [createZone],
+  );
+
+  const handleZoomIn = useCallback(() => {
+    setZoom(Math.min(zoom * 1.2, 3));
+  }, [zoom, setZoom]);
+
+  const handleZoomOut = useCallback(() => {
+    setZoom(Math.max(zoom / 1.2, 0.1));
+  }, [zoom, setZoom]);
+
+  const handleResetView = useCallback(() => {
+    setZoom(1);
+    setPan({ x: 0, y: 0 });
+  }, [setZoom, setPan]);
+
+  return (
+    <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-40">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 p-1.5 flex items-center gap-1">
+        {/* Add Card button with dropdown */}
+        <div className="relative">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="gap-1.5 rounded-xl"
+            onClick={() => setExpanded(!expanded)}
+          >
+            {expanded ? <X size={16} /> : <Plus size={16} />}
+            <span className="text-xs font-medium">Card</span>
+          </Button>
+
+          {/* Card type + zone dropdown */}
+          {expanded && (
+            <div className="absolute bottom-full left-0 mb-2 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 p-2 min-w-[160px]">
+              <p className="text-[10px] uppercase tracking-wider text-gray-400 px-2 mb-1.5 font-medium">
+                Add Card
+              </p>
+              {CARD_TYPES.map(({ type, label, icon }) => (
+                <button
+                  key={type}
+                  className="flex items-center gap-2 w-full px-2 py-1.5 text-sm rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transition-colors"
+                  onClick={() => handleAddCard(type)}
+                >
+                  {icon}
+                  {label}
+                </button>
+              ))}
+
+              <div className="border-t border-gray-200 dark:border-gray-700 my-1.5" />
+
+              <p className="text-[10px] uppercase tracking-wider text-gray-400 px-2 mb-1.5 font-medium">
+                Add Zone
+              </p>
+              <button
+                className="flex items-center gap-2 w-full px-2 py-1.5 text-sm rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transition-colors"
+                onClick={() => handleAddZone('business')}
+              >
+                <LayoutGrid size={16} className="text-amber-500" />
+                Business Zone
+              </button>
+              <button
+                className="flex items-center gap-2 w-full px-2 py-1.5 text-sm rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transition-colors"
+                onClick={() => handleAddZone('engineering')}
+              >
+                <LayoutGrid size={16} className="text-blue-500" />
+                Engineering Zone
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Divider */}
+        <div className="w-px h-6 bg-gray-200 dark:bg-gray-700" />
+
+        {/* Quick add zone */}
+        <Button
+          variant="ghost"
+          size="sm"
+          className="gap-1.5 rounded-xl"
+          onClick={() => handleAddZone('business')}
+        >
+          <LayoutGrid size={14} />
+          <span className="text-xs font-medium">Zone</span>
+        </Button>
+
+        {/* Divider */}
+        <div className="w-px h-6 bg-gray-200 dark:bg-gray-700" />
+
+        {/* Zoom controls */}
+        <Button
+          variant="ghost"
+          size="sm"
+          className="rounded-xl px-2"
+          onClick={handleZoomOut}
+          aria-label="Zoom out"
+        >
+          <Minus size={14} />
+        </Button>
+
+        <span className="text-[10px] font-mono text-gray-500 dark:text-gray-400 w-10 text-center">
+          {Math.round(zoom * 100)}%
+        </span>
+
+        <Button
+          variant="ghost"
+          size="sm"
+          className="rounded-xl px-2"
+          onClick={handleZoomIn}
+          aria-label="Zoom in"
+        >
+          <Plus size={14} />
+        </Button>
+
+        <Button
+          variant="ghost"
+          size="sm"
+          className="rounded-xl px-2"
+          onClick={handleResetView}
+          aria-label="Reset view"
+          title="Reset view (Ctrl+0)"
+        >
+          <RotateCcw size={14} />
+        </Button>
+      </div>
+    </div>
+  );
+}

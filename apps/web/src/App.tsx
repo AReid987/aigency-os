@@ -1,5 +1,8 @@
+// ─── Main App ────────────────────────────────────────────────────────────────
+
+import React from 'react';
 import { Header } from './layout/Header';
-import { Canvas } from './canvas/Canvas';
+import { Canvas } from './components/Canvas';
 
 export default function App() {
   return (

@@ -8,7 +8,7 @@ interface TicketBoardProps {
 }
 
 const columns = [
-  { key: 'backlog', label: 'Backlog', variant: 'default' as const },
+  { key: 'backlog', label: 'Backlog', variant: 'neutral' as const },
   { key: 'in_progress', label: 'In Progress', variant: 'info' as const },
   { key: 'review', label: 'Review', variant: 'warning' as const },
   { key: 'done', label: 'Done', variant: 'success' as const },

@@ -4,14 +4,16 @@ interface CardProps {
   children: React.ReactNode;
   className?: string;
   selected?: boolean;
+  hoverable?: boolean;
 }
 
-export function Card({ children, className = '', selected = false }: CardProps) {
+export function Card({ children, className = '', selected = false, hoverable = false }: CardProps) {
   return (
     <div
-      className={`rounded-lg border bg-white shadow-sm dark:bg-gray-800 dark:border-gray-700 ${
-        selected ? 'ring-2 ring-blue-500' : ''
-      } ${className}`}
+      className={`bg-surface border rounded-md transition-all duration-fast ease-out-expo
+        ${selected ? 'border-primary' : 'border-border'}
+        ${hoverable ? 'hover:border-border-hover cursor-pointer' : ''}
+        ${className}`}
     >
       {children}
     </div>

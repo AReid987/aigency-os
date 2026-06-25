@@ -1,0 +1,127 @@
+/* Aigency Design System — Tailwind v4 theme tokens
+   Import this in each app's index.css:
+   @import "@vscp/ui/styles/aigency-tokens.css";
+   @import "tailwindcss";
+*/
+
+@import url('https://api.fontshare.com/v2/css?f[]=array@400,700&f[]=supreme@400,500,700&f[]=satoshi@400,500,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Geist+Mono:wght@300;400;500;600&display=swap');
+
+@theme {
+  /* Colors — dark-first, glass surfaces */
+  --color-bg: #05070a;
+  --color-surface: rgba(10, 14, 20, 0.62);
+  --color-elevated: rgba(20, 28, 40, 0.52);
+  --color-hover: rgba(26, 34, 51, 0.7);
+  --color-border: rgba(255, 255, 255, 0.10);
+  --color-border-hover: rgba(255, 255, 255, 0.18);
+  --color-border-focus: #12a594;
+
+  --color-primary: #12a594;
+  --color-primary-light: #1ec4b0;
+  --color-primary-dark: #0d7d6f;
+  --color-primary-muted: rgba(18, 165, 148, 0.14);
+
+  --color-accent: #D6409F;
+  --color-accent-light: #e85ab5;
+  --color-accent-dark: #a82f7a;
+  --color-accent-muted: rgba(214, 64, 159, 0.14);
+
+  --color-amber: #e09646;
+  --color-amber-muted: rgba(224, 150, 70, 0.14);
+
+  --color-fg: #f0f4f8;
+  --color-fg-secondary: #9aa4b2;
+  --color-fg-muted: #5b6675;
+  --color-fg-dim: #3d4a5c;
+  --color-fg-inverse: #0a0c0f;
+
+  --color-error: #e5484d;
+  --color-error-muted: rgba(229, 72, 77, 0.12);
+  --color-warning: #f5a623;
+  --color-warning-muted: rgba(245, 166, 35, 0.12);
+  --color-success: #12a594;
+  --color-success-muted: rgba(18, 165, 148, 0.12);
+  --color-info: #5eb4fb;
+  --color-info-muted: rgba(94, 180, 251, 0.12);
+
+  /* Fonts */
+  --font-hero: 'Array', 'Supreme', system-ui, sans-serif;
+  --font-display: 'Supreme', system-ui, sans-serif;
+  --font-body: 'Satoshi', system-ui, sans-serif;
+  --font-mono: 'Geist Mono', 'Fira Code', monospace;
+
+  /* Radii — sharp, near-zero */
+  --radius-xs: 2px;
+  --radius-sm: 3px;
+  --radius-md: 4px;
+  --radius-lg: 4px;
+  --radius-xl: 6px;
+  --radius-full: 9999px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.6);
+  --shadow-glow-primary: 0 0 20px rgba(18, 165, 148, 0.3), 0 0 60px rgba(18, 165, 148, 0.1);
+  --shadow-glow-accent: 0 0 20px rgba(214, 64, 159, 0.3);
+
+  /* Animation */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --duration-micro: 80ms;
+  --duration-fast: 150ms;
+  --duration-normal: 250ms;
+  --duration-slow: 350ms;
+}
+
+/* Base reset */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--color-bg);
+  color: var(--color-fg);
+  line-height: 1.6;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.12); border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.2); }
+
+/* Glass panel utility */
+.glass {
+  position: relative;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.012));
+  backdrop-filter: blur(14px) saturate(120%);
+  -webkit-backdrop-filter: blur(14px) saturate(120%);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.10), 0 8px 40px rgba(0, 0, 0, 0.45);
+  border-radius: var(--radius-md);
+}
+
+.glass::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.07), transparent 42%);
+  pointer-events: none;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

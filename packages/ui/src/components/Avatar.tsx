@@ -8,30 +8,36 @@ interface AvatarProps {
 }
 
 const statusColors = {
-  active: 'bg-green-500',
-  thinking: 'bg-yellow-500',
-  blocked: 'bg-red-500',
-  idle: 'bg-gray-400',
+  active: 'bg-primary',
+  thinking: 'bg-warning',
+  blocked: 'bg-error',
+  idle: 'bg-fg-muted',
+};
+
+const statusGlow = {
+  active: 'shadow-[0_0_5px_rgba(18,165,148,0.5)]',
+  thinking: '',
+  blocked: '',
+  idle: '',
 };
 
 export function Avatar({ name, src, status, size = 'md' }: AvatarProps) {
-  const sizeClasses = { sm: 'h-8 w-8 text-xs', md: 'h-10 w-10 text-sm', lg: 'h-12 w-12 text-base' };
-  const ringSize = { sm: 'h-3 w-3', md: 'h-3.5 w-3.5', lg: 'h-4 w-4' };
+  const sizes = { sm: 'h-8 w-8 text-xs', md: 'h-10 w-10 text-sm', lg: 'h-12 w-12 text-base' };
+  const dots = { sm: 'h-2.5 w-2.5', md: 'h-3 w-3', lg: 'h-3.5 w-3.5' };
 
   return (
     <div className="relative inline-flex">
       {src ? (
-        <img src={src} alt={name} className={`${sizeClasses[size]} rounded-full object-cover`} />
+        <img src={src} alt={name} className={`${sizes[size]} rounded-sm object-cover`} />
       ) : (
-        <div
-          className={`${sizeClasses[size]} rounded-full bg-blue-600 text-white flex items-center justify-center font-medium`}
-        >
+        <div className={`${sizes[size]} rounded-sm bg-primary-muted text-primary flex items-center justify-center font-bold`}>
           {name.charAt(0).toUpperCase()}
         </div>
       )}
       {status && (
         <span
-          className={`absolute bottom-0 right-0 ${ringSize[size]} ${statusColors[status]} rounded-full ring-2 ring-white`}
+          className={`absolute -bottom-0.5 -right-0.5 ${dots[size]} ${statusColors[status]} ${statusGlow[status]}
+            rounded-full ring-2 ring-surface`}
         />
       )}
     </div>

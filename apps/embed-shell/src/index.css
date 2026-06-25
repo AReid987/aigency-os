@@ -1,2 +1,2 @@
-/* Embed Shell — minimal styles */
+/* Embed Shell — minimal styles (no Tailwind, no design system) */
 body { margin: 0; font-family: system-ui, -apple-system, sans-serif; }

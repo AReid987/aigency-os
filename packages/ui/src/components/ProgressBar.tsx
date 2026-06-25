@@ -7,29 +7,29 @@ interface ProgressBarProps {
   showLabel?: boolean;
 }
 
-const variantColors = {
-  default: 'bg-blue-600',
-  success: 'bg-green-600',
-  warning: 'bg-yellow-500',
-  danger: 'bg-red-600',
+const colors = {
+  default: 'bg-primary',
+  success: 'bg-success',
+  warning: 'bg-warning',
+  danger: 'bg-error',
 };
 
 export function ProgressBar({ value, max = 100, variant = 'default', showLabel = false }: ProgressBarProps) {
-  const percentage = Math.min(Math.round((value / max) * 100), 100);
-  const autoVariant = percentage >= 90 ? 'danger' : percentage >= 70 ? 'warning' : variant;
+  const pct = Math.min(Math.round((value / max) * 100), 100);
+  const auto = pct >= 90 ? 'danger' : pct >= 70 ? 'warning' : variant;
 
   return (
     <div className="w-full">
       {showLabel && (
-        <div className="flex justify-between text-sm mb-1">
+        <div className="flex justify-between text-xs text-fg-muted mb-1 font-mono">
           <span>{value}</span>
-          <span>{percentage}%</span>
+          <span>{pct}%</span>
         </div>
       )}
-      <div className="h-2 w-full rounded-full bg-gray-200 dark:bg-gray-700">
+      <div className="h-1.5 w-full rounded-full bg-[#1a2233]">
         <div
-          className={`h-full rounded-full transition-all ${variantColors[autoVariant]}`}
-          style={{ width: `${percentage}%` }}
+          className={`h-full rounded-full transition-all duration-normal ease-out-expo ${colors[auto]}`}
+          style={{ width: `${pct}%` }}
         />
       </div>
     </div>
