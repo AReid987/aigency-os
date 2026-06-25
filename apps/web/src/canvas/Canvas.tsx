@@ -184,7 +184,7 @@ export function Canvas() {
   return (
     <div
       ref={containerRef}
-      className="relative w-full h-full overflow-hidden bg-gray-50 dark:bg-gray-900"
+      className="relative w-full h-full overflow-hidden bg-bg bg-bg"
       style={{ cursor: isPanning ? 'grabbing' : 'default' }}
       onWheel={handleWheel}
       onMouseDown={handleMouseDown}
@@ -222,26 +222,26 @@ export function Canvas() {
       <div className="fixed bottom-4 left-4 z-40 flex flex-col gap-1">
         <button
           onClick={handleZoomIn}
-          className="w-8 h-8 bg-white dark:bg-gray-800 rounded-lg shadow border border-gray-200 dark:border-gray-700 flex items-center justify-center hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 font-mono text-sm"
+          className="w-8 h-8 bg-surface bg-elevated rounded-md shadow border border-border border-border flex items-center justify-center hover:bg-bg dark:hover:bg-hover text-fg-secondary text-fg-secondary font-mono text-sm"
           aria-label="Zoom in"
         >
           +
         </button>
-        <div className="w-8 h-6 bg-white dark:bg-gray-800 rounded shadow border border-gray-200 dark:border-gray-700 flex items-center justify-center">
-          <span className="text-[9px] font-mono text-gray-500 dark:text-gray-400">
+        <div className="w-8 h-6 bg-surface bg-elevated rounded shadow border border-border border-border flex items-center justify-center">
+          <span className="text-[9px] font-mono text-fg-muted text-fg-muted">
             {Math.round(zoom * 100)}%
           </span>
         </div>
         <button
           onClick={handleZoomOut}
-          className="w-8 h-8 bg-white dark:bg-gray-800 rounded-lg shadow border border-gray-200 dark:border-gray-700 flex items-center justify-center hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 font-mono text-sm"
+          className="w-8 h-8 bg-surface bg-elevated rounded-md shadow border border-border border-border flex items-center justify-center hover:bg-bg dark:hover:bg-hover text-fg-secondary text-fg-secondary font-mono text-sm"
           aria-label="Zoom out"
         >
           −
         </button>
         <button
           onClick={handleResetView}
-          className="w-8 h-8 bg-white dark:bg-gray-800 rounded-lg shadow border border-gray-200 dark:border-gray-700 flex items-center justify-center hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300"
+          className="w-8 h-8 bg-surface bg-elevated rounded-md shadow border border-border border-border flex items-center justify-center hover:bg-bg dark:hover:bg-hover text-fg-secondary text-fg-secondary"
           aria-label="Reset view"
           title="Reset view (Ctrl+0)"
         >

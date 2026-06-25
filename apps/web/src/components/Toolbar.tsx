@@ -85,13 +85,13 @@ export function Toolbar({ onAddCard }: ToolbarProps) {
 
   return (
     <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-40">
-      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 p-1.5 flex items-center gap-1">
+      <div className="bg-surface bg-elevated rounded-md shadow-md border border-border border-border p-1.5 flex items-center gap-1">
         {/* Add Card button with dropdown */}
         <div className="relative">
           <Button
             variant="ghost"
             size="sm"
-            className="gap-1.5 rounded-xl"
+            className="gap-1.5 rounded-md"
             onClick={() => setExpanded(!expanded)}
           >
             {expanded ? <X size={16} /> : <Plus size={16} />}
@@ -100,14 +100,14 @@ export function Toolbar({ onAddCard }: ToolbarProps) {
 
           {/* Card type + zone dropdown */}
           {expanded && (
-            <div className="absolute bottom-full left-0 mb-2 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 p-2 min-w-[160px]">
-              <p className="text-[10px] uppercase tracking-wider text-gray-400 px-2 mb-1.5 font-medium">
+            <div className="absolute bottom-full left-0 mb-2 bg-surface bg-elevated rounded-md shadow-md border border-border border-border p-2 min-w-[160px]">
+              <p className="text-[10px] uppercase tracking-wider text-fg-muted px-2 mb-1.5 font-medium">
                 Add Card
               </p>
               {CARD_TYPES.map(({ type, label, icon }) => (
                 <button
                   key={type}
-                  className="flex items-center gap-2 w-full px-2 py-1.5 text-sm rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transition-colors"
+                  className="flex items-center gap-2 w-full px-2 py-1.5 text-sm rounded-md hover:bg-hover dark:hover:bg-hover text-fg-secondary text-fg-secondary transition-colors"
                   onClick={() => handleAddCard(type)}
                 >
                   {icon}
@@ -115,20 +115,20 @@ export function Toolbar({ onAddCard }: ToolbarProps) {
                 </button>
               ))}
 
-              <div className="border-t border-gray-200 dark:border-gray-700 my-1.5" />
+              <div className="border-t border-border border-border my-1.5" />
 
-              <p className="text-[10px] uppercase tracking-wider text-gray-400 px-2 mb-1.5 font-medium">
+              <p className="text-[10px] uppercase tracking-wider text-fg-muted px-2 mb-1.5 font-medium">
                 Add Zone
               </p>
               <button
-                className="flex items-center gap-2 w-full px-2 py-1.5 text-sm rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transition-colors"
+                className="flex items-center gap-2 w-full px-2 py-1.5 text-sm rounded-md hover:bg-hover dark:hover:bg-hover text-fg-secondary text-fg-secondary transition-colors"
                 onClick={() => handleAddZone('business')}
               >
                 <LayoutGrid size={16} className="text-amber-500" />
                 Business Zone
               </button>
               <button
-                className="flex items-center gap-2 w-full px-2 py-1.5 text-sm rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transition-colors"
+                className="flex items-center gap-2 w-full px-2 py-1.5 text-sm rounded-md hover:bg-hover dark:hover:bg-hover text-fg-secondary text-fg-secondary transition-colors"
                 onClick={() => handleAddZone('engineering')}
               >
                 <LayoutGrid size={16} className="text-blue-500" />
@@ -139,13 +139,13 @@ export function Toolbar({ onAddCard }: ToolbarProps) {
         </div>
 
         {/* Divider */}
-        <div className="w-px h-6 bg-gray-200 dark:bg-gray-700" />
+        <div className="w-px h-6 bg-border bg-hover" />
 
         {/* Quick add zone */}
         <Button
           variant="ghost"
           size="sm"
-          className="gap-1.5 rounded-xl"
+          className="gap-1.5 rounded-md"
           onClick={() => handleAddZone('business')}
         >
           <LayoutGrid size={14} />
@@ -153,27 +153,27 @@ export function Toolbar({ onAddCard }: ToolbarProps) {
         </Button>
 
         {/* Divider */}
-        <div className="w-px h-6 bg-gray-200 dark:bg-gray-700" />
+        <div className="w-px h-6 bg-border bg-hover" />
 
         {/* Zoom controls */}
         <Button
           variant="ghost"
           size="sm"
-          className="rounded-xl px-2"
+          className="rounded-md px-2"
           onClick={handleZoomOut}
           aria-label="Zoom out"
         >
           <Minus size={14} />
         </Button>
 
-        <span className="text-[10px] font-mono text-gray-500 dark:text-gray-400 w-10 text-center">
+        <span className="text-[10px] font-mono text-fg-muted text-fg-muted w-10 text-center">
           {Math.round(zoom * 100)}%
         </span>
 
         <Button
           variant="ghost"
           size="sm"
-          className="rounded-xl px-2"
+          className="rounded-md px-2"
           onClick={handleZoomIn}
           aria-label="Zoom in"
         >
@@ -183,7 +183,7 @@ export function Toolbar({ onAddCard }: ToolbarProps) {
         <Button
           variant="ghost"
           size="sm"
-          className="rounded-xl px-2"
+          className="rounded-md px-2"
           onClick={handleResetView}
           aria-label="Reset view"
           title="Reset view (Ctrl+0)"

@@ -26,13 +26,13 @@ export const EmbedCard = React.memo(function EmbedCard({
       <div className="space-y-2 p-3">
         <input
           autoFocus
-          className="w-full text-sm font-semibold bg-transparent border-b border-gray-300 dark:border-gray-600 focus:outline-none focus:border-blue-500 px-0 py-1"
+          className="w-full text-sm font-semibold bg-transparent border-b border-border border-border-hover focus:outline-none focus:border-primary px-0 py-1"
           defaultValue={content.title || ''}
           placeholder="Embed title"
           onBlur={(e) => onUpdate({ title: e.target.value })}
         />
         <input
-          className="w-full text-xs bg-transparent border border-gray-200 dark:border-gray-700 rounded p-1.5 focus:outline-none focus:border-blue-500"
+          className="w-full text-xs bg-transparent border border-border border-border rounded p-1.5 focus:outline-none focus:border-primary"
           defaultValue={content.src || ''}
           placeholder="https://... (iframe URL)"
           onBlur={(e) => onUpdate({ src: e.target.value })}
@@ -42,7 +42,7 @@ export const EmbedCard = React.memo(function EmbedCard({
           <span>Only embed trusted URLs</span>
         </div>
         <button
-          className="text-xs text-blue-600 hover:underline"
+          className="text-xs text-primary hover:underline"
           onClick={onEditDone}
         >
           Done
@@ -55,22 +55,22 @@ export const EmbedCard = React.memo(function EmbedCard({
     <div className="p-2">
       <div className="flex items-center gap-1.5 mb-1.5 px-1">
         <Code size={14} className="text-orange-500" />
-        <span className="text-xs font-medium text-gray-700 dark:text-gray-300 truncate">
+        <span className="text-xs font-medium text-fg-secondary text-fg-secondary truncate">
           {content.title || 'Embed'}
         </span>
       </div>
       {content.src ? (
         <iframe
           src={content.src}
-          className="w-full rounded border border-gray-200 dark:border-gray-700"
+          className="w-full rounded border border-border border-border"
           style={{ height: 'calc(100% - 28px)', minHeight: 160 }}
           sandbox="allow-scripts allow-same-origin"
           title={content.title || 'Embedded content'}
         />
       ) : (
-        <div className="w-full h-48 bg-gray-100 dark:bg-gray-700 rounded flex flex-col items-center justify-center gap-2">
-          <Code size={20} className="text-gray-400" />
-          <span className="text-xs text-gray-400">Double-click to configure</span>
+        <div className="w-full h-48 bg-hover bg-hover rounded flex flex-col items-center justify-center gap-2">
+          <Code size={20} className="text-fg-muted" />
+          <span className="text-xs text-fg-muted">Double-click to configure</span>
         </div>
       )}
     </div>

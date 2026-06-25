@@ -23,14 +23,14 @@ export default function App() {
   const [selectedAgent, setSelectedAgent] = useState<HCOMAgent | undefined>();
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
-      <header className="border-b bg-white dark:bg-gray-800 px-6 py-3 flex items-center justify-between">
+    <div className="min-h-screen bg-bg bg-bg text-fg text-fg">
+      <header className="border-b bg-surface bg-elevated px-6 py-3 flex items-center justify-between">
         <h1 className="text-lg font-bold">HCOM Agent Monitor</h1>
         <div className="flex gap-2">
-          <button className="px-3 py-1.5 text-sm rounded-md border hover:bg-gray-50 dark:hover:bg-gray-700">
+          <button className="px-3 py-1.5 text-sm rounded-md border hover:bg-bg dark:hover:bg-hover">
             Refresh
           </button>
-          <button className="px-3 py-1.5 text-sm rounded-md border hover:bg-gray-50 dark:hover:bg-gray-700">
+          <button className="px-3 py-1.5 text-sm rounded-md border hover:bg-bg dark:hover:bg-hover">
             Settings
           </button>
         </div>
@@ -41,7 +41,7 @@ export default function App() {
         <CollisionAlert collisions={[]} />
 
         {/* Agent Table */}
-        <section className="bg-white dark:bg-gray-800 rounded-xl border shadow-sm">
+        <section className="bg-surface bg-elevated rounded-md border shadow-sm">
           <div className="px-4 py-3 border-b">
             <h2 className="font-semibold text-sm">Agents ({DEMO_AGENTS.length})</h2>
           </div>
@@ -50,7 +50,7 @@ export default function App() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Messages */}
-          <section className="bg-white dark:bg-gray-800 rounded-xl border shadow-sm">
+          <section className="bg-surface bg-elevated rounded-md border shadow-sm">
             <div className="px-4 py-3 border-b">
               <h2 className="font-semibold text-sm">Messages</h2>
             </div>
@@ -58,7 +58,7 @@ export default function App() {
           </section>
 
           {/* Terminal Preview */}
-          <section className="bg-white dark:bg-gray-800 rounded-xl border shadow-sm">
+          <section className="bg-surface bg-elevated rounded-md border shadow-sm">
             <div className="px-4 py-3 border-b">
               <h2 className="font-semibold text-sm">Terminal Preview</h2>
             </div>
@@ -74,19 +74,19 @@ export default function App() {
 
         {/* Actions */}
         <div className="flex gap-2">
-          <button className="px-3 py-1.5 text-sm rounded-md bg-blue-600 text-white hover:bg-blue-700">
+          <button className="px-3 py-1.5 text-sm rounded-md bg-primary text-white hover:bg-primary-dark">
             Attach
           </button>
-          <button className="px-3 py-1.5 text-sm rounded-md border hover:bg-gray-50 dark:hover:bg-gray-700">
+          <button className="px-3 py-1.5 text-sm rounded-md border hover:bg-bg dark:hover:bg-hover">
             Kill
           </button>
-          <button className="px-3 py-1.5 text-sm rounded-md border hover:bg-gray-50 dark:hover:bg-gray-700">
+          <button className="px-3 py-1.5 text-sm rounded-md border hover:bg-bg dark:hover:bg-hover">
             Fork
           </button>
-          <button className="px-3 py-1.5 text-sm rounded-md border hover:bg-gray-50 dark:hover:bg-gray-700">
+          <button className="px-3 py-1.5 text-sm rounded-md border hover:bg-bg dark:hover:bg-hover">
             Message
           </button>
-          <button className="px-3 py-1.5 text-sm rounded-md border hover:bg-gray-50 dark:hover:bg-gray-700">
+          <button className="px-3 py-1.5 text-sm rounded-md border hover:bg-bg dark:hover:bg-hover">
             View Transcript
           </button>
         </div>

@@ -121,7 +121,7 @@ export const CanvasCard = React.memo(function CanvasCard({
         <div className="space-y-2 p-3">
           <input
             autoFocus
-            className="w-full text-sm font-semibold bg-transparent border-b border-gray-300 dark:border-gray-600 focus:outline-none focus:border-blue-500 px-0 py-1"
+            className="w-full text-sm font-semibold bg-transparent border-b border-border border-border-hover focus:outline-none focus:border-primary px-0 py-1"
             defaultValue={(content.title as string) || ''}
             onBlur={(e) => {
               updateCardContent(card.id, { title: e.target.value });
@@ -135,7 +135,7 @@ export const CanvasCard = React.memo(function CanvasCard({
             }}
           />
           <textarea
-            className="w-full text-xs bg-transparent border border-gray-200 dark:border-gray-700 rounded p-1.5 focus:outline-none focus:border-blue-500 resize-none"
+            className="w-full text-xs bg-transparent border border-border border-border rounded p-1.5 focus:outline-none focus:border-primary resize-none"
             rows={4}
             defaultValue={(content.text as string) || ''}
             onBlur={(e) => {
@@ -143,7 +143,7 @@ export const CanvasCard = React.memo(function CanvasCard({
             }}
           />
           <button
-            className="text-xs text-blue-600 hover:underline"
+            className="text-xs text-primary hover:underline"
             onClick={() => setIsEditing(false)}
           >
             Done
@@ -156,10 +156,10 @@ export const CanvasCard = React.memo(function CanvasCard({
       case 'text':
         return (
           <div className="p-3">
-            <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-1">
+            <h4 className="text-sm font-semibold text-fg text-fg mb-1">
               {(content.title as string) || 'Untitled'}
             </h4>
-            <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">
+            <p className="text-xs text-fg-secondary text-fg-muted leading-relaxed">
               {(content.text as string) || 'Double-click to edit...'}
             </p>
           </div>
@@ -175,12 +175,12 @@ export const CanvasCard = React.memo(function CanvasCard({
                 className="w-full h-32 object-cover rounded"
               />
             ) : (
-              <div className="w-full h-32 bg-gray-100 dark:bg-gray-700 rounded flex items-center justify-center">
-                <ImageIcon size={24} className="text-gray-400" />
+              <div className="w-full h-32 bg-hover bg-hover rounded flex items-center justify-center">
+                <ImageIcon size={24} className="text-fg-muted" />
               </div>
             )}
             {content.caption && (
-              <p className="text-xs text-gray-500 mt-1 px-1">{content.caption as string}</p>
+              <p className="text-xs text-fg-muted mt-1 px-1">{content.caption as string}</p>
             )}
           </div>
         );
@@ -191,7 +191,7 @@ export const CanvasCard = React.memo(function CanvasCard({
             <div className="flex items-start gap-2">
               <ExternalLink size={16} className="text-purple-500 mt-0.5 shrink-0" />
               <div className="min-w-0">
-                <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate">
+                <h4 className="text-sm font-semibold text-fg text-fg truncate">
                   {(content.title as string) || 'Link'}
                 </h4>
                 {content.url && (
@@ -206,7 +206,7 @@ export const CanvasCard = React.memo(function CanvasCard({
                   </a>
                 )}
                 {content.description && (
-                  <p className="text-xs text-gray-500 mt-1">
+                  <p className="text-xs text-fg-muted mt-1">
                     {content.description as string}
                   </p>
                 )}
@@ -220,20 +220,20 @@ export const CanvasCard = React.memo(function CanvasCard({
           <div className="p-2">
             <div className="flex items-center gap-1.5 mb-1.5 px-1">
               <Code size={14} className="text-orange-500" />
-              <span className="text-xs font-medium text-gray-700 dark:text-gray-300">
+              <span className="text-xs font-medium text-fg-secondary text-fg-secondary">
                 {(content.title as string) || 'Embed'}
               </span>
             </div>
             {content.src ? (
               <iframe
                 src={content.src as string}
-                className="w-full h-48 rounded border border-gray-200 dark:border-gray-700"
+                className="w-full h-48 rounded border border-border border-border"
                 sandbox="allow-scripts allow-same-origin"
                 title={(content.title as string) || 'Embedded content'}
               />
             ) : (
-              <div className="w-full h-48 bg-gray-100 dark:bg-gray-700 rounded flex items-center justify-center">
-                <span className="text-xs text-gray-400">No URL configured</span>
+              <div className="w-full h-48 bg-hover bg-hover rounded flex items-center justify-center">
+                <span className="text-xs text-fg-muted">No URL configured</span>
               </div>
             )}
           </div>
@@ -242,7 +242,7 @@ export const CanvasCard = React.memo(function CanvasCard({
       default:
         return (
           <div className="p-3">
-            <p className="text-xs text-gray-500">Unknown card type: {card.type}</p>
+            <p className="text-xs text-fg-muted">Unknown card type: {card.type}</p>
           </div>
         );
     }
@@ -252,9 +252,9 @@ export const CanvasCard = React.memo(function CanvasCard({
     <div
       ref={cardRef}
       data-testid="canvas-card"
-      className={`absolute select-none rounded-lg border bg-white dark:bg-gray-800 shadow-sm
+      className={`absolute select-none rounded-md border bg-surface bg-elevated shadow-sm
         ${typeColors[card.type] || 'border-l-gray-400'} border-l-4
-        ${isSelected ? 'ring-2 ring-blue-500 shadow-md z-20' : 'z-10 hover:shadow-md'}
+        ${isSelected ? 'ring-2 ring-primary shadow-md z-20' : 'z-10 hover:shadow-md'}
         ${isDragging ? 'cursor-grabbing opacity-90 z-30' : editable ? 'cursor-grab' : 'cursor-default'}
         ${!editable ? 'opacity-80' : ''}
         transition-shadow duration-100
@@ -269,10 +269,10 @@ export const CanvasCard = React.memo(function CanvasCard({
       onDoubleClick={handleDoubleClick}
     >
       {/* Card header with drag handle */}
-      <div className="flex items-center justify-between px-2 py-1 border-b border-gray-100 dark:border-gray-700 rounded-t-lg bg-gray-50/50 dark:bg-gray-900/30">
-        <div className="flex items-center gap-1.5 text-gray-400">
+      <div className="flex items-center justify-between px-2 py-1 border-b border-border border-border rounded-t-lg bg-surface/50 bg-surface/30">
+        <div className="flex items-center gap-1.5 text-fg-muted">
           <GripVertical size={12} />
-          <span className="text-[10px] uppercase tracking-wider font-medium text-gray-500 dark:text-gray-400">
+          <span className="text-[10px] uppercase tracking-wider font-medium text-fg-muted text-fg-muted">
             {card.type}
           </span>
           {typeIcons[card.type]}
@@ -280,7 +280,7 @@ export const CanvasCard = React.memo(function CanvasCard({
         {isSelected && editable && (
           <button
             onClick={handleDelete}
-            className="p-0.5 rounded hover:bg-red-100 dark:hover:bg-red-900/30 text-gray-400 hover:text-red-500 transition-colors"
+            className="p-0.5 rounded hover:bg-error-muted hover:bg-error-muted text-fg-muted hover:text-error transition-colors"
             aria-label="Delete card"
           >
             <X size={12} />
@@ -294,7 +294,7 @@ export const CanvasCard = React.memo(function CanvasCard({
       {/* Read-only indicator */}
       {!editable && (
         <div className="absolute top-1 right-1">
-          <span className="text-[9px] px-1.5 py-0.5 rounded bg-gray-100 dark:bg-gray-700 text-gray-500">
+          <span className="text-[9px] px-1.5 py-0.5 rounded bg-hover bg-hover text-fg-muted">
             Read-only
           </span>
         </div>

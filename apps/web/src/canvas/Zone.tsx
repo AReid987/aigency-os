@@ -62,8 +62,8 @@ export const Zone = React.memo(function Zone({ zone, zoom, onCardMove }: ZonePro
     <div
       data-testid={`${zone.type}-zone`}
       data-readonly={!editable}
-      className={`absolute rounded-xl border-2 ${styles.border} ${styles.bg} overflow-hidden transition-all duration-200
-        ${isActive ? 'shadow-lg' : 'shadow-sm'}
+      className={`absolute rounded-md border-2 ${styles.border} ${styles.bg} overflow-hidden transition-all duration-200
+        ${isActive ? 'shadow-md' : 'shadow-sm'}
       `}
       style={{
         left: zonePos.x,
@@ -109,7 +109,7 @@ export const Zone = React.memo(function Zone({ zone, zoom, onCardMove }: ZonePro
         {/* Empty state */}
         {zoneCards.length === 0 && (
           <div className="absolute inset-0 flex items-center justify-center">
-            <p className="text-sm text-gray-400 dark:text-gray-500">
+            <p className="text-sm text-fg-muted text-fg-muted">
               {editable ? 'Double-click or use toolbar to add cards' : 'No cards yet'}
             </p>
           </div>

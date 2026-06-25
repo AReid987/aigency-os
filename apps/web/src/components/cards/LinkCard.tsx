@@ -43,26 +43,26 @@ export const LinkCard = React.memo(function LinkCard({
       <div className="space-y-2 p-3">
         <input
           autoFocus
-          className="w-full text-sm font-semibold bg-transparent border-b border-gray-300 dark:border-gray-600 focus:outline-none focus:border-blue-500 px-0 py-1"
+          className="w-full text-sm font-semibold bg-transparent border-b border-border border-border-hover focus:outline-none focus:border-primary px-0 py-1"
           defaultValue={content.title || ''}
           placeholder="Link title"
           onBlur={(e) => onUpdate({ title: e.target.value })}
         />
         <input
-          className="w-full text-xs bg-transparent border border-gray-200 dark:border-gray-700 rounded p-1.5 focus:outline-none focus:border-blue-500"
+          className="w-full text-xs bg-transparent border border-border border-border rounded p-1.5 focus:outline-none focus:border-primary"
           defaultValue={content.url || ''}
           placeholder="https://..."
           onBlur={(e) => onUpdate({ url: e.target.value })}
         />
         <textarea
-          className="w-full text-xs bg-transparent border border-gray-200 dark:border-gray-700 rounded p-1.5 focus:outline-none focus:border-blue-500 resize-none"
+          className="w-full text-xs bg-transparent border border-border border-border rounded p-1.5 focus:outline-none focus:border-primary resize-none"
           rows={2}
           defaultValue={content.description || ''}
           placeholder="Description (optional)"
           onBlur={(e) => onUpdate({ description: e.target.value })}
         />
         <button
-          className="text-xs text-blue-600 hover:underline"
+          className="text-xs text-primary hover:underline"
           onClick={onEditDone}
         >
           Done
@@ -89,7 +89,7 @@ export const LinkCard = React.memo(function LinkCard({
           )}
         </div>
         <div className="min-w-0 flex-1">
-          <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate">
+          <h4 className="text-sm font-semibold text-fg text-fg truncate">
             {content.title || 'Link'}
           </h4>
           {content.url && (
@@ -105,7 +105,7 @@ export const LinkCard = React.memo(function LinkCard({
             </a>
           )}
           {content.description && (
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1.5 leading-relaxed">
+            <p className="text-xs text-fg-muted text-fg-muted mt-1.5 leading-relaxed">
               {content.description}
             </p>
           )}

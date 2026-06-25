@@ -1,2 +1,119 @@
-@import "@vscp/ui/styles/aigency-tokens.css";
 @import "tailwindcss";
+
+@import url('https://api.fontshare.com/v2/css?f[]=array@400,700&f[]=supreme@400,500,700&f[]=satoshi@400,500,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Geist+Mono:wght@300;400;500;600&display=swap');
+
+@theme {
+  /* Backgrounds — dark void palette */
+  --color-bg: #05070a;
+  --color-surface: #0a0e14;
+  --color-elevated: #141c28;
+  --color-hover: #1a2233;
+
+  /* Borders */
+  --color-border: #1a1f2e;
+  --color-border-hover: #252d3a;
+
+  /* Primary — teal */
+  --color-primary: #12a594;
+  --color-primary-light: #1ec4b0;
+  --color-primary-dark: #0d7d6f;
+  --color-primary-muted: #12a59424;
+
+  /* Accent — magenta */
+  --color-accent: #D6409F;
+  --color-accent-light: #e85ab5;
+  --color-accent-dark: #a82f7a;
+  --color-accent-muted: #D6409F24;
+
+  /* Amber — warm human accent */
+  --color-amber: #e09646;
+  --color-amber-muted: #e0964624;
+
+  /* Foreground */
+  --color-fg: #f0f4f8;
+  --color-fg-secondary: #9aa4b2;
+  --color-fg-muted: #5b6675;
+  --color-fg-dim: #3d4a5c;
+  --color-fg-inverse: #0a0c0f;
+
+  /* Semantic */
+  --color-error: #e5484d;
+  --color-error-muted: #e5484d1f;
+  --color-warning: #f5a623;
+  --color-warning-muted: #f5a6231f;
+  --color-success: #12a594;
+  --color-success-muted: #12a5941f;
+  --color-info: #5eb4fb;
+  --color-info-muted: #5eb4fb1f;
+
+  /* Fonts */
+  --font-hero: 'Array', 'Supreme', system-ui, sans-serif;
+  --font-display: 'Supreme', system-ui, sans-serif;
+  --font-body: 'Satoshi', system-ui, sans-serif;
+  --font-mono: 'Geist Mono', 'Fira Code', monospace;
+
+  /* Radii — sharp */
+  --radius-xs: 2px;
+  --radius-sm: 3px;
+  --radius-md: 4px;
+  --radius-lg: 4px;
+  --radius-xl: 6px;
+  --radius-full: 9999px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.6);
+  --shadow-glow: 0 0 20px rgba(18, 165, 148, 0.3), 0 0 60px rgba(18, 165, 148, 0.1);
+
+  /* Animation */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --duration-fast: 150ms;
+  --duration-normal: 250ms;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--color-bg);
+  color: var(--color-fg);
+  line-height: 1.6;
+}
+
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #ffffff1f; border-radius: 2px; }
+
+.glass {
+  position: relative;
+  background: var(--color-surface);
+  backdrop-filter: blur(14px) saturate(120%);
+  -webkit-backdrop-filter: blur(14px) saturate(120%);
+  box-shadow: inset 0 0 0 1px var(--color-border), 0 8px 40px rgba(0, 0, 0, 0.45);
+  border-radius: var(--radius-md);
+}
+
+.glass::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.07), transparent 42%);
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

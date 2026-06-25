@@ -26,7 +26,7 @@ export const TextCard = React.memo(function TextCard({
       <div className="space-y-2 p-3">
         <input
           autoFocus
-          className="w-full text-sm font-semibold bg-transparent border-b border-gray-300 dark:border-gray-600 focus:outline-none focus:border-blue-500 px-0 py-1"
+          className="w-full text-sm font-semibold bg-transparent border-b border-border border-border-hover focus:outline-none focus:border-primary px-0 py-1"
           defaultValue={content.title || ''}
           onBlur={(e) => {
             onUpdate({ title: e.target.value });
@@ -40,13 +40,13 @@ export const TextCard = React.memo(function TextCard({
           }}
         />
         <textarea
-          className="w-full text-xs bg-transparent border border-gray-200 dark:border-gray-700 rounded p-1.5 focus:outline-none focus:border-blue-500 resize-none"
+          className="w-full text-xs bg-transparent border border-border border-border rounded p-1.5 focus:outline-none focus:border-primary resize-none"
           rows={4}
           defaultValue={content.text || ''}
           onBlur={(e) => onUpdate({ text: e.target.value })}
         />
         <button
-          className="text-xs text-blue-600 hover:underline"
+          className="text-xs text-primary hover:underline"
           onClick={onEditDone}
         >
           Done
@@ -58,12 +58,12 @@ export const TextCard = React.memo(function TextCard({
   return (
     <div className="p-3">
       <div className="flex items-center gap-1.5 mb-1">
-        <FileText size={14} className="text-blue-400" />
-        <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate">
+        <FileText size={14} className="text-primary-light" />
+        <h4 className="text-sm font-semibold text-fg text-fg truncate">
           {content.title || 'Untitled'}
         </h4>
       </div>
-      <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">
+      <p className="text-xs text-fg-secondary text-fg-muted leading-relaxed">
         {content.text || 'Double-click to edit...'}
       </p>
     </div>

@@ -26,7 +26,7 @@ export function TicketBoard({ tickets, onTicketClick }: TicketBoardProps) {
       {columns.map((col) => {
         const colTickets = tickets.filter((t) => t.status === col.key);
         return (
-          <div key={col.key} className="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-3">
+          <div key={col.key} className="bg-bg bg-elevated/50 rounded-md p-3">
             <div className="flex items-center justify-between mb-3">
               <h3 className="font-semibold text-sm">{col.label}</h3>
               <Badge variant={col.variant}>{colTickets.length}</Badge>
@@ -37,19 +37,19 @@ export function TicketBoard({ tickets, onTicketClick }: TicketBoardProps) {
                   key={ticket.id}
                   onClick={() => onTicketClick?.(ticket)}
                   className={`
-                    p-3 bg-white dark:bg-gray-800 rounded-md border border-l-4 shadow-sm
+                    p-3 bg-surface bg-elevated rounded-md border border-l-4 shadow-sm
                     cursor-pointer hover:shadow-md transition-shadow
                     ${priorityColors[ticket.priority]}
                   `}
                 >
                   <p className="font-medium text-sm truncate">{ticket.title}</p>
-                  <p className="text-xs text-gray-500 mt-1 line-clamp-2">{ticket.description}</p>
+                  <p className="text-xs text-fg-muted mt-1 line-clamp-2">{ticket.description}</p>
                   <div className="flex items-center justify-between mt-2">
                     <Badge variant={ticket.priority === 'P0' ? 'danger' : ticket.priority === 'P1' ? 'warning' : 'info'}>
                       {ticket.priority}
                     </Badge>
                     {ticket.comments.length > 0 && (
-                      <span className="text-xs text-gray-400">{ticket.comments.length} comments</span>
+                      <span className="text-xs text-fg-muted">{ticket.comments.length} comments</span>
                     )}
                   </div>
                 </div>

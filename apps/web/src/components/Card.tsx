@@ -173,7 +173,7 @@ export const Card = React.memo(function Card({
       default:
         return (
           <div className="p-3">
-            <p className="text-xs text-gray-500">Unknown card type: {card.type}</p>
+            <p className="text-xs text-fg-muted">Unknown card type: {card.type}</p>
           </div>
         );
     }
@@ -183,9 +183,9 @@ export const Card = React.memo(function Card({
     <div
       ref={cardRef}
       data-testid="canvas-card"
-      className={`absolute select-none rounded-lg border bg-white dark:bg-gray-800 shadow-sm
+      className={`absolute select-none rounded-md border bg-surface bg-elevated shadow-sm
         ${typeColors[card.type] || 'border-l-gray-400'} border-l-4
-        ${isSelected ? 'ring-2 ring-blue-500 shadow-md z-20' : 'z-10 hover:shadow-md'}
+        ${isSelected ? 'ring-2 ring-primary shadow-md z-20' : 'z-10 hover:shadow-md'}
         ${isDragging ? 'cursor-grabbing opacity-90 z-30' : editable ? 'cursor-grab' : 'cursor-default'}
         ${!editable ? 'opacity-80' : ''}
         transition-shadow duration-100
@@ -200,10 +200,10 @@ export const Card = React.memo(function Card({
       onDoubleClick={handleDoubleClick}
     >
       {/* Card header with drag handle */}
-      <div className="flex items-center justify-between px-2 py-1 border-b border-gray-100 dark:border-gray-700 rounded-t-lg bg-gray-50/50 dark:bg-gray-900/30">
-        <div className="flex items-center gap-1.5 text-gray-400">
+      <div className="flex items-center justify-between px-2 py-1 border-b border-border border-border rounded-t-lg bg-surface/50 bg-surface/30">
+        <div className="flex items-center gap-1.5 text-fg-muted">
           <GripVertical size={12} />
-          <span className="text-[10px] uppercase tracking-wider font-medium text-gray-500 dark:text-gray-400">
+          <span className="text-[10px] uppercase tracking-wider font-medium text-fg-muted text-fg-muted">
             {card.type}
           </span>
           {typeIcons[card.type]}
@@ -211,7 +211,7 @@ export const Card = React.memo(function Card({
         {isSelected && editable && (
           <button
             onClick={handleDelete}
-            className="p-0.5 rounded hover:bg-red-100 dark:hover:bg-red-900/30 text-gray-400 hover:text-red-500 transition-colors"
+            className="p-0.5 rounded hover:bg-error-muted hover:bg-error-muted text-fg-muted hover:text-error transition-colors"
             aria-label="Delete card"
           >
             <X size={12} />
@@ -225,7 +225,7 @@ export const Card = React.memo(function Card({
       {/* Read-only indicator */}
       {!editable && (
         <div className="absolute top-1 right-1">
-          <span className="text-[9px] px-1.5 py-0.5 rounded bg-gray-100 dark:bg-gray-700 text-gray-500">
+          <span className="text-[9px] px-1.5 py-0.5 rounded bg-hover bg-hover text-fg-muted">
             Read-only
           </span>
         </div>

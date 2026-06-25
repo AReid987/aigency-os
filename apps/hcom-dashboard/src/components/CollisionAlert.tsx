@@ -16,7 +16,7 @@ export function CollisionAlert({ collisions, onResolve }: CollisionAlertProps) {
       {unresolved.map((collision) => (
         <div
           key={collision.id}
-          className="flex items-center gap-3 p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800"
+          className="flex items-center gap-3 p-3 rounded-md bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800"
         >
           <span className="text-red-500 text-lg">⚠️</span>
           <div className="flex-1">
@@ -28,7 +28,7 @@ export function CollisionAlert({ collisions, onResolve }: CollisionAlertProps) {
               <code className="bg-red-100 dark:bg-red-800 px-1 rounded">{collision.filePath}</code>{' '}
               within 30s
             </p>
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-fg-muted mt-1">
               {new Date(collision.timestamp).toLocaleString()}
             </p>
           </div>

@@ -31,7 +31,7 @@ export function OrgChart({ agents, onAgentClick }: OrgChartProps) {
         <div
           onClick={() => onAgentClick?.(agent)}
           className={`
-            relative flex flex-col items-center gap-2 p-4 rounded-xl border bg-white dark:bg-gray-800
+            relative flex flex-col items-center gap-2 p-4 rounded-md border bg-surface bg-elevated
             shadow-sm hover:shadow-md transition-shadow cursor-pointer min-w-[160px]
             ${agent.status === 'terminated' ? 'opacity-50' : ''}
           `}
@@ -39,8 +39,8 @@ export function OrgChart({ agents, onAgentClick }: OrgChartProps) {
           <Avatar name={agent.name} status={agent.status as 'active' | 'thinking' | 'blocked' | 'idle'} size="lg" />
           <div className="text-center">
             <p className="font-semibold text-sm">{agent.name}</p>
-            <p className="text-xs text-gray-500">{agent.role}</p>
-            <p className="text-xs text-gray-400">{agent.adapter}</p>
+            <p className="text-xs text-fg-muted">{agent.role}</p>
+            <p className="text-xs text-fg-muted">{agent.adapter}</p>
           </div>
           <div className="flex items-center gap-2">
             <span className={`h-2 w-2 rounded-full ${statusColors[agent.status] ?? 'bg-gray-400'}`} />
@@ -50,14 +50,14 @@ export function OrgChart({ agents, onAgentClick }: OrgChartProps) {
           </div>
           {agent.budgetLimit > 0 && (
             <div className="w-full">
-              <div className="flex justify-between text-xs text-gray-500 mb-1">
+              <div className="flex justify-between text-xs text-fg-muted mb-1">
                 <span>${agent.budgetSpent.toFixed(2)}</span>
                 <span>${agent.budgetLimit.toFixed(2)}</span>
               </div>
-              <div className="h-1.5 w-full rounded-full bg-gray-200 dark:bg-gray-700">
+              <div className="h-1.5 w-full rounded-full bg-border bg-hover">
                 <div
                   className={`h-full rounded-full transition-all ${
-                    budgetPercent >= 90 ? 'bg-red-500' : budgetPercent >= 70 ? 'bg-yellow-500' : 'bg-blue-500'
+                    budgetPercent >= 90 ? 'bg-red-500' : budgetPercent >= 70 ? 'bg-yellow-500' : 'bg-primary'
                   }`}
                   style={{ width: `${Math.min(budgetPercent, 100)}%` }}
                 />
@@ -79,7 +79,7 @@ export function OrgChart({ agents, onAgentClick }: OrgChartProps) {
 
   if (agents.length === 0) {
     return (
-      <div className="flex items-center justify-center h-48 text-gray-400">
+      <div className="flex items-center justify-center h-48 text-fg-muted">
         No agents hired yet. Click "Hire Agent" to get started.
       </div>
     );

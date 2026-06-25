@@ -15,14 +15,14 @@ export function BudgetTracker({ budget, agents }: BudgetTrackerProps) {
       <div>
         <div className="flex justify-between text-sm mb-1">
           <span className="font-medium">Total Budget</span>
-          <span className="text-gray-500">
+          <span className="text-fg-muted">
             ${budget.spent.toFixed(2)} / ${budget.total.toFixed(2)} ({totalPercent}%)
           </span>
         </div>
-        <div className="h-3 w-full rounded-full bg-gray-200 dark:bg-gray-700">
+        <div className="h-3 w-full rounded-full bg-border bg-hover">
           <div
             className={`h-full rounded-full transition-all ${
-              totalPercent >= 90 ? 'bg-red-500' : totalPercent >= 70 ? 'bg-yellow-500' : 'bg-blue-500'
+              totalPercent >= 90 ? 'bg-red-500' : totalPercent >= 70 ? 'bg-yellow-500' : 'bg-primary'
             }`}
             style={{ width: `${Math.min(totalPercent, 100)}%` }}
           />
@@ -31,7 +31,7 @@ export function BudgetTracker({ budget, agents }: BudgetTrackerProps) {
 
       {/* Per-agent budgets */}
       <div className="space-y-3">
-        <h4 className="text-sm font-medium text-gray-600 dark:text-gray-400">Per-Agent Breakdown</h4>
+        <h4 className="text-sm font-medium text-fg-secondary text-fg-muted">Per-Agent Breakdown</h4>
         {agents.map((agent) => {
           const agentBudget = budget.perAgent[agent.id];
           if (!agentBudget || agentBudget.limit === 0) return null;
@@ -43,13 +43,13 @@ export function BudgetTracker({ budget, agents }: BudgetTrackerProps) {
             <div key={agent.id}>
               <div className="flex justify-between text-xs mb-1">
                 <span className="font-medium">{agent.name} ({agent.role})</span>
-                <span className={isOver ? 'text-red-500 font-semibold' : 'text-gray-500'}>
+                <span className={isOver ? 'text-red-500 font-semibold' : 'text-fg-muted'}>
                   ${agentBudget.spent.toFixed(2)} / ${agentBudget.limit.toFixed(2)}
                   {isWarning && !isOver && ' ⚠️'}
                   {isOver && ' 🛑'}
                 </span>
               </div>
-              <div className="h-2 w-full rounded-full bg-gray-200 dark:bg-gray-700">
+              <div className="h-2 w-full rounded-full bg-border bg-hover">
                 <div
                   className={`h-full rounded-full transition-all ${
                     isOver ? 'bg-red-500' : isWarning ? 'bg-yellow-500' : 'bg-green-500'

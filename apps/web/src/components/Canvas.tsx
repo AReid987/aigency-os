@@ -188,7 +188,7 @@ export function Canvas() {
   return (
     <div
       ref={containerRef}
-      className="relative w-full h-full overflow-hidden bg-gray-50 dark:bg-gray-900"
+      className="relative w-full h-full overflow-hidden bg-bg bg-bg"
       style={{ cursor: isPanning ? 'grabbing' : 'default' }}
       onWheel={handleWheel}
       onMouseDown={handleMouseDown}

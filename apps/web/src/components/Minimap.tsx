@@ -69,7 +69,7 @@ export const Minimap = React.memo(function Minimap({
 
   return (
     <div
-      className="fixed bottom-4 right-4 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden z-40"
+      className="fixed bottom-4 right-4 bg-surface bg-elevated rounded-md shadow-md border border-border border-border overflow-hidden z-40"
       style={{ width: MINIMAP_WIDTH + 8, height: MINIMAP_HEIGHT + 8 }}
     >
       <div
@@ -100,7 +100,7 @@ export const Minimap = React.memo(function Minimap({
         {cards.map((card) => (
           <div
             key={card.id}
-            className="absolute rounded-sm bg-gray-500 dark:bg-gray-400"
+            className="absolute rounded-sm bg-bg0 dark:bg-gray-400"
             style={{
               left: card.position.x * scale,
               top: card.position.y * scale,
@@ -112,7 +112,7 @@ export const Minimap = React.memo(function Minimap({
 
         {/* Viewport rectangle */}
         <div
-          className="absolute border-2 border-blue-500 bg-blue-500/10 rounded-sm"
+          className="absolute border-2 border-primary bg-primary/10 rounded-sm"
           style={{
             left: Math.max(0, vpX),
             top: Math.max(0, vpY),
@@ -123,7 +123,7 @@ export const Minimap = React.memo(function Minimap({
       </div>
 
       {/* Zoom indicator */}
-      <div className="absolute top-1 left-2 text-[9px] font-mono text-gray-500 dark:text-gray-400">
+      <div className="absolute top-1 left-2 text-[9px] font-mono text-fg-muted text-fg-muted">
         {Math.round(zoom * 100)}%
       </div>
     </div>
