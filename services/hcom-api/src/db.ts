@@ -1,4 +1,4 @@
-import Database from 'better-sqlite3';
+import Database, { type Database as DatabaseType } from 'better-sqlite3';
 import { mkdirSync } from 'node:fs';
 import { dirname } from 'node:path';
 
@@ -7,7 +7,7 @@ const DB_PATH = process.env.HCOM_DB_PATH ?? './data/hcom.db';
 // Ensure parent directory exists
 mkdirSync(dirname(DB_PATH), { recursive: true });
 
-const db = new Database(DB_PATH);
+const db: DatabaseType = new Database(DB_PATH);
 
 // Enable WAL mode for better concurrent read performance
 db.pragma('journal_mode = WAL');
