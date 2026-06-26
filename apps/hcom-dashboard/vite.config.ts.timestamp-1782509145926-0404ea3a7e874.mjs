@@ -1,0 +1,15 @@
+// vite.config.ts
+import { defineConfig } from "file:///Users/antonioreid/CODE/00_PROJECTS/00_APPS/AIGENCY/aigency-os/node_modules/.pnpm/vite@6.4.3_@types+node@26.0.1_jiti@2.7.0_lightningcss@1.32.0_tsx@4.22.4/node_modules/vite/dist/node/index.js";
+import react from "file:///Users/antonioreid/CODE/00_PROJECTS/00_APPS/AIGENCY/aigency-os/node_modules/.pnpm/@vitejs+plugin-react@4.7.0_vite@6.4.3_@types+node@26.0.1_jiti@2.7.0_lightningcss@1.32.0_tsx@4.22.4_/node_modules/@vitejs/plugin-react/dist/index.js";
+import tailwindcss from "file:///Users/antonioreid/CODE/00_PROJECTS/00_APPS/AIGENCY/aigency-os/node_modules/.pnpm/@tailwindcss+vite@4.3.1_vite@6.4.3_@types+node@26.0.1_jiti@2.7.0_lightningcss@1.32.0_tsx@4.22.4_/node_modules/@tailwindcss/vite/dist/index.mjs";
+var vite_config_default = defineConfig({
+  plugins: [react(), tailwindcss()],
+  server: { port: 3005 },
+  test: {
+    passWithNoTests: true
+  }
+});
+export {
+  vite_config_default as default
+};
+//# sourceMappingURL=data:application/json;base64,ewogICJ2ZXJzaW9uIjogMywKICAic291cmNlcyI6IFsidml0ZS5jb25maWcudHMiXSwKICAic291cmNlc0NvbnRlbnQiOiBbImNvbnN0IF9fdml0ZV9pbmplY3RlZF9vcmlnaW5hbF9kaXJuYW1lID0gXCIvVXNlcnMvYW50b25pb3JlaWQvQ09ERS8wMF9QUk9KRUNUUy8wMF9BUFBTL0FJR0VOQ1kvYWlnZW5jeS1vcy9hcHBzL2hjb20tZGFzaGJvYXJkXCI7Y29uc3QgX192aXRlX2luamVjdGVkX29yaWdpbmFsX2ZpbGVuYW1lID0gXCIvVXNlcnMvYW50b25pb3JlaWQvQ09ERS8wMF9QUk9KRUNUUy8wMF9BUFBTL0FJR0VOQ1kvYWlnZW5jeS1vcy9hcHBzL2hjb20tZGFzaGJvYXJkL3ZpdGUuY29uZmlnLnRzXCI7Y29uc3QgX192aXRlX2luamVjdGVkX29yaWdpbmFsX2ltcG9ydF9tZXRhX3VybCA9IFwiZmlsZTovLy9Vc2Vycy9hbnRvbmlvcmVpZC9DT0RFLzAwX1BST0pFQ1RTLzAwX0FQUFMvQUlHRU5DWS9haWdlbmN5LW9zL2FwcHMvaGNvbS1kYXNoYm9hcmQvdml0ZS5jb25maWcudHNcIjtpbXBvcnQgeyBkZWZpbmVDb25maWcgfSBmcm9tICd2aXRlJztcbmltcG9ydCByZWFjdCBmcm9tICdAdml0ZWpzL3BsdWdpbi1yZWFjdCc7XG5pbXBvcnQgdGFpbHdpbmRjc3MgZnJvbSAnQHRhaWx3aW5kY3NzL3ZpdGUnO1xuXG5leHBvcnQgZGVmYXVsdCBkZWZpbmVDb25maWcoe1xuICBwbHVnaW5zOiBbcmVhY3QoKSwgdGFpbHdpbmRjc3MoKV0sXG4gIHNlcnZlcjogeyBwb3J0OiAzMDA1IH0sXG4gIHRlc3Q6IHtcbiAgICBwYXNzV2l0aE5vVGVzdHM6IHRydWUsXG4gIH0sXG59KTtcbiJdLAogICJtYXBwaW5ncyI6ICI7QUFBd2EsU0FBUyxvQkFBb0I7QUFDcmMsT0FBTyxXQUFXO0FBQ2xCLE9BQU8saUJBQWlCO0FBRXhCLElBQU8sc0JBQVEsYUFBYTtBQUFBLEVBQzFCLFNBQVMsQ0FBQyxNQUFNLEdBQUcsWUFBWSxDQUFDO0FBQUEsRUFDaEMsUUFBUSxFQUFFLE1BQU0sS0FBSztBQUFBLEVBQ3JCLE1BQU07QUFBQSxJQUNKLGlCQUFpQjtBQUFBLEVBQ25CO0FBQ0YsQ0FBQzsiLAogICJuYW1lcyI6IFtdCn0K

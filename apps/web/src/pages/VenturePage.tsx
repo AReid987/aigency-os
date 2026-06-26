@@ -1,0 +1,150 @@
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Badge } from '@vscp/ui';
+import { Lightbulb, ArrowRight, Loader, CheckCircle } from 'lucide-react';
+
+type Step = 'input' | 'analyzing' | 'plan' | 'review' | 'approved';
+
+export function VenturePage() {
+  const navigate = useNavigate();
+  const [idea, setIdea] = useState('');
+  const [step, setStep] = useState<Step>('input');
+  const [plan, setPlan] = useState<{ title: string; tasks: string[]; sections: Array<{ title: string; content: string }> } | null>(null);
+
+  const handleCreateVenture = () => {
+    if (!idea.trim()) return;
+    setStep('analyzing');
+
+    // Simulate PAUL plan generation
+    setTimeout(() => {
+      setPlan({
+        title: `Venture: ${idea.slice(0, 50)}`,
+        tasks: [
+          'Define value proposition and target market',
+          'Build Business Model Canvas with revenue model',
+          'Create MVP technical specification',
+          'Implement core features',
+          'Run quality audit',
+          'Launch and track metrics',
+        ],
+        sections: [
+          { title: 'Business Overview', content: `This venture addresses: ${idea}\n\nTarget market analysis and competitive landscape to be defined during the BMAD process.` },
+          { title: 'Technical Approach', content: 'Architecture to be defined by PAUL after business requirements are approved by domain expert.' },
+          { title: 'Success Metrics', content: 'MRR target, customer acquisition cost, and LTV/CAC ratio to be established.' },
+        ],
+      });
+      setStep('plan');
+    }, 2000);
+  };
+
+  const handleApprove = () => {
+    setStep('approved');
+    setTimeout(() => navigate('/'), 1500);
+  };
+
+  return (
+    <div className="p-6 h-full overflow-auto">
+      <div className="max-w-3xl mx-auto">
+        <div className="flex items-center gap-3 mb-8">
+          <Lightbulb size={24} className="text-amber" />
+          <h1 className="text-2xl font-bold">New Venture</h1>
+        </div>
+
+        {/* Progress steps */}
+        <div className="flex items-center gap-2 mb-8">
+          {['Input', 'Analysis', 'Plan', 'Review', 'Approved'].map((s, i) => {
+            const stepNames: Record<string, Step> = { Input: 'input', Analysis: 'analyzing', Plan: 'plan', Review: 'review', Approved: 'approved' };
+            const current = ['input', 'analyzing', 'plan', 'review', 'approved'].indexOf(step);
+            const isActive = i <= current;
+            return (
+              <React.Fragment key={s}>
+                {i > 0 && <div className={`w-8 h-px ${isActive ? 'bg-primary' : 'bg-border'}`} />}
+                <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium ${isActive ? 'bg-primary-muted text-primary' : 'text-fg-muted'}`}>
+                  {i < current ? <CheckCircle size={12} /> : null}
+                  {s}
+                </div>
+              </React.Fragment>
+            );
+          })}
+        </div>
+
+        {/* Step: Input */}
+        {step === 'input' && (
+          <div className="bg-surface/70 backdrop-blur-md rounded-md border border-border p-6">
+            <h2 className="text-lg font-bold mb-4">Describe your venture idea</h2>
+            <textarea
+              value={idea}
+              onChange={(e) => setIdea(e.target.value)}
+              placeholder="e.g., An AI-powered note-taking app that automatically organizes and connects ideas across meetings, documents, and conversations..."
+              className="w-full h-40 p-4 bg-elevated/70 border border-border rounded-md text-sm focus:border-primary focus:outline-none resize-none"
+            />
+            <button
+              onClick={handleCreateVenture}
+              disabled={!idea.trim()}
+              className="mt-4 px-6 py-2.5 bg-primary text-fg-inverse font-semibold rounded-md hover:bg-primary-dark transition-colors disabled:opacity-50 flex items-center gap-2"
+            >
+              Analyze & Generate Plan <ArrowRight size={16} />
+            </button>
+          </div>
+        )}
+
+        {/* Step: Analyzing */}
+        {step === 'analyzing' && (
+          <div className="bg-surface/70 backdrop-blur-md rounded-md border border-border p-8 text-center">
+            <Loader size={32} className="animate-spin text-primary mx-auto mb-4" />
+            <h2 className="text-lg font-bold mb-2">Analyzing your idea...</h2>
+            <p className="text-sm text-fg-muted">PAUL is generating a structured plan with acceptance criteria</p>
+          </div>
+        )}
+
+        {/* Step: Plan/Review */}
+        {(step === 'plan' || step === 'review') && plan && (
+          <div className="space-y-6">
+            <div className="bg-surface/70 backdrop-blur-md rounded-md border border-border p-6">
+              <h2 className="text-lg font-bold mb-2">{plan.title}</h2>
+              <Badge variant="info">Generated by PAUL</Badge>
+
+              <div className="mt-6 space-y-4">
+                <h3 className="text-sm font-semibold text-fg-secondary uppercase tracking-wider">Tasks</h3>
+                {plan.tasks.map((task, i) => (
+                  <div key={i} className="flex items-center gap-3 p-3 rounded-md bg-hover/40 border border-border">
+                    <span className="w-6 h-6 rounded-full bg-primary-muted text-primary flex items-center justify-center text-xs font-bold">{i + 1}</span>
+                    <span className="text-sm">{task}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="bg-surface/70 backdrop-blur-md rounded-md border border-border p-6">
+              <h3 className="text-sm font-semibold text-fg-secondary uppercase tracking-wider mb-4">Business Sections</h3>
+              {plan.sections.map((section, i) => (
+                <div key={i} className="mb-4 p-4 rounded-md bg-hover/40 border border-border">
+                  <h4 className="text-sm font-semibold mb-2">{section.title}</h4>
+                  <p className="text-sm text-fg-secondary whitespace-pre-wrap">{section.content}</p>
+                </div>
+              ))}
+            </div>
+
+            <div className="flex gap-3">
+              <button onClick={handleApprove} className="px-6 py-2.5 bg-success text-fg-inverse font-semibold rounded-md hover:bg-success/80 transition-colors">
+                <CheckCircle size={16} className="inline mr-2" /> Approve & Continue
+              </button>
+              <button onClick={() => setStep('input')} className="px-6 py-2.5 bg-surface border border-border text-fg-secondary rounded-md hover:bg-hover transition-colors">
+                Revise Idea
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Step: Approved */}
+        {step === 'approved' && (
+          <div className="bg-surface/70 backdrop-blur-md rounded-md border border-border p-8 text-center">
+            <CheckCircle size={48} className="text-success mx-auto mb-4" />
+            <h2 className="text-xl font-bold mb-2">Venture Approved!</h2>
+            <p className="text-sm text-fg-muted">Redirecting to canvas where your venture will be built...</p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
