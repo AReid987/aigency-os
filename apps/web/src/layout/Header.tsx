@@ -13,27 +13,33 @@ export function Header() {
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-surface/80 bg-surface/80 backdrop-blur-md border-b border-border border-border">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-surface/70 backdrop-blur-md border-b border-border shadow-[inset_0_1px_0_0_rgba(255,255,255,0.06)]">
       <div className="flex items-center justify-between h-12 px-4">
         {/* Left: Logo and nav */}
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-md bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center">
-              <span className="text-white text-xs font-bold">A</span>
-            </div>
-            <span className="text-sm font-bold text-fg text-fg">
-              Agor Canvas
-            </span>
+            <img
+              src="/logo.png"
+              alt="Aigency"
+              className="w-7 h-7"
+              onError={(e) => {
+                // Fallback mark if logo asset is missing
+                const target = e.currentTarget;
+                target.style.display = 'none';
+                target.parentElement?.classList.add('fallback-mark');
+              }}
+            />
+            <span className="text-sm font-bold text-fg">Agor Canvas</span>
           </div>
 
           <nav className="hidden md:flex items-center gap-1">
-            <button className="px-3 py-1.5 text-xs font-medium rounded-md bg-hover bg-elevated text-fg text-fg">
+            <button className="px-3 py-1.5 text-xs font-medium rounded-md bg-elevated/70 text-fg">
               Canvas
             </button>
-            <button className="px-3 py-1.5 text-xs font-medium rounded-md text-fg-muted hover:bg-hover dark:hover:bg-elevated">
+            <button className="px-3 py-1.5 text-xs font-medium rounded-md text-fg-muted hover:bg-hover/60 hover:text-fg">
               Brain
             </button>
-            <button className="px-3 py-1.5 text-xs font-medium rounded-md text-fg-muted hover:bg-hover dark:hover:bg-elevated">
+            <button className="px-3 py-1.5 text-xs font-medium rounded-md text-fg-muted hover:bg-hover/60 hover:text-fg">
               CRM
             </button>
           </nav>
@@ -46,8 +52,8 @@ export function Header() {
             onClick={() => handleRoleSwitch('domain_expert')}
             className={`px-2.5 py-1 text-xs rounded-md transition-colors ${
               role === 'domain_expert'
-                ? 'bg-amber-100 text-amber-800 font-medium'
-                : 'text-fg-muted hover:bg-hover dark:hover:bg-elevated'
+                ? 'bg-amber-muted text-amber font-medium'
+                : 'text-fg-muted hover:bg-hover hover:text-fg'
             }`}
           >
             Domain Expert
@@ -56,8 +62,8 @@ export function Header() {
             onClick={() => handleRoleSwitch('technical_founder')}
             className={`px-2.5 py-1 text-xs rounded-md transition-colors ${
               role === 'technical_founder'
-                ? 'bg-blue-100 text-blue-800 font-medium'
-                : 'text-fg-muted hover:bg-hover dark:hover:bg-elevated'
+                ? 'bg-primary-muted text-primary font-medium'
+                : 'text-fg-muted hover:bg-hover hover:text-fg'
             }`}
           >
             Technical Founder

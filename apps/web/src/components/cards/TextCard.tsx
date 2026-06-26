@@ -40,7 +40,7 @@ export const TextCard = React.memo(function TextCard({
           }}
         />
         <textarea
-          className="w-full text-xs bg-transparent border border-border border-border rounded p-1.5 focus:outline-none focus:border-primary resize-none"
+          className="w-full text-xs bg-transparent border border-border rounded p-1.5 focus:outline-none focus:border-primary resize-none"
           rows={4}
           defaultValue={content.text || ''}
           onBlur={(e) => onUpdate({ text: e.target.value })}
@@ -59,11 +59,11 @@ export const TextCard = React.memo(function TextCard({
     <div className="p-3">
       <div className="flex items-center gap-1.5 mb-1">
         <FileText size={14} className="text-primary-light" />
-        <h4 className="text-sm font-semibold text-fg text-fg truncate">
+        <h4 className="text-sm font-semibold text-fg truncate">
           {content.title || 'Untitled'}
         </h4>
       </div>
-      <p className="text-xs text-fg-secondary text-fg-muted leading-relaxed">
+      <p className="text-xs text-fg-secondary leading-relaxed">
         {content.text || 'Double-click to edit...'}
       </p>
     </div>

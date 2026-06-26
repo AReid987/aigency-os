@@ -1,4 +1,5 @@
 import React from 'react';
+import { Atmosphere } from '../components/Atmosphere';
 import { OrgChart } from '../components/OrgChart';
 import { TicketBoard } from '../components/TicketBoard';
 import { BudgetTracker } from '../components/BudgetTracker';
@@ -30,28 +31,29 @@ export function CompanyDashboard({ company }: CompanyDashboardProps) {
   const budget = company?.budgets ?? DEMO_BUDGET;
 
   return (
-    <div className="min-h-screen bg-bg bg-bg">
-      <header className="border-b bg-surface bg-elevated px-6 py-4">
+    <div className="relative min-h-screen z-10">
+      <Atmosphere />
+      <header className="fixed top-0 left-0 right-0 z-50 bg-surface/70 backdrop-blur-md border-b border-border shadow-[inset_0_1px_0_0_rgba(255,255,255,0.06)] px-6 py-4">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-xl font-bold">{company?.name ?? 'Acme Ventures'}</h1>
             <p className="text-sm text-fg-muted">{company?.mission ?? 'Build the #1 AI note-taking app to $1M ARR'}</p>
           </div>
           <div className="flex gap-2">
-            <button className="px-3 py-1.5 text-sm rounded-md bg-primary text-white hover:bg-primary-dark">
-              + Hire Agent
+            <button className="px-3 py-1.5 text-sm rounded-md bg-primary text-fg-inverse hover:bg-primary-dark transition-colors">
+              Hire agent
             </button>
-            <button className="px-3 py-1.5 text-sm rounded-md border hover:bg-bg dark:hover:bg-hover">
+            <button className="px-3 py-1.5 text-sm rounded-md border border-border hover:bg-hover/60 transition-colors">
               Settings
             </button>
           </div>
         </div>
       </header>
 
-      <main className="p-6 space-y-6">
+      <main className="pt-20 p-6 space-y-6">
         {/* Org Chart */}
-        <section className="bg-surface bg-elevated rounded-md border shadow-sm">
-          <div className="px-6 py-3 border-b">
+        <section className="bg-surface/70 backdrop-blur-md rounded-md border border-border shadow-[inset_0_1px_0_0_rgba(255,255,255,0.06)]">
+          <div className="px-6 py-3 border-b border-border">
             <h2 className="font-semibold">Org Chart</h2>
           </div>
           <OrgChart agents={agents} />
@@ -59,8 +61,8 @@ export function CompanyDashboard({ company }: CompanyDashboardProps) {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Tickets */}
-          <section className="lg:col-span-2 bg-surface bg-elevated rounded-md border shadow-sm">
-            <div className="px-6 py-3 border-b">
+          <section className="lg:col-span-2 bg-surface/70 backdrop-blur-md rounded-md border border-border shadow-[inset_0_1px_0_0_rgba(255,255,255,0.06)]">
+            <div className="px-6 py-3 border-b border-border">
               <h2 className="font-semibold">Active Tickets</h2>
             </div>
             <TicketBoard tickets={tickets} />
@@ -68,15 +70,15 @@ export function CompanyDashboard({ company }: CompanyDashboardProps) {
 
           {/* Budget + Board */}
           <div className="space-y-6">
-            <section className="bg-surface bg-elevated rounded-md border shadow-sm">
-              <div className="px-6 py-3 border-b">
+            <section className="bg-surface/70 backdrop-blur-md rounded-md border border-border shadow-[inset_0_1px_0_0_rgba(255,255,255,0.06)]">
+              <div className="px-6 py-3 border-b border-border">
                 <h2 className="font-semibold">Budget Overview</h2>
               </div>
               <BudgetTracker budget={budget} agents={agents} />
             </section>
 
-            <section className="bg-surface bg-elevated rounded-md border shadow-sm">
-              <div className="px-6 py-3 border-b">
+            <section className="bg-surface/70 backdrop-blur-md rounded-md border border-border shadow-[inset_0_1px_0_0_rgba(255,255,255,0.06)]">
+              <div className="px-6 py-3 border-b border-border">
                 <h2 className="font-semibold">Board Actions</h2>
               </div>
               <BoardActions />

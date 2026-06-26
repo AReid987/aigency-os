@@ -40,7 +40,7 @@ export const Grid = React.memo(function Grid({ zoom, panX, panY }: GridProps) {
             fill="none"
             stroke="currentColor"
             strokeWidth="0.5"
-            className="text-gray-200 dark:text-fg-secondary"
+            className="text-fg-secondary"
             opacity="0.5"
           />
         </pattern>
@@ -60,7 +60,7 @@ export const Grid = React.memo(function Grid({ zoom, panX, panY }: GridProps) {
             fill="none"
             stroke="currentColor"
             strokeWidth="1"
-            className="text-fg-secondary dark:text-fg-secondary"
+            className="text-fg-secondary"
             opacity="0.5"
           />
         </pattern>

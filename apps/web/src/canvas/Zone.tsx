@@ -21,24 +21,21 @@ const ZONE_POSITIONS: Record<string, { x: number; y: number; width: number; heig
   'zone-engineering-default': { x: 0, y: 540, width: 1200, height: 500 },
 };
 
-const ZONE_STYLES: Record<string, { bg: string; border: string; headerBg: string; headerText: string }> = {
+const ZONE_STYLES: Record<string, { border: string; headerText: string; icon: string }> = {
   business: {
-    bg: 'bg-[#fef3c7]',
-    border: 'border-amber-300',
-    headerBg: 'bg-amber-100',
-    headerText: 'text-amber-900',
+    border: 'border-amber/30',
+    headerText: 'text-amber',
+    icon: 'text-amber',
   },
   engineering: {
-    bg: 'bg-[#dbeafe]',
-    border: 'border-blue-300',
-    headerBg: 'bg-blue-100',
-    headerText: 'text-blue-900',
+    border: 'border-primary/30',
+    headerText: 'text-primary',
+    icon: 'text-primary',
   },
   shared: {
-    bg: 'bg-purple-50',
-    border: 'border-purple-300',
-    headerBg: 'bg-purple-100',
-    headerText: 'text-purple-900',
+    border: 'border-accent/30',
+    headerText: 'text-accent',
+    icon: 'text-accent',
   },
 };
 
@@ -62,8 +59,8 @@ export const Zone = React.memo(function Zone({ zone, zoom, onCardMove }: ZonePro
     <div
       data-testid={`${zone.type}-zone`}
       data-readonly={!editable}
-      className={`absolute rounded-md border-2 ${styles.border} ${styles.bg} overflow-hidden transition-all duration-200
-        ${isActive ? 'shadow-md' : 'shadow-sm'}
+      className={`absolute rounded-md border-2 ${styles.border} bg-surface/70 backdrop-blur-md shadow-[inset_0_1px_0_0_rgba(255,255,255,0.06)] overflow-hidden transition-all duration-200
+        ${isActive ? 'shadow-[0_4px_16px_rgba(0,0,0,0.5),inset_0_1px_0_0_rgba(255,255,255,0.06)]' : 'shadow-[0_1px_3px_rgba(0,0,0,0.4),inset_0_1px_0_0_rgba(255,255,255,0.06)]'}
       `}
       style={{
         left: zonePos.x,
@@ -75,10 +72,10 @@ export const Zone = React.memo(function Zone({ zone, zoom, onCardMove }: ZonePro
     >
       {/* Zone header */}
       <div
-        className={`flex items-center justify-between px-4 py-2.5 ${styles.headerBg} border-b ${styles.border}`}
+        className={`flex items-center justify-between px-4 py-2.5 bg-elevated/60 backdrop-blur-sm border-b ${styles.border}`}
       >
         <div className="flex items-center gap-2">
-          <Shield size={16} className={styles.headerText} />
+          <Shield size={16} className={styles.icon} />
           <h3 className={`text-sm font-bold uppercase tracking-wider ${styles.headerText}`}>
             {zone.name}
           </h3>
@@ -109,7 +106,7 @@ export const Zone = React.memo(function Zone({ zone, zoom, onCardMove }: ZonePro
         {/* Empty state */}
         {zoneCards.length === 0 && (
           <div className="absolute inset-0 flex items-center justify-center">
-            <p className="text-sm text-fg-muted text-fg-muted">
+            <p className="text-sm text-fg-muted">
               {editable ? 'Double-click or use toolbar to add cards' : 'No cards yet'}
             </p>
           </div>

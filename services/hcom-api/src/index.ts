@@ -39,7 +39,7 @@ const shutdown = async () => {
 process.on('SIGINT', shutdown);
 process.on('SIGTERM', shutdown);
 
-const port = Number(process.env.PORT) || 3004;
+const port = Number(process.env.PORT) || 3007;
 app.listen({ port, host: '0.0.0.0' }).then((address) => {
   app.log.info(`HCOM API listening at ${address}`);
 });

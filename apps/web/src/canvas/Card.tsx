@@ -22,13 +22,13 @@ const typeIcons: Record<string, React.ReactNode> = {
   embed: <Code size={14} />,
 };
 
-const typeColors: Record<string, string> = {
-  text: 'border-l-blue-400',
-  image: 'border-l-green-400',
-  link: 'border-l-purple-400',
-  embed: 'border-l-orange-400',
-  calculator: 'border-l-yellow-400',
-  preview: 'border-l-cyan-400',
+const typeAccent: Record<string, string> = {
+  text: 'text-info',
+  image: 'text-success',
+  link: 'text-accent',
+  embed: 'text-amber',
+  calculator: 'text-warning',
+  preview: 'text-primary',
 };
 
 export const CanvasCard = React.memo(function CanvasCard({
@@ -121,7 +121,7 @@ export const CanvasCard = React.memo(function CanvasCard({
         <div className="space-y-2 p-3">
           <input
             autoFocus
-            className="w-full text-sm font-semibold bg-transparent border-b border-border border-border-hover focus:outline-none focus:border-primary px-0 py-1"
+            className="w-full text-sm font-semibold bg-transparent border-b border-border focus:outline-none focus:border-primary px-0 py-1"
             defaultValue={(content.title as string) || ''}
             onBlur={(e) => {
               updateCardContent(card.id, { title: e.target.value });
@@ -135,7 +135,7 @@ export const CanvasCard = React.memo(function CanvasCard({
             }}
           />
           <textarea
-            className="w-full text-xs bg-transparent border border-border border-border rounded p-1.5 focus:outline-none focus:border-primary resize-none"
+            className="w-full text-xs bg-transparent border border-border rounded p-1.5 focus:outline-none focus:border-primary resize-none"
             rows={4}
             defaultValue={(content.text as string) || ''}
             onBlur={(e) => {
@@ -156,10 +156,10 @@ export const CanvasCard = React.memo(function CanvasCard({
       case 'text':
         return (
           <div className="p-3">
-            <h4 className="text-sm font-semibold text-fg text-fg mb-1">
+            <h4 className="text-sm font-semibold text-fg mb-1">
               {(content.title as string) || 'Untitled'}
             </h4>
-            <p className="text-xs text-fg-secondary text-fg-muted leading-relaxed">
+            <p className="text-xs text-fg-secondary leading-relaxed">
               {(content.text as string) || 'Double-click to edit...'}
             </p>
           </div>
@@ -175,7 +175,7 @@ export const CanvasCard = React.memo(function CanvasCard({
                 className="w-full h-32 object-cover rounded"
               />
             ) : (
-              <div className="w-full h-32 bg-hover bg-hover rounded flex items-center justify-center">
+              <div className="w-full h-32 bg-hover/60 rounded flex items-center justify-center">
                 <ImageIcon size={24} className="text-fg-muted" />
               </div>
             )}
@@ -189,9 +189,9 @@ export const CanvasCard = React.memo(function CanvasCard({
         return (
           <div className="p-3">
             <div className="flex items-start gap-2">
-              <ExternalLink size={16} className="text-purple-500 mt-0.5 shrink-0" />
+              <ExternalLink size={16} className="text-accent mt-0.5 shrink-0" />
               <div className="min-w-0">
-                <h4 className="text-sm font-semibold text-fg text-fg truncate">
+                <h4 className="text-sm font-semibold text-fg truncate">
                   {(content.title as string) || 'Link'}
                 </h4>
                 {content.url && (
@@ -199,7 +199,7 @@ export const CanvasCard = React.memo(function CanvasCard({
                     href={content.url as string}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-xs text-purple-600 hover:underline truncate block"
+                    className="text-xs text-accent hover:underline truncate block"
                     onClick={(e) => e.stopPropagation()}
                   >
                     {content.url as string}
@@ -219,20 +219,20 @@ export const CanvasCard = React.memo(function CanvasCard({
         return (
           <div className="p-2">
             <div className="flex items-center gap-1.5 mb-1.5 px-1">
-              <Code size={14} className="text-orange-500" />
-              <span className="text-xs font-medium text-fg-secondary text-fg-secondary">
+              <Code size={14} className="text-amber" />
+              <span className="text-xs font-medium text-fg-secondary">
                 {(content.title as string) || 'Embed'}
               </span>
             </div>
             {content.src ? (
               <iframe
                 src={content.src as string}
-                className="w-full h-48 rounded border border-border border-border"
+                className="w-full h-48 rounded border border-border"
                 sandbox="allow-scripts allow-same-origin"
                 title={(content.title as string) || 'Embedded content'}
               />
             ) : (
-              <div className="w-full h-48 bg-hover bg-hover rounded flex items-center justify-center">
+              <div className="w-full h-48 bg-hover/60 rounded flex items-center justify-center">
                 <span className="text-xs text-fg-muted">No URL configured</span>
               </div>
             )}
@@ -252,9 +252,8 @@ export const CanvasCard = React.memo(function CanvasCard({
     <div
       ref={cardRef}
       data-testid="canvas-card"
-      className={`absolute select-none rounded-md border bg-surface bg-elevated shadow-sm
-        ${typeColors[card.type] || 'border-l-gray-400'} border-l-4
-        ${isSelected ? 'ring-2 ring-primary shadow-md z-20' : 'z-10 hover:shadow-md'}
+      className={`absolute select-none rounded-md border bg-surface/70 backdrop-blur-md shadow-[0_1px_3px_rgba(0,0,0,0.4),inset_0_1px_0_0_rgba(255,255,255,0.06)]
+        ${isSelected ? 'ring-2 ring-primary shadow-[0_4px_16px_rgba(0,0,0,0.5),inset_0_1px_0_0_rgba(255,255,255,0.06)] z-20' : 'z-10 hover:shadow-[0_1px_3px_rgba(0,0,0,0.4),inset_0_1px_0_0_rgba(255,255,255,0.06)]'}
         ${isDragging ? 'cursor-grabbing opacity-90 z-30' : editable ? 'cursor-grab' : 'cursor-default'}
         ${!editable ? 'opacity-80' : ''}
         transition-shadow duration-100
@@ -269,18 +268,20 @@ export const CanvasCard = React.memo(function CanvasCard({
       onDoubleClick={handleDoubleClick}
     >
       {/* Card header with drag handle */}
-      <div className="flex items-center justify-between px-2 py-1 border-b border-border border-border rounded-t-lg bg-surface/50 bg-surface/30">
+      <div className="flex items-center justify-between px-2 py-1 border-b border-border rounded-t-md bg-surface/50 backdrop-blur-sm">
         <div className="flex items-center gap-1.5 text-fg-muted">
           <GripVertical size={12} />
-          <span className="text-[10px] uppercase tracking-wider font-medium text-fg-muted text-fg-muted">
+          <span className="text-[10px] font-medium text-fg-muted">
             {card.type}
           </span>
-          {typeIcons[card.type]}
+          <span className={typeAccent[card.type] || 'text-fg-muted'}>
+            {typeIcons[card.type]}
+          </span>
         </div>
         {isSelected && editable && (
           <button
             onClick={handleDelete}
-            className="p-0.5 rounded hover:bg-error-muted hover:bg-error-muted text-fg-muted hover:text-error transition-colors"
+            className="p-0.5 rounded hover:bg-error-muted text-fg-muted hover:text-error transition-colors"
             aria-label="Delete card"
           >
             <X size={12} />
@@ -294,7 +295,7 @@ export const CanvasCard = React.memo(function CanvasCard({
       {/* Read-only indicator */}
       {!editable && (
         <div className="absolute top-1 right-1">
-          <span className="text-[9px] px-1.5 py-0.5 rounded bg-hover bg-hover text-fg-muted">
+          <span className="text-[9px] px-1.5 py-0.5 rounded bg-hover/60 text-fg-muted">
             Read-only
           </span>
         </div>

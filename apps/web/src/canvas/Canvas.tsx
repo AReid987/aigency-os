@@ -26,7 +26,7 @@ export function Canvas() {
   } = useCanvasStore();
 
   const { user } = useUserStore();
-  const { emitCursorMove, emitCardMove } = useWebSocket(
+  const { emitCursorMove } = useWebSocket(
     user?.id,
     user?.name,
   );
@@ -184,7 +184,7 @@ export function Canvas() {
   return (
     <div
       ref={containerRef}
-      className="relative w-full h-full overflow-hidden bg-bg bg-bg"
+      className="relative w-full h-full overflow-hidden"
       style={{ cursor: isPanning ? 'grabbing' : 'default' }}
       onWheel={handleWheel}
       onMouseDown={handleMouseDown}
@@ -222,26 +222,26 @@ export function Canvas() {
       <div className="fixed bottom-4 left-4 z-40 flex flex-col gap-1">
         <button
           onClick={handleZoomIn}
-          className="w-8 h-8 bg-surface bg-elevated rounded-md shadow border border-border border-border flex items-center justify-center hover:bg-bg dark:hover:bg-hover text-fg-secondary text-fg-secondary font-mono text-sm"
+          className="w-8 h-8 bg-elevated/70 backdrop-blur-sm rounded-md shadow-[0_1px_3px_rgba(0,0,0,0.4),inset_0_1px_0_0_rgba(255,255,255,0.06)] border border-border flex items-center justify-center hover:bg-hover/60 text-fg-secondary font-mono text-sm"
           aria-label="Zoom in"
         >
           +
         </button>
-        <div className="w-8 h-6 bg-surface bg-elevated rounded shadow border border-border border-border flex items-center justify-center">
-          <span className="text-[9px] font-mono text-fg-muted text-fg-muted">
+        <div className="w-8 h-6 bg-elevated/70 backdrop-blur-sm rounded shadow-[0_1px_3px_rgba(0,0,0,0.4),inset_0_1px_0_0_rgba(255,255,255,0.06)] border border-border flex items-center justify-center">
+          <span className="text-[9px] font-mono text-fg-muted">
             {Math.round(zoom * 100)}%
           </span>
         </div>
         <button
           onClick={handleZoomOut}
-          className="w-8 h-8 bg-surface bg-elevated rounded-md shadow border border-border border-border flex items-center justify-center hover:bg-bg dark:hover:bg-hover text-fg-secondary text-fg-secondary font-mono text-sm"
+          className="w-8 h-8 bg-elevated/70 backdrop-blur-sm rounded-md shadow-[0_1px_3px_rgba(0,0,0,0.4),inset_0_1px_0_0_rgba(255,255,255,0.06)] border border-border flex items-center justify-center hover:bg-hover/60 text-fg-secondary font-mono text-sm"
           aria-label="Zoom out"
         >
           −
         </button>
         <button
           onClick={handleResetView}
-          className="w-8 h-8 bg-surface bg-elevated rounded-md shadow border border-border border-border flex items-center justify-center hover:bg-bg dark:hover:bg-hover text-fg-secondary text-fg-secondary"
+          className="w-8 h-8 bg-elevated/70 backdrop-blur-sm rounded-md shadow-[0_1px_3px_rgba(0,0,0,0.4),inset_0_1px_0_0_rgba(255,255,255,0.06)] border border-border flex items-center justify-center hover:bg-hover/60 text-fg-secondary"
           aria-label="Reset view"
           title="Reset view (Ctrl+0)"
         >

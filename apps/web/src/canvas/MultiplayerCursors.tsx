@@ -22,6 +22,7 @@ export const MultiplayerCursors = React.memo(function MultiplayerCursors() {
         >
           {/* Cursor arrow */}
           <svg
+            className="text-fg"
             width="20"
             height="20"
             viewBox="0 0 20 20"
@@ -31,7 +32,7 @@ export const MultiplayerCursors = React.memo(function MultiplayerCursors() {
             <path
               d="M3 1L17 10L10 11L7 18L3 1Z"
               fill={cursor.color}
-              stroke="white"
+              stroke="currentColor"
               strokeWidth="1.5"
               strokeLinejoin="round"
             />
@@ -39,7 +40,7 @@ export const MultiplayerCursors = React.memo(function MultiplayerCursors() {
 
           {/* Name label */}
           <div
-            className="absolute left-4 top-4 px-2 py-0.5 rounded text-[10px] font-medium text-white whitespace-nowrap shadow-sm"
+            className="absolute left-4 top-4 px-2 py-0.5 rounded text-[10px] font-medium text-fg whitespace-nowrap shadow-sm"
             style={{ backgroundColor: cursor.color }}
           >
             {cursor.userName}

@@ -20,9 +20,9 @@ const MINIMAP_WIDTH = 180;
 const MINIMAP_HEIGHT = 120;
 
 const zoneColors: Record<string, string> = {
-  business: '#fef3c7',
-  engineering: '#dbeafe',
-  shared: '#f3e8ff',
+  business: 'rgba(224, 150, 70, 0.14)',
+  engineering: 'rgba(18, 165, 148, 0.14)',
+  shared: 'rgba(214, 64, 159, 0.14)',
 };
 
 export const Minimap = React.memo(function Minimap({
@@ -69,7 +69,7 @@ export const Minimap = React.memo(function Minimap({
 
   return (
     <div
-      className="fixed bottom-4 right-4 bg-surface bg-elevated rounded-md shadow-md border border-border border-border overflow-hidden z-40"
+      className="fixed bottom-4 right-4 bg-surface/70 backdrop-blur-md rounded-md shadow-[0_4px_16px_rgba(0,0,0,0.5),inset_0_1px_0_0_rgba(255,255,255,0.06)] border border-border overflow-hidden z-40"
       style={{ width: MINIMAP_WIDTH + 8, height: MINIMAP_HEIGHT + 8 }}
     >
       <div
@@ -90,7 +90,7 @@ export const Minimap = React.memo(function Minimap({
                 top: pos.y * scale,
                 width: pos.w * scale,
                 height: pos.h * scale,
-                backgroundColor: zoneColors[zone.type] || '#f3f4f6',
+                backgroundColor: zoneColors[zone.type] || 'rgba(240, 244, 248, 0.08)',
               }}
             />
           );
@@ -100,7 +100,7 @@ export const Minimap = React.memo(function Minimap({
         {cards.map((card) => (
           <div
             key={card.id}
-            className="absolute rounded-sm bg-bg0 dark:bg-gray-400"
+            className="absolute rounded-sm bg-fg-muted"
             style={{
               left: card.position.x * scale,
               top: card.position.y * scale,
@@ -123,7 +123,7 @@ export const Minimap = React.memo(function Minimap({
       </div>
 
       {/* Zoom indicator */}
-      <div className="absolute top-1 left-2 text-[9px] font-mono text-fg-muted text-fg-muted">
+      <div className="absolute top-1 left-2 text-[9px] font-mono text-fg-muted">
         {Math.round(zoom * 100)}%
       </div>
     </div>

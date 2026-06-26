@@ -1,0 +1,52 @@
+# aigency-os infrastructure services
+# Usage: docker-compose -f infra/docker/docker-compose.yml up -d
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: aigency-postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: aigency
+      POSTGRES_PASSWORD: aigency_dev
+      POSTGRES_DB: aigency
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U aigency -d aigency"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - aigency-net
+
+  redis:
+    image: redis:7-alpine
+    container_name: aigency-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+    networks:
+      - aigency-net
+
+volumes:
+  postgres_data:
+    name: aigency-postgres-data
+  redis_data:
+    name: aigency-redis-data
+
+networks:
+  aigency-net:
+    name: aigency-net
+    driver: bridge

@@ -1,5 +1,6 @@
 import React from 'react';
 import type { Collision } from '@vscp/shared-types';
+import { AlertTriangle } from 'lucide-react';
 
 interface CollisionAlertProps {
   collisions: Collision[];
@@ -16,16 +17,16 @@ export function CollisionAlert({ collisions, onResolve }: CollisionAlertProps) {
       {unresolved.map((collision) => (
         <div
           key={collision.id}
-          className="flex items-center gap-3 p-3 rounded-md bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800"
+          className="flex items-center gap-3 p-3 rounded-md bg-error-muted border border-error/30 backdrop-blur-md shadow-[inset_0_1px_0_0_rgba(255,255,255,0.06)]"
         >
-          <span className="text-red-500 text-lg">⚠️</span>
+          <AlertTriangle size={20} className="text-error shrink-0" />
           <div className="flex-1">
-            <p className="text-sm font-medium text-red-800 dark:text-red-200">
-              Collision Detected
+            <p className="text-sm font-medium text-fg">
+              Collision detected
             </p>
-            <p className="text-xs text-red-600 dark:text-red-400">
+            <p className="text-xs text-fg-secondary">
               <strong>{collision.agent1}</strong> and <strong>{collision.agent2}</strong> both edited{' '}
-              <code className="bg-red-100 dark:bg-red-800 px-1 rounded">{collision.filePath}</code>{' '}
+              <code className="bg-error/20 px-1 rounded">{collision.filePath}</code>{' '}
               within 30s
             </p>
             <p className="text-xs text-fg-muted mt-1">
@@ -34,7 +35,7 @@ export function CollisionAlert({ collisions, onResolve }: CollisionAlertProps) {
           </div>
           <button
             onClick={() => onResolve?.(collision.id)}
-            className="px-3 py-1 text-xs rounded-md bg-red-600 text-white hover:bg-red-700"
+            className="px-3 py-1 text-xs rounded-md bg-error text-fg-inverse hover:bg-error/80 transition-colors"
           >
             Resolve
           </button>

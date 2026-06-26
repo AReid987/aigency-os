@@ -22,8 +22,8 @@ export const Grid = React.memo(function Grid({ zoom, panX, panY }: GridProps) {
 
   return (
     <svg
-      className="absolute inset-0 w-full h-full pointer-events-none"
-      style={{ zIndex: 0 }}
+      className="absolute inset-0 w-full h-full pointer-events-none text-fg-muted"
+      style={{ zIndex: 0, opacity: 0.35 }}
     >
       <defs>
         <pattern
@@ -39,8 +39,6 @@ export const Grid = React.memo(function Grid({ zoom, panX, panY }: GridProps) {
             fill="none"
             stroke="currentColor"
             strokeWidth="0.5"
-            className="text-gray-200 dark:text-fg-secondary"
-            opacity="0.5"
           />
         </pattern>
         <pattern
@@ -57,8 +55,6 @@ export const Grid = React.memo(function Grid({ zoom, panX, panY }: GridProps) {
             fill="none"
             stroke="currentColor"
             strokeWidth="1"
-            className="text-fg-secondary dark:text-fg-secondary"
-            opacity="0.5"
           />
         </pattern>
       </defs>

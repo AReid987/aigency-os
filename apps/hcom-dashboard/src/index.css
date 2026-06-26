@@ -1,7 +1,7 @@
-@import "tailwindcss";
-
 @import url('https://api.fontshare.com/v2/css?f[]=array@400,700&f[]=supreme@400,500,700&f[]=satoshi@400,500,700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Geist+Mono:wght@300;400;500;600&display=swap');
+
+@import "tailwindcss";
 
 @theme {
   /* Backgrounds — dark void palette */

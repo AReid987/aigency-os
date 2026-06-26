@@ -30,7 +30,7 @@ const CARD_TYPES: { type: CardType; label: string; icon: React.ReactNode }[] = [
 
 export function Toolbar({ onAddCard }: ToolbarProps) {
   const [expanded, setExpanded] = useState(false);
-  const { zones, createCard, createZone, pan, zoom, setZoom, setPan } = useCanvasStore();
+  const { zones, zoneLayouts, createCard, createZone, zoom, setZoom, setPan } = useCanvasStore();
   const { role } = useUserStore();
 
   const handleAddCard = useCallback(
@@ -45,15 +45,16 @@ export function Toolbar({ onAddCard }: ToolbarProps) {
 
       if (!editableZone) return;
 
-      // Place new card at center of current viewport with slight random offset
-      const centerX = (-pan.x / zoom + 400) + Math.random() * 100;
-      const centerY = (-pan.y / zoom + 300) + Math.random() * 100;
+      // Place new card inside the editable zone so it's always visible
+      const layout = zoneLayouts[editableZone.id] || { width: 1200, height: 500 };
+      const localX = Math.min(80 + Math.random() * 200, layout.width - 300);
+      const localY = Math.min(80 + Math.random() * 120, layout.height - 200);
 
-      createCard(type, editableZone.id, { x: centerX, y: centerY });
+      createCard(type, editableZone.id, { x: localX, y: localY });
       onAddCard?.(type, editableZone.id);
       setExpanded(false);
     },
-    [zones, role, pan, zoom, createCard, onAddCard],
+    [zones, zoneLayouts, role, createCard, onAddCard],
   );
 
   const handleAddZone = useCallback(
@@ -85,7 +86,7 @@ export function Toolbar({ onAddCard }: ToolbarProps) {
 
   return (
     <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-40">
-      <div className="bg-surface bg-elevated rounded-md shadow-md border border-border border-border p-1.5 flex items-center gap-1">
+      <div className="bg-surface/70 backdrop-blur-md rounded-md shadow-[0_4px_16px_rgba(0,0,0,0.5),inset_0_1px_0_0_rgba(255,255,255,0.06)] border border-border p-1.5 flex items-center gap-1">
         {/* Add Card button with dropdown */}
         <div className="relative">
           <Button
@@ -100,14 +101,14 @@ export function Toolbar({ onAddCard }: ToolbarProps) {
 
           {/* Card type + zone dropdown */}
           {expanded && (
-            <div className="absolute bottom-full left-0 mb-2 bg-surface bg-elevated rounded-md shadow-md border border-border border-border p-2 min-w-[160px]">
-              <p className="text-[10px] uppercase tracking-wider text-fg-muted px-2 mb-1.5 font-medium">
-                Add Card
+            <div className="absolute bottom-full left-0 mb-2 bg-surface/70 backdrop-blur-md rounded-md shadow-[0_4px_16px_rgba(0,0,0,0.5),inset_0_1px_0_0_rgba(255,255,255,0.06)] border border-border p-2 min-w-[160px]">
+              <p className="text-[11px] font-semibold text-fg-muted px-2 mb-1.5">
+                Add card
               </p>
               {CARD_TYPES.map(({ type, label, icon }) => (
                 <button
                   key={type}
-                  className="flex items-center gap-2 w-full px-2 py-1.5 text-sm rounded-md hover:bg-hover dark:hover:bg-hover text-fg-secondary text-fg-secondary transition-colors"
+                  className="flex items-center gap-2 w-full px-2 py-1.5 text-sm rounded-md hover:bg-hover/60 text-fg-secondary transition-colors"
                   onClick={() => handleAddCard(type)}
                 >
                   {icon}
@@ -115,23 +116,23 @@ export function Toolbar({ onAddCard }: ToolbarProps) {
                 </button>
               ))}
 
-              <div className="border-t border-border border-border my-1.5" />
+              <div className="border-t border-border my-1.5" />
 
-              <p className="text-[10px] uppercase tracking-wider text-fg-muted px-2 mb-1.5 font-medium">
-                Add Zone
+              <p className="text-[11px] font-semibold text-fg-muted px-2 mb-1.5">
+                Add zone
               </p>
               <button
-                className="flex items-center gap-2 w-full px-2 py-1.5 text-sm rounded-md hover:bg-hover dark:hover:bg-hover text-fg-secondary text-fg-secondary transition-colors"
+                className="flex items-center gap-2 w-full px-2 py-1.5 text-sm rounded-md hover:bg-hover/60 text-fg-secondary transition-colors"
                 onClick={() => handleAddZone('business')}
               >
-                <LayoutGrid size={16} className="text-amber-500" />
+                <LayoutGrid size={16} className="text-amber" />
                 Business Zone
               </button>
               <button
-                className="flex items-center gap-2 w-full px-2 py-1.5 text-sm rounded-md hover:bg-hover dark:hover:bg-hover text-fg-secondary text-fg-secondary transition-colors"
+                className="flex items-center gap-2 w-full px-2 py-1.5 text-sm rounded-md hover:bg-hover/60 text-fg-secondary transition-colors"
                 onClick={() => handleAddZone('engineering')}
               >
-                <LayoutGrid size={16} className="text-blue-500" />
+                <LayoutGrid size={16} className="text-primary" />
                 Engineering Zone
               </button>
             </div>
@@ -139,7 +140,7 @@ export function Toolbar({ onAddCard }: ToolbarProps) {
         </div>
 
         {/* Divider */}
-        <div className="w-px h-6 bg-border bg-hover" />
+        <div className="w-px h-6 bg-border" />
 
         {/* Quick add zone */}
         <Button
@@ -153,7 +154,7 @@ export function Toolbar({ onAddCard }: ToolbarProps) {
         </Button>
 
         {/* Divider */}
-        <div className="w-px h-6 bg-border bg-hover" />
+        <div className="w-px h-6 bg-border" />
 
         {/* Zoom controls */}
         <Button
@@ -166,7 +167,7 @@ export function Toolbar({ onAddCard }: ToolbarProps) {
           <Minus size={14} />
         </Button>
 
-        <span className="text-[10px] font-mono text-fg-muted text-fg-muted w-10 text-center">
+        <span className="text-[10px] font-mono text-fg-muted w-10 text-center">
           {Math.round(zoom * 100)}%
         </span>
 

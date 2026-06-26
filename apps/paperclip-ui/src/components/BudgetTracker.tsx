@@ -1,5 +1,6 @@
 import React from 'react';
 import type { Budget, Agent } from '@vscp/shared-types';
+import { AlertTriangle, OctagonAlert } from 'lucide-react';
 
 interface BudgetTrackerProps {
   budget: Budget;
@@ -19,10 +20,10 @@ export function BudgetTracker({ budget, agents }: BudgetTrackerProps) {
             ${budget.spent.toFixed(2)} / ${budget.total.toFixed(2)} ({totalPercent}%)
           </span>
         </div>
-        <div className="h-3 w-full rounded-full bg-border bg-hover">
+        <div className="h-3 w-full rounded-full bg-hover/60 backdrop-blur-sm">
           <div
             className={`h-full rounded-full transition-all ${
-              totalPercent >= 90 ? 'bg-red-500' : totalPercent >= 70 ? 'bg-yellow-500' : 'bg-primary'
+              totalPercent >= 90 ? 'bg-error' : totalPercent >= 70 ? 'bg-warning' : 'bg-primary'
             }`}
             style={{ width: `${Math.min(totalPercent, 100)}%` }}
           />
@@ -31,7 +32,7 @@ export function BudgetTracker({ budget, agents }: BudgetTrackerProps) {
 
       {/* Per-agent budgets */}
       <div className="space-y-3">
-        <h4 className="text-sm font-medium text-fg-secondary text-fg-muted">Per-Agent Breakdown</h4>
+        <h4 className="text-sm font-medium text-fg-muted">Per-Agent Breakdown</h4>
         {agents.map((agent) => {
           const agentBudget = budget.perAgent[agent.id];
           if (!agentBudget || agentBudget.limit === 0) return null;
@@ -43,16 +44,16 @@ export function BudgetTracker({ budget, agents }: BudgetTrackerProps) {
             <div key={agent.id}>
               <div className="flex justify-between text-xs mb-1">
                 <span className="font-medium">{agent.name} ({agent.role})</span>
-                <span className={isOver ? 'text-red-500 font-semibold' : 'text-fg-muted'}>
+                <span className={`flex items-center gap-1 ${isOver ? 'text-error font-semibold' : 'text-fg-muted'}`}>
                   ${agentBudget.spent.toFixed(2)} / ${agentBudget.limit.toFixed(2)}
-                  {isWarning && !isOver && ' ⚠️'}
-                  {isOver && ' 🛑'}
+                  {isWarning && !isOver && <AlertTriangle size={12} className="text-warning" />}
+                  {isOver && <OctagonAlert size={12} className="text-error" />}
                 </span>
               </div>
-              <div className="h-2 w-full rounded-full bg-border bg-hover">
+              <div className="h-2 w-full rounded-full bg-hover/60 backdrop-blur-sm">
                 <div
                   className={`h-full rounded-full transition-all ${
-                    isOver ? 'bg-red-500' : isWarning ? 'bg-yellow-500' : 'bg-green-500'
+                    isOver ? 'bg-error' : isWarning ? 'bg-warning' : 'bg-primary'
                   }`}
                   style={{ width: `${Math.min(percent, 100)}%` }}
                 />

@@ -32,13 +32,13 @@ export const ImageCard = React.memo(function ImageCard({
           onBlur={(e) => onUpdate({ title: e.target.value })}
         />
         <input
-          className="w-full text-xs bg-transparent border border-border border-border rounded p-1.5 focus:outline-none focus:border-primary"
+          className="w-full text-xs bg-transparent border border-border rounded p-1.5 focus:outline-none focus:border-primary"
           defaultValue={content.src || ''}
           placeholder="Image URL"
           onBlur={(e) => onUpdate({ src: e.target.value })}
         />
         <input
-          className="w-full text-xs bg-transparent border border-border border-border rounded p-1.5 focus:outline-none focus:border-primary"
+          className="w-full text-xs bg-transparent border border-border rounded p-1.5 focus:outline-none focus:border-primary"
           defaultValue={content.caption || ''}
           placeholder="Caption (optional)"
           onBlur={(e) => onUpdate({ caption: e.target.value })}
@@ -62,12 +62,12 @@ export const ImageCard = React.memo(function ImageCard({
           className="w-full h-32 object-cover rounded"
         />
       ) : (
-        <div className="w-full h-32 bg-hover bg-hover rounded flex items-center justify-center">
+        <div className="w-full h-32 bg-hover/60 rounded flex items-center justify-center">
           <ImageIcon size={24} className="text-fg-muted" />
         </div>
       )}
       {content.title && (
-        <p className="text-xs font-medium text-fg-secondary text-fg-secondary mt-1.5 px-1">
+        <p className="text-xs font-medium text-fg-secondary mt-1.5 px-1">
           {content.title}
         </p>
       )}

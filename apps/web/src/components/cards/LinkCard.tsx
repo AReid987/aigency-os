@@ -49,13 +49,13 @@ export const LinkCard = React.memo(function LinkCard({
           onBlur={(e) => onUpdate({ title: e.target.value })}
         />
         <input
-          className="w-full text-xs bg-transparent border border-border border-border rounded p-1.5 focus:outline-none focus:border-primary"
+          className="w-full text-xs bg-transparent border border-border rounded p-1.5 focus:outline-none focus:border-primary"
           defaultValue={content.url || ''}
           placeholder="https://..."
           onBlur={(e) => onUpdate({ url: e.target.value })}
         />
         <textarea
-          className="w-full text-xs bg-transparent border border-border border-border rounded p-1.5 focus:outline-none focus:border-primary resize-none"
+          className="w-full text-xs bg-transparent border border-border rounded p-1.5 focus:outline-none focus:border-primary resize-none"
           rows={2}
           defaultValue={content.description || ''}
           placeholder="Description (optional)"
@@ -85,11 +85,11 @@ export const LinkCard = React.memo(function LinkCard({
               }}
             />
           ) : (
-            <Globe size={16} className="text-purple-500" />
+            <Globe size={16} className="text-accent" />
           )}
         </div>
         <div className="min-w-0 flex-1">
-          <h4 className="text-sm font-semibold text-fg text-fg truncate">
+          <h4 className="text-sm font-semibold text-fg truncate">
             {content.title || 'Link'}
           </h4>
           {content.url && (
@@ -97,7 +97,7 @@ export const LinkCard = React.memo(function LinkCard({
               href={content.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-xs text-purple-600 dark:text-purple-400 hover:underline truncate flex items-center gap-1 mt-0.5"
+              className="text-xs text-accent hover:underline truncate flex items-center gap-1 mt-0.5"
               onClick={(e) => e.stopPropagation()}
             >
               <ExternalLink size={10} />
@@ -105,7 +105,7 @@ export const LinkCard = React.memo(function LinkCard({
             </a>
           )}
           {content.description && (
-            <p className="text-xs text-fg-muted text-fg-muted mt-1.5 leading-relaxed">
+            <p className="text-xs text-fg-muted mt-1.5 leading-relaxed">
               {content.description}
             </p>
           )}

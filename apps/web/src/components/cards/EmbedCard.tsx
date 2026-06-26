@@ -32,12 +32,12 @@ export const EmbedCard = React.memo(function EmbedCard({
           onBlur={(e) => onUpdate({ title: e.target.value })}
         />
         <input
-          className="w-full text-xs bg-transparent border border-border border-border rounded p-1.5 focus:outline-none focus:border-primary"
+          className="w-full text-xs bg-transparent border border-border rounded p-1.5 focus:outline-none focus:border-primary"
           defaultValue={content.src || ''}
           placeholder="https://... (iframe URL)"
           onBlur={(e) => onUpdate({ src: e.target.value })}
         />
-        <div className="flex items-center gap-1.5 text-[10px] text-amber-600 dark:text-amber-400">
+        <div className="flex items-center gap-1.5 text-[10px] text-amber">
           <AlertTriangle size={10} />
           <span>Only embed trusted URLs</span>
         </div>
@@ -54,21 +54,21 @@ export const EmbedCard = React.memo(function EmbedCard({
   return (
     <div className="p-2">
       <div className="flex items-center gap-1.5 mb-1.5 px-1">
-        <Code size={14} className="text-orange-500" />
-        <span className="text-xs font-medium text-fg-secondary text-fg-secondary truncate">
+        <Code size={14} className="text-amber" />
+        <span className="text-xs font-medium text-fg-secondary truncate">
           {content.title || 'Embed'}
         </span>
       </div>
       {content.src ? (
         <iframe
           src={content.src}
-          className="w-full rounded border border-border border-border"
+          className="w-full rounded border border-border"
           style={{ height: 'calc(100% - 28px)', minHeight: 160 }}
           sandbox="allow-scripts allow-same-origin"
           title={content.title || 'Embedded content'}
         />
       ) : (
-        <div className="w-full h-48 bg-hover bg-hover rounded flex flex-col items-center justify-center gap-2">
+        <div className="w-full h-48 bg-hover/60 rounded flex flex-col items-center justify-center gap-2">
           <Code size={20} className="text-fg-muted" />
           <span className="text-xs text-fg-muted">Double-click to configure</span>
         </div>

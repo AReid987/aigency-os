@@ -109,7 +109,7 @@ const EMBED_REGISTRY: Record<string, EmbedConfig> = {
   },
   hcom: {
     id: 'hcom',
-    src: 'http://localhost:3002',
+    src: 'http://localhost:3004',
     title: 'HCOM Agent Monitor',
     allow: 'clipboard-write',
   },

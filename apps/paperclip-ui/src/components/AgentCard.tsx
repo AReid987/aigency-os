@@ -17,7 +17,7 @@ export function AgentCard({ agent, onClick, compact = false }: AgentCardProps) {
     return (
       <div
         onClick={onClick}
-        className="flex items-center gap-3 p-2 rounded-md hover:bg-bg dark:hover:bg-elevated cursor-pointer"
+        className="flex items-center gap-3 p-2 rounded-md hover:bg-elevated/70 hover:backdrop-blur-sm cursor-pointer"
       >
         <Avatar name={agent.name} size="sm" />
         <div className="flex-1 min-w-0">
@@ -34,7 +34,7 @@ export function AgentCard({ agent, onClick, compact = false }: AgentCardProps) {
   return (
     <div
       onClick={onClick}
-      className="p-4 rounded-md border bg-surface bg-elevated shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+      className="p-4 rounded-md border border-border bg-surface/70 backdrop-blur-md shadow-[inset_0_1px_0_0_rgba(255,255,255,0.06)] hover:border-border-hover transition-colors cursor-pointer"
     >
       <div className="flex items-start gap-3">
         <Avatar name={agent.name} status={agent.status as 'active' | 'thinking' | 'blocked' | 'idle'} size="md" />
@@ -51,10 +51,10 @@ export function AgentCard({ agent, onClick, compact = false }: AgentCardProps) {
           <span>Budget</span>
           <span>${agent.budgetSpent.toFixed(2)} / ${agent.budgetLimit.toFixed(2)} ({budgetPercent}%)</span>
         </div>
-        <div className="h-2 w-full rounded-full bg-border bg-hover">
+        <div className="h-2 w-full rounded-full bg-hover/60 backdrop-blur-sm">
           <div
             className={`h-full rounded-full transition-all ${
-              budgetPercent >= 90 ? 'bg-red-500' : budgetPercent >= 70 ? 'bg-yellow-500' : 'bg-primary'
+              budgetPercent >= 90 ? 'bg-error' : budgetPercent >= 70 ? 'bg-warning' : 'bg-primary'
             }`}
             style={{ width: `${Math.min(budgetPercent, 100)}%` }}
           />

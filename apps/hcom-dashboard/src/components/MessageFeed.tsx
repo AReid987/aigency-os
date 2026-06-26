@@ -1,5 +1,6 @@
 import React from 'react';
 import type { HCOMMessage } from '@vscp/shared-types';
+import { Check, CheckCheck, Clock } from 'lucide-react';
 
 interface MessageFeedProps {
   messages: HCOMMessage[];
@@ -13,26 +14,30 @@ export function MessageFeed({ messages, maxHeight = 400 }: MessageFeedProps) {
         {messages.map((msg) => (
           <div
             key={msg.id}
-            className="flex items-start gap-2 px-3 py-1.5 rounded-md hover:bg-bg dark:hover:bg-elevated/50 text-sm"
+            className="flex items-start gap-2 px-3 py-1.5 rounded-md hover:bg-hover/60 text-sm transition-colors"
           >
             <span className="text-fg-muted text-xs whitespace-nowrap mt-0.5">
               {new Date(msg.timestamp).toLocaleTimeString()}
             </span>
-            <span className="font-medium text-primary dark:text-blue-400 whitespace-nowrap">
+            <span className="font-medium text-primary whitespace-nowrap">
               {msg.senderId.slice(0, 8)}
             </span>
             <span className="text-fg-muted">→</span>
-            <span className="font-medium text-green-600 dark:text-green-400 whitespace-nowrap">
+            <span className="font-medium text-success whitespace-nowrap">
               {msg.recipientId ? msg.recipientId.slice(0, 8) : 'broadcast'}
             </span>
             {msg.intent && (
-              <span className="text-xs bg-hover bg-hover px-1.5 py-0.5 rounded">
+              <span className="text-xs bg-hover/60 backdrop-blur-sm px-1.5 py-0.5 rounded">
                 {msg.intent}
               </span>
             )}
-            <span className="text-fg-secondary text-fg-secondary flex-1 truncate">{msg.content}</span>
-            <span className={`text-xs ${msg.deliveryStatus === 'delivered' ? 'text-green-500' : 'text-fg-muted'}`}>
-              {msg.deliveryStatus === 'delivered' ? '✓' : msg.deliveryStatus === 'read' ? '✓✓' : '⏳'}
+            <span className="text-fg-secondary flex-1 truncate">{msg.content}</span>
+            <span className="text-xs text-fg-muted">
+              {msg.deliveryStatus === 'delivered' && <Check size={12} className="text-success" />}
+              {msg.deliveryStatus === 'read' && <CheckCheck size={12} className="text-success" />}
+              {msg.deliveryStatus !== 'delivered' && msg.deliveryStatus !== 'read' && (
+                <Clock size={12} />
+              )}
             </span>
           </div>
         ))}

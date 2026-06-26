@@ -21,6 +21,7 @@ interface CanvasState {
 
   // Zones
   zones: Zone[];
+  zoneLayouts: Record<string, { x: number; y: number; width: number; height: number }>;
   activeZone: string | null;
 
   // Cards
@@ -46,6 +47,8 @@ interface CanvasState {
 
   // Actions — Zones
   createZone: (type: ZoneType, name: string, position: Position) => void;
+  moveZone: (id: string, position: Position) => void;
+  resizeZone: (id: string, size: Size) => void;
   setActiveZone: (id: string | null) => void;
 
   // Actions — Multiplayer cursors
@@ -97,6 +100,13 @@ export const useCanvasStore = create<CanvasState>((set, get) => ({
 
   // Initial zones
   zones: [defaultBusinessZone, defaultEngineeringZone],
+
+  // Zone layouts (position + size)
+  zoneLayouts: {
+    [defaultBusinessZone.id]: { x: 0, y: 0, width: 1200, height: 500 },
+    [defaultEngineeringZone.id]: { x: 0, y: 540, width: 1200, height: 500 },
+  },
+
   activeZone: null,
 
   // Initial cards (some demo cards)
@@ -230,7 +240,7 @@ export const useCanvasStore = create<CanvasState>((set, get) => ({
     })),
 
   // Zone actions
-  createZone: (type, name, _position) => {
+  createZone: (type, name, position) => {
     const id = generateZoneId();
     const newZone: Zone = {
       id,
@@ -240,8 +250,35 @@ export const useCanvasStore = create<CanvasState>((set, get) => ({
       collaborators: [],
       permissions: [],
     };
-    set((state) => ({ zones: [...state.zones, newZone] }));
+    // Offset new zones so they don't stack on top of the default business zone
+    const offset = Object.keys(get().zoneLayouts).length * 40;
+    const layout = {
+      x: (position?.x ?? 0) + offset,
+      y: (position?.y ?? 0) + offset,
+      width: 1200,
+      height: 500,
+    };
+    set((state) => ({
+      zones: [...state.zones, newZone],
+      zoneLayouts: { ...state.zoneLayouts, [id]: layout },
+    }));
   },
+
+  moveZone: (id, position) =>
+    set((state) => ({
+      zoneLayouts: {
+        ...state.zoneLayouts,
+        [id]: { ...state.zoneLayouts[id], x: position.x, y: position.y },
+      },
+    })),
+
+  resizeZone: (id, size) =>
+    set((state) => ({
+      zoneLayouts: {
+        ...state.zoneLayouts,
+        [id]: { ...state.zoneLayouts[id], width: size.width, height: size.height },
+      },
+    })),
 
   setActiveZone: (id) => set({ activeZone: id }),
 

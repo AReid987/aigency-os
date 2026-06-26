@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Atmosphere } from './components/Atmosphere';
 import { AgentList } from './components/AgentList';
 import { MessageFeed } from './components/MessageFeed';
 import { TerminalPreview } from './components/TerminalPreview';
@@ -23,26 +24,27 @@ export default function App() {
   const [selectedAgent, setSelectedAgent] = useState<HCOMAgent | undefined>();
 
   return (
-    <div className="min-h-screen bg-bg bg-bg text-fg text-fg">
-      <header className="border-b bg-surface bg-elevated px-6 py-3 flex items-center justify-between">
+    <div className="relative min-h-screen text-fg z-10">
+      <Atmosphere />
+      <header className="fixed top-0 left-0 right-0 z-50 bg-surface/70 backdrop-blur-md border-b border-border shadow-[inset_0_1px_0_0_rgba(255,255,255,0.06)] px-6 py-3 flex items-center justify-between">
         <h1 className="text-lg font-bold">HCOM Agent Monitor</h1>
         <div className="flex gap-2">
-          <button className="px-3 py-1.5 text-sm rounded-md border hover:bg-bg dark:hover:bg-hover">
+          <button className="px-3 py-1.5 text-sm rounded-md bg-surface/70 backdrop-blur-sm border border-border hover:bg-hover/60 transition-colors">
             Refresh
           </button>
-          <button className="px-3 py-1.5 text-sm rounded-md border hover:bg-bg dark:hover:bg-hover">
+          <button className="px-3 py-1.5 text-sm rounded-md bg-surface/70 backdrop-blur-sm border border-border hover:bg-hover/60 transition-colors">
             Settings
           </button>
         </div>
       </header>
 
-      <main className="p-6 space-y-6">
+      <main className="pt-16 p-6 space-y-6">
         {/* Collision Alerts */}
         <CollisionAlert collisions={[]} />
 
         {/* Agent Table */}
-        <section className="bg-surface bg-elevated rounded-md border shadow-sm">
-          <div className="px-4 py-3 border-b">
+        <section className="bg-surface/70 backdrop-blur-md rounded-md border border-border shadow-[inset_0_1px_0_0_rgba(255,255,255,0.06)]">
+          <div className="px-4 py-3 border-b border-border bg-elevated/60 backdrop-blur-sm">
             <h2 className="font-semibold text-sm">Agents ({DEMO_AGENTS.length})</h2>
           </div>
           <AgentList agents={DEMO_AGENTS} selectedAgentId={selectedAgent?.id} onAgentSelect={setSelectedAgent} />
@@ -50,23 +52,23 @@ export default function App() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Messages */}
-          <section className="bg-surface bg-elevated rounded-md border shadow-sm">
-            <div className="px-4 py-3 border-b">
+          <section className="bg-surface/70 backdrop-blur-md rounded-md border border-border shadow-[inset_0_1px_0_0_rgba(255,255,255,0.06)]">
+            <div className="px-4 py-3 border-b border-border bg-elevated/60 backdrop-blur-sm">
               <h2 className="font-semibold text-sm">Messages</h2>
             </div>
             <MessageFeed messages={DEMO_MESSAGES} />
           </section>
 
           {/* Terminal Preview */}
-          <section className="bg-surface bg-elevated rounded-md border shadow-sm">
-            <div className="px-4 py-3 border-b">
+          <section className="bg-surface/70 backdrop-blur-md rounded-md border border-border shadow-[inset_0_1px_0_0_rgba(255,255,255,0.06)]">
+            <div className="px-4 py-3 border-b border-border bg-elevated/60 backdrop-blur-sm">
               <h2 className="font-semibold text-sm">Terminal Preview</h2>
             </div>
             <div className="p-4">
               <TerminalPreview
                 agentName={selectedAgent?.name ?? 'claude'}
                 sessionId={selectedAgent?.sessionId ?? 'tmux:1'}
-                output={['$ npm test', '✓ 45 tests passed', '', '$ npm run dev', '[vite] ready on :3000']}
+                output={['$ npm test', '45 tests passed', '', '$ npm run dev', '[vite] ready on :3000']}
               />
             </div>
           </section>
@@ -74,19 +76,19 @@ export default function App() {
 
         {/* Actions */}
         <div className="flex gap-2">
-          <button className="px-3 py-1.5 text-sm rounded-md bg-primary text-white hover:bg-primary-dark">
+          <button className="px-3 py-1.5 text-sm rounded-md bg-primary text-fg-inverse hover:bg-primary-dark transition-colors">
             Attach
           </button>
-          <button className="px-3 py-1.5 text-sm rounded-md border hover:bg-bg dark:hover:bg-hover">
+          <button className="px-3 py-1.5 text-sm rounded-md bg-surface/70 backdrop-blur-sm border border-border hover:bg-hover/60 transition-colors">
             Kill
           </button>
-          <button className="px-3 py-1.5 text-sm rounded-md border hover:bg-bg dark:hover:bg-hover">
+          <button className="px-3 py-1.5 text-sm rounded-md bg-surface/70 backdrop-blur-sm border border-border hover:bg-hover/60 transition-colors">
             Fork
           </button>
-          <button className="px-3 py-1.5 text-sm rounded-md border hover:bg-bg dark:hover:bg-hover">
+          <button className="px-3 py-1.5 text-sm rounded-md bg-surface/70 backdrop-blur-sm border border-border hover:bg-hover/60 transition-colors">
             Message
           </button>
-          <button className="px-3 py-1.5 text-sm rounded-md border hover:bg-bg dark:hover:bg-hover">
+          <button className="px-3 py-1.5 text-sm rounded-md bg-surface/70 backdrop-blur-sm border border-border hover:bg-hover/60 transition-colors">
             View Transcript
           </button>
         </div>
