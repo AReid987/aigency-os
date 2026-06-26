@@ -5,6 +5,8 @@ import { pageRoutes } from './routes/pages.js';
 import { queryRoutes } from './routes/query.js';
 import { graphRoutes } from './routes/graph.js';
 import { captureRoutes } from './routes/capture.js';
+import { synthesizeRoutes } from './routes/synthesize.js';
+import { registerMetrics } from '@vscp/shared-types/metrics-helper';
 
 const app = Fastify({ logger: true });
 
@@ -19,11 +21,15 @@ app.get('/health', async () => ({
   timestamp: new Date().toISOString(),
 }));
 
+// ─── Metrics ────────────────────────────────────────────────────────────
+registerMetrics(app, 'gbrain');
+
 // ─── Register Route Modules ─────────────────────────────────────────────
 await app.register(pageRoutes);
 await app.register(queryRoutes);
 await app.register(graphRoutes);
 await app.register(captureRoutes);
+await app.register(synthesizeRoutes);
 
 // ─── Seed Demo Data ─────────────────────────────────────────────────────
 store.seed();

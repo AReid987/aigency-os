@@ -6,6 +6,7 @@ import { collisionRoutes } from './routes/collisions.js';
 import { lifecycleRoutes } from './routes/lifecycle.js';
 import { subscriptionRoutes } from './routes/subscriptions.js';
 import { dashboardRoutes } from './routes/dashboard.js';
+import { registerMetrics } from '@vscp/shared-types/metrics-helper';
 
 const app = Fastify({
   logger: {
@@ -21,6 +22,9 @@ app.get('/health', async () => ({
   service: 'hcom-api',
   timestamp: new Date().toISOString(),
 }));
+
+// Metrics
+registerMetrics(app, 'hcom-api');
 
 // Register all route modules
 await app.register(agentRoutes);

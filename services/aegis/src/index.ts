@@ -4,6 +4,8 @@ import { auditRoutes } from './routes/audit.js';
 import { transformRoutes } from './routes/transform.js';
 import { summaryRoutes } from './routes/summary.js';
 import { personaRoutes } from './routes/personas.js';
+import { continuousRoutes } from './routes/continuous.js';
+import { registerMetrics } from '@vscp/shared-types/metrics-helper';
 
 const app = Fastify({ logger: true });
 
@@ -19,11 +21,15 @@ app.get('/health', async () => ({
   timestamp: new Date().toISOString(),
 }));
 
+// ─── Metrics ────────────────────────────────────────────────────────────
+registerMetrics(app, 'aegis');
+
 // ─── Register Route Modules ─────────────────────────────────────────────
 await app.register(auditRoutes);
 await app.register(transformRoutes);
 await app.register(summaryRoutes);
 await app.register(personaRoutes);
+await app.register(continuousRoutes);
 
 // ─── Start Server ───────────────────────────────────────────────────────
 const port = Number(process.env.PORT) || 3014;

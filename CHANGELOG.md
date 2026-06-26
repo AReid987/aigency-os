@@ -7,6 +7,45 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.2.0] — 2026-06-26
+
+### Scale, Intelligence, and Real-World Robustness
+
+Sprint 5 transforms Aigency OS from a working MVP into a production-grade platform with database persistence, intelligent knowledge synthesis, continuous quality monitoring, and observability.
+
+### Added
+
+**New Packages:**
+- `@vscp/prisma` — Shared Prisma schema with unified models for all 9 services, PostgreSQL provider, migration runner, seed data
+- `@vscp/redis` — Shared Redis client with ioredis, Redis Streams helpers (XADD/XREADGROUP/XACK), pub/sub fallback
+
+**New Service:**
+- `services/skills` (port 3017) — Agent skill marketplace with skill discovery, installation, validation, and rating
+
+**Infrastructure:**
+- Prometheus metrics endpoints on all services (`/metrics`)
+- Grafana dashboard with service health, request rate, error rate, latency panels
+- PWA manifest and service worker for offline canvas editing
+- Prometheus scrape config (`infra/monitoring/prometheus.yml`)
+- Grafana dashboard JSON (`infra/monitoring/grafana-dashboards/`)
+
+**Service Enhancements:**
+- Gbrain: LLM synthesis endpoint (`POST /api/v1/synthesize`) for knowledge summaries
+- AEGIS: Continuous audit endpoint (`POST /api/v1/audit/continuous`) for real-time monitoring
+- All services: Prometheus-format metrics at `/metrics`
+
+**Shared Types:**
+- `metrics.ts` — MetricPoint, MetricSeries, DashboardPanel, AlertRule
+- `skills.ts` — SkillManifest, SkillVersion, SkillInstallation
+- `mobile.ts` — PushNotification, OfflineSync, PWAConfig
+- `redis.ts` — StreamMessage, ConsumerGroup, StreamConfig
+
+**Documentation:**
+- v0.2.0 migration guide
+- Sprint 5 implementation plan
+
+---
+
 ## [0.1.0] — 2026-06-26
 
 **Initial release of Aigency OS.** A visual-first, agent-orchestrated platform for collaborative venture building.

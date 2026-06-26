@@ -6,6 +6,7 @@ import { dealRoutes } from './routes/deals.js';
 import { sequenceRoutes } from './routes/sequences.js';
 import { leadRoutes } from './routes/leads.js';
 import { pipelineRoutes } from './routes/pipeline.js';
+import { registerMetrics } from '@vscp/shared-types/metrics-helper';
 
 const app = Fastify({ logger: true });
 
@@ -19,6 +20,9 @@ app.get('/health', async () => ({
   version: '0.1.0',
   timestamp: new Date().toISOString(),
 }));
+
+// ─── Metrics ────────────────────────────────────────────────────────────
+registerMetrics(app, 'denchclaw');
 
 // ─── Register Route Modules ─────────────────────────────────────────────
 await app.register(contactRoutes);

@@ -4,6 +4,7 @@ import { planRoutes } from './routes/plan.js';
 import { applyRoutes } from './routes/apply.js';
 import { unifyRoutes } from './routes/unify.js';
 import { criteriaRoutes } from './routes/criteria.js';
+import { registerMetrics } from '@vscp/shared-types/metrics-helper';
 
 const app = Fastify({ logger: true });
 
@@ -17,6 +18,9 @@ app.get('/health', async () => ({
   version: '0.1.0',
   timestamp: new Date().toISOString(),
 }));
+
+// ─── Metrics ────────────────────────────────────────────────────────────
+registerMetrics(app, 'paul');
 
 // ─── Register Route Modules ─────────────────────────────────────────────
 await app.register(planRoutes);

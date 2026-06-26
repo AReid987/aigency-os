@@ -1,0 +1,410 @@
+// ─── VSCP Unified Prisma Schema ──────────────────────────────────────────────
+// Shared schema for all services in the aigency-os monorepo.
+// Generated for Sprint 5 — single source of truth for DB models.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// Paperclip — Company / Agent / Goal / Task / Ticket / Budget
+// ═══════════════════════════════════════════════════════════════════════════════
+
+model Company {
+  id        String   @id @default(uuid())
+  name      String
+  mission   String   @default("")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  agents  Agent[]
+  goals   Goal[]
+  budgets Budget[]
+}
+
+model Agent {
+  id                String   @id @default(uuid())
+  companyId         String
+  name              String
+  role              String   // CEO, CTO, CMO, Sales, Engineer, QA, Designer
+  reportingTo       String?
+  budgetLimit       Float    @default(0)
+  budgetSpent       Float    @default(0)
+  heartbeatSchedule String   @default("8h")
+  status            String   @default("active")
+  skills            String[] @default([])
+  adapter           String   @default("claude")
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@index([companyId])
+}
+
+model Goal {
+  id           String   @id @default(uuid())
+  companyId    String
+  parentGoalId String?
+  title        String
+  description  String   @default("")
+  status       String   @default("backlog")
+  priority     String   @default("P2")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  tasks   Task[]
+
+  @@index([companyId])
+}
+
+model Task {
+  id                String   @id @default(uuid())
+  goalId            String
+  assigneeId        String
+  title             String
+  description       String   @default("")
+  acceptanceCriteria String[] @default([])
+  status            String   @default("backlog")
+  contextChain      String[] @default([])
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  goal Goal @relation(fields: [goalId], references: [id], onDelete: Cascade)
+
+  @@index([goalId])
+  @@index([assigneeId])
+}
+
+model Ticket {
+  id          String   @id @default(uuid())
+  title       String
+  description String   @default("")
+  assigneeId  String
+  status      String   @default("backlog")
+  priority    String   @default("P2")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  comments TicketComment[]
+
+  @@index([assigneeId])
+}
+
+model TicketComment {
+  id        String   @id @default(uuid())
+  ticketId  String
+  authorId  String
+  content   String
+  createdAt DateTime @default(now())
+
+  ticket Ticket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+
+  @@index([ticketId])
+}
+
+model Budget {
+  id        String @id @default(uuid())
+  companyId String
+  total     Float  @default(0)
+  spent     Float  @default(0)
+  perAgent  Json   @default("{}") // Record<string, { limit: number; spent: number }>
+
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@index([companyId])
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// AEGIS — Audit / Findings / Personas
+// ═══════════════════════════════════════════════════════════════════════════════
+
+model AuditReport {
+  id           String   @id @default(uuid())
+  project      String
+  overallScore Float    @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  findings Finding[]
+  personas Persona[]
+}
+
+model Finding {
+  id          String   @id @default(uuid())
+  auditId     String
+  domain      String
+  severity    String   // critical, high, medium, low, info
+  description String
+  confidence  Float    @default(0)
+  evidence    String[] @default([])
+  personaId   String?
+  createdAt   DateTime @default(now())
+
+  auditReport AuditReport @relation(fields: [auditId], references: [id], onDelete: Cascade)
+
+  @@index([auditId])
+  @@index([severity])
+}
+
+model Persona {
+  id          String @id @default(uuid())
+  auditId     String
+  name        String
+  type        String
+  perspective String
+
+  auditReport AuditReport @relation(fields: [auditId], references: [id], onDelete: Cascade)
+
+  @@index([auditId])
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// DenchClaw — CRM / Outreach
+// ═══════════════════════════════════════════════════════════════════════════════
+
+model Contact {
+  id        String   @id @default(uuid())
+  name      String
+  email     String
+  company   String   @default("")
+  tags      String[] @default([])
+  source    String   @default("")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  deals Deal[]
+
+  @@unique([email])
+}
+
+model Deal {
+  id        String @id @default(uuid())
+  contactId String
+  stage     String @default("lead")
+  value     Float  @default(0)
+  currency  String @default("USD")
+  notes     String @default("")
+
+  contact Contact @relation(fields: [contactId], references: [id], onDelete: Cascade)
+
+  @@index([contactId])
+}
+
+model OutreachSequence {
+  id         String   @id @default(uuid())
+  name       String
+  steps      Json     @default("[]")     // OutreachStep[]
+  contactIds String[] @default([])
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// GBrain — Knowledge Graph
+// ═══════════════════════════════════════════════════════════════════════════════
+
+model KnowledgePage {
+  id              String   @id @default(uuid())
+  source          String
+  type            String   // decision, plan, audit, assumption, fact, transcript
+  title           String
+  content         String   @default("")
+  frontmatter     Json     @default("{}")
+  confidence      Float    @default(0)
+  recency         String   @default("")
+  evidenceSources String[] @default([])
+  supersedes      String[] @default([])
+  contradictions  String[] @default([])
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model GraphEdge {
+  id           String @id @default(uuid())
+  source       String
+  target       String
+  relationship String
+
+  @@index([source])
+  @@index([target])
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// PAUL — Planner / TechSpecs
+// ═══════════════════════════════════════════════════════════════════════════════
+
+model Plan {
+  id          String   @id @default(uuid())
+  title       String
+  description String   @default("")
+  goalId      String?
+  status      String   @default("draft")
+  createdBy   String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  acceptanceCriteria AcceptanceCriteria[]
+  techSpecs          TechSpec[]
+}
+
+model AcceptanceCriteria {
+  id          String    @id @default(uuid())
+  planId      String
+  description String
+  type        String    @default("functional") // functional, non_functional, constraint
+  met         Boolean   @default(false)
+  verifiedAt  DateTime?
+  verifiedBy  String?
+
+  plan Plan @relation(fields: [planId], references: [id], onDelete: Cascade)
+
+  @@index([planId])
+}
+
+model TechSpec {
+  id           String   @id @default(uuid())
+  planId       String
+  title        String
+  overview     String   @default("")
+  architecture Json     @default("{}")
+  apiContracts Json     @default("[]")
+  dataModels   Json     @default("[]")
+  dependencies String[] @default([])
+  risks        Json     @default("[]")
+  createdBy    String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  plan Plan @relation(fields: [planId], references: [id], onDelete: Cascade)
+
+  @@index([planId])
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// GStack — Build Engine / Skills
+// ═══════════════════════════════════════════════════════════════════════════════
+
+model BuildJob {
+  id              String   @id @default(uuid())
+  name            String
+  status          String   @default("queued")
+  triggeredBy     String
+  trigger         String   @default("manual")
+  context         Json     @default("{}")
+  startedAt       DateTime @default(now())
+  finishedAt      DateTime?
+  totalDurationMs Int?
+  logs            String[] @default([])
+
+  @@index([triggeredBy])
+  @@index([status])
+}
+
+model SkillInvocation {
+  id         String    @id @default(uuid())
+  skillName  String
+  jobId      String?
+  trigger    String    @default("manual")
+  input      Json      @default("{}")
+  output     Json      @default("{}")
+  status     String    @default("queued")
+  invokedBy  String
+  startedAt  DateTime  @default(now())
+  finishedAt DateTime?
+  durationMs Int?
+  error      String?
+
+  @@index([skillName])
+  @@index([jobId])
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// BMAD — Business Model / Revenue / Milestones
+// ═══════════════════════════════════════════════════════════════════════════════
+
+model Milestone {
+  id              String    @id @default(uuid())
+  businessModelId String
+  title           String
+  description     String    @default("")
+  targetDate      DateTime?
+  status          String    @default("planned")
+  metrics         Json      @default("{}")
+  dependencies    String[]  @default([])
+
+  businessModel BusinessModel @relation(fields: [businessModelId], references: [id], onDelete: Cascade)
+
+  @@index([businessModelId])
+}
+
+model BusinessModel {
+  id          String   @id @default(uuid())
+  name        String
+  type        String   @default("SaaS")
+  description String   @default("")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  milestones    Milestone[]
+  revenueModels RevenueModel[]
+}
+
+model RevenueModel {
+  id                String   @id @default(uuid())
+  businessModelId   String
+  totalProjectedMRR Float    @default(0)
+  totalActualMRR    Float    @default(0)
+  currency          String   @default("USD")
+  forecastMonths    Int      @default(12)
+  updatedAt         DateTime @updatedAt
+
+  businessModel BusinessModel @relation(fields: [businessModelId], references: [id], onDelete: Cascade)
+
+  @@index([businessModelId])
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// HCOM — Communication Hub
+// ═══════════════════════════════════════════════════════════════════════════════
+
+model Message {
+  id             String   @id @default(uuid())
+  senderId       String
+  recipientId    String?  // null = broadcast
+  intent         String   @default("")
+  content        String
+  contextBundle  Json     @default("{}")
+  deliveryStatus String   @default("pending")
+  createdAt      DateTime @default(now())
+
+  @@index([senderId])
+  @@index([recipientId])
+}
+
+model Collision {
+  id        String   @id @default(uuid())
+  filePath  String
+  agent1    String
+  agent2    String
+  resolved  Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([agent1])
+  @@index([agent2])
+}
+
+model Subscription {
+  id        String   @id @default(uuid())
+  agentId   String
+  eventType String
+  channel   String   @default("stream")
+  createdAt DateTime @default(now())
+
+  @@index([agentId])
+  @@index([eventType])
+}

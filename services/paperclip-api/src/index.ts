@@ -8,6 +8,7 @@ import { budgetRoutes } from './routes/budgets.js';
 import { heartbeatRoutes } from './routes/heartbeat.js';
 import { boardRoutes } from './routes/board.js';
 import { dashboardRoutes } from './routes/dashboard.js';
+import { registerMetrics } from '@vscp/shared-types/metrics-helper';
 
 const app = Fastify({ logger: true });
 
@@ -21,6 +22,9 @@ app.get('/health', async () => ({
   version: '0.1.0',
   timestamp: new Date().toISOString(),
 }));
+
+// ─── Metrics ────────────────────────────────────────────────────────────
+registerMetrics(app, 'paperclip-api');
 
 // ─── Register Route Modules ─────────────────────────────────────────────
 await app.register(companyRoutes);

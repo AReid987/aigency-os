@@ -5,6 +5,7 @@ import { shipRoutes } from './routes/ship.js';
 import { qaRoutes } from './routes/qa.js';
 import { designRoutes } from './routes/design.js';
 import { jobRoutes } from './routes/jobs.js';
+import { registerMetrics } from '@vscp/shared-types/metrics-helper';
 
 const app = Fastify({ logger: true });
 
@@ -18,6 +19,9 @@ app.get('/health', async () => ({
   version: '0.1.0',
   timestamp: new Date().toISOString(),
 }));
+
+// ─── Metrics ────────────────────────────────────────────────────────────
+registerMetrics(app, 'gstack');
 
 // ─── Register Route Modules ─────────────────────────────────────────────
 await app.register(autoplanRoutes);

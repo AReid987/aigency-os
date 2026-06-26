@@ -4,6 +4,7 @@ import { canvasRoutes } from './routes/canvas.js';
 import { revenueRoutes } from './routes/revenue.js';
 import { milestoneRoutes } from './routes/milestones.js';
 import { competitiveRoutes } from './routes/competitive.js';
+import { registerMetrics } from '@vscp/shared-types/metrics-helper';
 
 const app = Fastify({ logger: true });
 
@@ -17,6 +18,9 @@ app.get('/health', async () => ({
   version: '0.1.0',
   timestamp: new Date().toISOString(),
 }));
+
+// ─── Metrics ────────────────────────────────────────────────────────────
+registerMetrics(app, 'bmad');
 
 // ─── Register Route Modules ─────────────────────────────────────────────
 await app.register(canvasRoutes);

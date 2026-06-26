@@ -209,3 +209,10 @@ export * from './gstack';
 export * from './aegis';
 export * from './denchclaw';
 export * from './gbrain';
+
+// ─── Sprint 5 Re-exports ────────────────────────────────────────────────────
+
+export * from './metrics';
+export * from './skills';
+export * from './mobile';
+export * from './redis';

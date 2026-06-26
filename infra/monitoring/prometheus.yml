@@ -1,0 +1,55 @@
+# Prometheus scrape configuration for Aigency OS
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: 'paperclip-api'
+    static_configs:
+      - targets: ['paperclip-api:3001']
+    metrics_path: '/metrics'
+
+  - job_name: 'bmad'
+    static_configs:
+      - targets: ['bmad:3010']
+    metrics_path: '/metrics'
+
+  - job_name: 'paul'
+    static_configs:
+      - targets: ['paul:3011']
+    metrics_path: '/metrics'
+
+  - job_name: 'gstack'
+    static_configs:
+      - targets: ['gstack:3012']
+    metrics_path: '/metrics'
+
+  - job_name: 'plannotator'
+    static_configs:
+      - targets: ['plannotator:3013']
+    metrics_path: '/metrics'
+
+  - job_name: 'aegis'
+    static_configs:
+      - targets: ['aegis:3014']
+    metrics_path: '/metrics'
+
+  - job_name: 'denchclaw'
+    static_configs:
+      - targets: ['denchclaw:3015']
+    metrics_path: '/metrics'
+
+  - job_name: 'gbrain'
+    static_configs:
+      - targets: ['gbrain:3016']
+    metrics_path: '/metrics'
+
+  - job_name: 'skills'
+    static_configs:
+      - targets: ['skills:3017']
+    metrics_path: '/metrics'
+
+  - job_name: 'hcom-api'
+    static_configs:
+      - targets: ['hcom-api:3007']
+    metrics_path: '/metrics'
