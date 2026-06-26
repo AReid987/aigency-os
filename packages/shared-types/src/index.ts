@@ -186,25 +186,6 @@ export interface Collision {
   resolved: boolean;
 }
 
-// ─── Brain Types ─────────────────────────────────────────────────────────────
-
-export type KnowledgeSource = 'paperclip' | 'hcom' | 'aegis' | 'plannotator' | 'bmad' | 'manual';
-export type KnowledgeType = 'decision' | 'plan' | 'audit' | 'assumption' | 'fact';
-
-export interface KnowledgePage {
-  id: string;
-  source: KnowledgeSource;
-  type: KnowledgeType;
-  title: string;
-  content: string;
-  frontmatter: Record<string, unknown>;
-  confidence: number;
-  recency: string;
-  evidenceSources: string[];
-  supersedes: string[];
-  contradictions: string[];
-}
-
 // ─── User Types ──────────────────────────────────────────────────────────────
 
 export type UserRole = 'domain_expert' | 'technical_founder' | 'agent';
@@ -222,3 +203,9 @@ export * from './bmad';
 export * from './paul';
 export * from './carl';
 export * from './gstack';
+
+// ─── Sprint 3 Re-exports ────────────────────────────────────────────────────
+
+export * from './aegis';
+export * from './denchclaw';
+export * from './gbrain';

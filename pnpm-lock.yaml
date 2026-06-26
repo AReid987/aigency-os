@@ -15,6 +15,128 @@ importers:
         specifier: ^5.5.0
         version: 5.9.3
 
+  apps/aegis-dashboard:
+    dependencies:
+      '@vscp/shared-types':
+        specifier: workspace:*
+        version: link:../../packages/shared-types
+      '@vscp/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
+      lucide-react:
+        specifier: ^0.400.0
+        version: 0.400.0(react@19.2.7)
+      react:
+        specifier: ^19.0.0
+        version: 19.2.7
+      react-dom:
+        specifier: ^19.0.0
+        version: 19.2.7(react@19.2.7)
+      zustand:
+        specifier: ^5.0.0
+        version: 5.0.14(@types/react@19.2.17)(react@19.2.7)
+    devDependencies:
+      '@eslint/js':
+        specifier: ^9.39.4
+        version: 9.39.4
+      '@tailwindcss/vite':
+        specifier: ^4.0.0
+        version: 4.3.1(vite@6.4.3(@types/node@26.0.1)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.22.4))
+      '@types/react':
+        specifier: ^19.0.0
+        version: 19.2.17
+      '@types/react-dom':
+        specifier: ^19.0.0
+        version: 19.2.3(@types/react@19.2.17)
+      '@typescript-eslint/eslint-plugin':
+        specifier: ^8.62.0
+        version: 8.62.0(@typescript-eslint/parser@8.62.0(eslint@9.39.4(jiti@2.7.0))(typescript@5.9.3))(eslint@9.39.4(jiti@2.7.0))(typescript@5.9.3)
+      '@typescript-eslint/parser':
+        specifier: ^8.62.0
+        version: 8.62.0(eslint@9.39.4(jiti@2.7.0))(typescript@5.9.3)
+      '@vitejs/plugin-react':
+        specifier: ^4.0.0
+        version: 4.7.0(vite@6.4.3(@types/node@26.0.1)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.22.4))
+      eslint:
+        specifier: ^9.0.0
+        version: 9.39.4(jiti@2.7.0)
+      globals:
+        specifier: ^17.7.0
+        version: 17.7.0
+      tailwindcss:
+        specifier: ^4.0.0
+        version: 4.3.1
+      typescript:
+        specifier: ^5.5.0
+        version: 5.9.3
+      vite:
+        specifier: ^6.0.0
+        version: 6.4.3(@types/node@26.0.1)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.22.4)
+      vitest:
+        specifier: ^2.0.0
+        version: 2.1.9(@types/node@26.0.1)(lightningcss@1.32.0)
+
+  apps/denchclaw-ui:
+    dependencies:
+      '@vscp/shared-types':
+        specifier: workspace:*
+        version: link:../../packages/shared-types
+      '@vscp/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
+      lucide-react:
+        specifier: ^0.400.0
+        version: 0.400.0(react@19.2.7)
+      react:
+        specifier: ^19.0.0
+        version: 19.2.7
+      react-dom:
+        specifier: ^19.0.0
+        version: 19.2.7(react@19.2.7)
+      zustand:
+        specifier: ^5.0.0
+        version: 5.0.14(@types/react@19.2.17)(react@19.2.7)
+    devDependencies:
+      '@eslint/js':
+        specifier: ^9.39.4
+        version: 9.39.4
+      '@tailwindcss/vite':
+        specifier: ^4.0.0
+        version: 4.3.1(vite@6.4.3(@types/node@26.0.1)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.22.4))
+      '@types/react':
+        specifier: ^19.0.0
+        version: 19.2.17
+      '@types/react-dom':
+        specifier: ^19.0.0
+        version: 19.2.3(@types/react@19.2.17)
+      '@typescript-eslint/eslint-plugin':
+        specifier: ^8.62.0
+        version: 8.62.0(@typescript-eslint/parser@8.62.0(eslint@9.39.4(jiti@2.7.0))(typescript@5.9.3))(eslint@9.39.4(jiti@2.7.0))(typescript@5.9.3)
+      '@typescript-eslint/parser':
+        specifier: ^8.62.0
+        version: 8.62.0(eslint@9.39.4(jiti@2.7.0))(typescript@5.9.3)
+      '@vitejs/plugin-react':
+        specifier: ^4.0.0
+        version: 4.7.0(vite@6.4.3(@types/node@26.0.1)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.22.4))
+      eslint:
+        specifier: ^9.0.0
+        version: 9.39.4(jiti@2.7.0)
+      globals:
+        specifier: ^17.7.0
+        version: 17.7.0
+      tailwindcss:
+        specifier: ^4.0.0
+        version: 4.3.1
+      typescript:
+        specifier: ^5.5.0
+        version: 5.9.3
+      vite:
+        specifier: ^6.0.0
+        version: 6.4.3(@types/node@26.0.1)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.22.4)
+      vitest:
+        specifier: ^2.0.0
+        version: 2.1.9(@types/node@26.0.1)(lightningcss@1.32.0)
+
   apps/embed-shell:
     dependencies:
       '@vscp/shared-types':
@@ -42,6 +164,67 @@ importers:
       vite:
         specifier: ^6.0.0
         version: 6.4.3(@types/node@26.0.1)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.22.4)
+
+  apps/gbrain-dashboard:
+    dependencies:
+      '@vscp/shared-types':
+        specifier: workspace:*
+        version: link:../../packages/shared-types
+      '@vscp/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
+      lucide-react:
+        specifier: ^0.400.0
+        version: 0.400.0(react@19.2.7)
+      react:
+        specifier: ^19.0.0
+        version: 19.2.7
+      react-dom:
+        specifier: ^19.0.0
+        version: 19.2.7(react@19.2.7)
+      zustand:
+        specifier: ^5.0.0
+        version: 5.0.14(@types/react@19.2.17)(react@19.2.7)
+    devDependencies:
+      '@eslint/js':
+        specifier: ^9.39.4
+        version: 9.39.4
+      '@tailwindcss/vite':
+        specifier: ^4.0.0
+        version: 4.3.1(vite@6.4.3(@types/node@26.0.1)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.22.4))
+      '@types/react':
+        specifier: ^19.0.0
+        version: 19.2.17
+      '@types/react-dom':
+        specifier: ^19.0.0
+        version: 19.2.3(@types/react@19.2.17)
+      '@typescript-eslint/eslint-plugin':
+        specifier: ^8.62.0
+        version: 8.62.0(@typescript-eslint/parser@8.62.0(eslint@9.39.4(jiti@2.7.0))(typescript@5.9.3))(eslint@9.39.4(jiti@2.7.0))(typescript@5.9.3)
+      '@typescript-eslint/parser':
+        specifier: ^8.62.0
+        version: 8.62.0(eslint@9.39.4(jiti@2.7.0))(typescript@5.9.3)
+      '@vitejs/plugin-react':
+        specifier: ^4.0.0
+        version: 4.7.0(vite@6.4.3(@types/node@26.0.1)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.22.4))
+      eslint:
+        specifier: ^9.0.0
+        version: 9.39.4(jiti@2.7.0)
+      globals:
+        specifier: ^17.7.0
+        version: 17.7.0
+      tailwindcss:
+        specifier: ^4.0.0
+        version: 4.3.1
+      typescript:
+        specifier: ^5.5.0
+        version: 5.9.3
+      vite:
+        specifier: ^6.0.0
+        version: 6.4.3(@types/node@26.0.1)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.22.4)
+      vitest:
+        specifier: ^2.0.0
+        version: 2.1.9(@types/node@26.0.1)(lightningcss@1.32.0)
 
   apps/hcom-dashboard:
     dependencies:
@@ -325,7 +508,82 @@ importers:
         specifier: ^5.5.0
         version: 5.9.3
 
+  services/aegis:
+    dependencies:
+      '@fastify/cors':
+        specifier: ^10.0.0
+        version: 10.1.0
+      '@vscp/shared-types':
+        specifier: workspace:*
+        version: link:../../packages/shared-types
+      fastify:
+        specifier: ^5.0.0
+        version: 5.8.5
+      zod:
+        specifier: ^3.23.0
+        version: 3.25.76
+    devDependencies:
+      tsx:
+        specifier: ^4.0.0
+        version: 4.22.4
+      typescript:
+        specifier: ^5.5.0
+        version: 5.9.3
+      vitest:
+        specifier: ^2.0.0
+        version: 2.1.9(@types/node@26.0.1)(lightningcss@1.32.0)
+
   services/bmad:
+    dependencies:
+      '@fastify/cors':
+        specifier: ^10.0.0
+        version: 10.1.0
+      '@vscp/shared-types':
+        specifier: workspace:*
+        version: link:../../packages/shared-types
+      fastify:
+        specifier: ^5.0.0
+        version: 5.8.5
+      zod:
+        specifier: ^3.23.0
+        version: 3.25.76
+    devDependencies:
+      tsx:
+        specifier: ^4.0.0
+        version: 4.22.4
+      typescript:
+        specifier: ^5.5.0
+        version: 5.9.3
+      vitest:
+        specifier: ^2.0.0
+        version: 2.1.9(@types/node@26.0.1)(lightningcss@1.32.0)
+
+  services/denchclaw:
+    dependencies:
+      '@fastify/cors':
+        specifier: ^10.0.0
+        version: 10.1.0
+      '@vscp/shared-types':
+        specifier: workspace:*
+        version: link:../../packages/shared-types
+      fastify:
+        specifier: ^5.0.0
+        version: 5.8.5
+      zod:
+        specifier: ^3.23.0
+        version: 3.25.76
+    devDependencies:
+      tsx:
+        specifier: ^4.0.0
+        version: 4.22.4
+      typescript:
+        specifier: ^5.5.0
+        version: 5.9.3
+      vitest:
+        specifier: ^2.0.0
+        version: 2.1.9(@types/node@26.0.1)(lightningcss@1.32.0)
+
+  services/gbrain:
     dependencies:
       '@fastify/cors':
         specifier: ^10.0.0
