@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Atmosphere } from './components/Atmosphere';
 import { PlanViewer } from './components/PlanViewer';
-import { AnnotationThread } from './components/AnnotationThread';
+
 import { DiffViewer } from './components/DiffViewer';
 import { SectionToggle } from './components/SectionToggle';
 import { Badge } from '@vscp/ui';

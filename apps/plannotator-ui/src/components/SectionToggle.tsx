@@ -1,6 +1,6 @@
 import React from 'react';
-import { Badge } from '@vscp/ui';
-import { Shield, Eye, EyeOff } from 'lucide-react';
+
+import { Eye, EyeOff } from 'lucide-react';
 
 interface SectionToggleProps {
   role: 'domain_expert' | 'technical_founder';

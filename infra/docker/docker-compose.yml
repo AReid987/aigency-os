@@ -1,7 +1,25 @@
 # aigency-os infrastructure services
-# Usage: docker-compose -f infra/docker/docker-compose.yml up -d
+# Usage: docker compose -f infra/docker/docker-compose.yml up -d
+
+x-service-defaults: &service-defaults
+  image: node:22-alpine
+  restart: unless-stopped
+  healthcheck:
+    test: ["CMD", "wget", "--spider", "-q", "http://localhost:${PORT}/health"]
+    interval: 15s
+    timeout: 5s
+    retries: 3
+    start_period: 30s
+  depends_on:
+    postgres:
+      condition: service_healthy
+    redis:
+      condition: service_healthy
+  networks:
+    - aigency-net
 
 services:
+  # ── Infrastructure ──────────────────────────────────────────────
   postgres:
     image: postgres:16-alpine
     container_name: aigency-postgres
@@ -9,13 +27,13 @@ services:
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_USER: aigency
-      POSTGRES_PASSWORD: aigency_dev
-      POSTGRES_DB: aigency
+      POSTGRES_USER: ${POSTGRES_USER:-aigency}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-aigency_dev}
+      POSTGRES_DB: ${POSTGRES_DB:-aigency}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U aigency -d aigency"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-aigency} -d ${POSTGRES_DB:-aigency}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -39,6 +57,142 @@ services:
       start_period: 5s
     networks:
       - aigency-net
+
+  # ── API Services ────────────────────────────────────────────────
+  paperclip-api:
+    <<: *service-defaults
+    container_name: aigency-paperclip-api
+    working_dir: /app/services/paperclip-api
+    command: ["npx", "tsx", "src/index.ts"]
+    ports:
+      - "3001:3001"
+    environment:
+      PORT: "3001"
+      DATABASE_URL: postgresql://${POSTGRES_USER:-aigency}:${POSTGRES_PASSWORD:-aigency_dev}@postgres:5432/${POSTGRES_DB:-aigency}
+      REDIS_URL: redis://redis:6379
+    volumes:
+      - ../../services/paperclip-api:/app/services/paperclip-api:cached
+      - ../../packages:/app/packages:cached
+
+  bmad:
+    <<: *service-defaults
+    container_name: aigency-bmad
+    working_dir: /app/services/bmad
+    command: ["npx", "tsx", "src/index.ts"]
+    ports:
+      - "3010:3010"
+    environment:
+      PORT: "3010"
+      DATABASE_URL: postgresql://${POSTGRES_USER:-aigency}:${POSTGRES_PASSWORD:-aigency_dev}@postgres:5432/${POSTGRES_DB:-aigency}
+      REDIS_URL: redis://redis:6379
+    volumes:
+      - ../../services/bmad:/app/services/bmad:cached
+      - ../../packages:/app/packages:cached
+
+  paul:
+    <<: *service-defaults
+    container_name: aigency-paul
+    working_dir: /app/services/paul
+    command: ["npx", "tsx", "src/index.ts"]
+    ports:
+      - "3011:3011"
+    environment:
+      PORT: "3011"
+      DATABASE_URL: postgresql://${POSTGRES_USER:-aigency}:${POSTGRES_PASSWORD:-aigency_dev}@postgres:5432/${POSTGRES_DB:-aigency}
+      REDIS_URL: redis://redis:6379
+    volumes:
+      - ../../services/paul:/app/services/paul:cached
+      - ../../packages:/app/packages:cached
+
+  gstack:
+    <<: *service-defaults
+    container_name: aigency-gstack
+    working_dir: /app/services/gstack
+    command: ["npx", "tsx", "src/index.ts"]
+    ports:
+      - "3012:3012"
+    environment:
+      PORT: "3012"
+      DATABASE_URL: postgresql://${POSTGRES_USER:-aigency}:${POSTGRES_PASSWORD:-aigency_dev}@postgres:5432/${POSTGRES_DB:-aigency}
+      REDIS_URL: redis://redis:6379
+    volumes:
+      - ../../services/gstack:/app/services/gstack:cached
+      - ../../packages:/app/packages:cached
+
+  plannotator:
+    <<: *service-defaults
+    container_name: aigency-plannotator
+    working_dir: /app/services/plannotator
+    command: ["npx", "tsx", "src/index.ts"]
+    ports:
+      - "3013:3013"
+    environment:
+      PORT: "3013"
+      DATABASE_URL: postgresql://${POSTGRES_USER:-aigency}:${POSTGRES_PASSWORD:-aigency_dev}@postgres:5432/${POSTGRES_DB:-aigency}
+      REDIS_URL: redis://redis:6379
+    volumes:
+      - ../../services/plannotator:/app/services/plannotator:cached
+      - ../../packages:/app/packages:cached
+
+  aegis:
+    <<: *service-defaults
+    container_name: aigency-aegis
+    working_dir: /app/services/aegis
+    command: ["npx", "tsx", "src/index.ts"]
+    ports:
+      - "3014:3014"
+    environment:
+      PORT: "3014"
+      DATABASE_URL: postgresql://${POSTGRES_USER:-aigency}:${POSTGRES_PASSWORD:-aigency_dev}@postgres:5432/${POSTGRES_DB:-aigency}
+      REDIS_URL: redis://redis:6379
+    volumes:
+      - ../../services/aegis:/app/services/aegis:cached
+      - ../../packages:/app/packages:cached
+
+  denchclaw:
+    <<: *service-defaults
+    container_name: aigency-denchclaw
+    working_dir: /app/services/denchclaw
+    command: ["npx", "tsx", "src/index.ts"]
+    ports:
+      - "3015:3015"
+    environment:
+      PORT: "3015"
+      DATABASE_URL: postgresql://${POSTGRES_USER:-aigency}:${POSTGRES_PASSWORD:-aigency_dev}@postgres:5432/${POSTGRES_DB:-aigency}
+      REDIS_URL: redis://redis:6379
+    volumes:
+      - ../../services/denchclaw:/app/services/denchclaw:cached
+      - ../../packages:/app/packages:cached
+
+  gbrain:
+    <<: *service-defaults
+    container_name: aigency-gbrain
+    working_dir: /app/services/gbrain
+    command: ["npx", "tsx", "src/index.ts"]
+    ports:
+      - "3016:3016"
+    environment:
+      PORT: "3016"
+      DATABASE_URL: postgresql://${POSTGRES_USER:-aigency}:${POSTGRES_PASSWORD:-aigency_dev}@postgres:5432/${POSTGRES_DB:-aigency}
+      REDIS_URL: redis://redis:6379
+    volumes:
+      - ../../services/gbrain:/app/services/gbrain:cached
+      - ../../packages:/app/packages:cached
+
+  hcom-api:
+    <<: *service-defaults
+    container_name: aigency-hcom-api
+    working_dir: /app/services/hcom-api
+    command: ["npx", "tsx", "src/index.ts"]
+    ports:
+      - "3007:3007"
+    environment:
+      PORT: "3007"
+      DATABASE_URL: postgresql://${POSTGRES_USER:-aigency}:${POSTGRES_PASSWORD:-aigency_dev}@postgres:5432/${POSTGRES_DB:-aigency}
+      REDIS_URL: redis://redis:6379
+    volumes:
+      - ../../services/hcom-api:/app/services/hcom-api:cached
+      - ../../packages:/app/packages:cached
 
 volumes:
   postgres_data:

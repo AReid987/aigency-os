@@ -1,5 +1,5 @@
 import React from 'react';
-import { Badge } from '@vscp/ui';
+
 import { GitCompare, Plus, Minus, Equal } from 'lucide-react';
 
 interface DiffViewerProps {
