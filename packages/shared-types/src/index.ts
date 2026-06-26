@@ -10,7 +10,7 @@ export interface Size {
   height: number;
 }
 
-export type CardType = 'text' | 'image' | 'link' | 'embed' | 'calculator' | 'preview';
+export type CardType = 'text' | 'image' | 'link' | 'embed' | 'calculator' | 'preview' | 'bmc' | 'revenue' | 'gate' | 'spec';
 export type ZoneType = 'business' | 'engineering' | 'shared';
 
 export interface Card {
@@ -215,3 +215,10 @@ export interface User {
   role: UserRole;
   permissions: Permission[];
 }
+
+// ─── Sprint 2 Re-exports ────────────────────────────────────────────────────
+
+export * from './bmad';
+export * from './paul';
+export * from './carl';
+export * from './gstack';

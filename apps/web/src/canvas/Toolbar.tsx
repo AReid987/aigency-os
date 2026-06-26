@@ -13,6 +13,9 @@ import {
   Code,
   LayoutGrid,
   X,
+  DollarSign,
+  Shield,
+  FileCode,
 } from 'lucide-react';
 
 interface ToolbarProps {
@@ -24,6 +27,10 @@ const CARD_TYPES: { type: CardType; label: string; icon: React.ReactNode }[] = [
   { type: 'image', label: 'Image', icon: <ImageIcon size={16} /> },
   { type: 'link', label: 'Link', icon: <ExternalLink size={16} /> },
   { type: 'embed', label: 'Embed', icon: <Code size={16} /> },
+  { type: 'bmc', label: 'Business Canvas', icon: <LayoutGrid size={16} className="text-primary" /> },
+  { type: 'revenue', label: 'Revenue Calc', icon: <DollarSign size={16} className="text-success" /> },
+  { type: 'gate', label: 'Milestone Gate', icon: <Shield size={16} className="text-accent" /> },
+  { type: 'spec', label: 'TECH-SPEC', icon: <FileCode size={16} className="text-info" /> },
 ];
 
 export function Toolbar({ onAddCard }: ToolbarProps) {

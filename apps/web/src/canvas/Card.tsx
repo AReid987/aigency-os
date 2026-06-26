@@ -6,7 +6,11 @@ import { useCanvasStore } from '../stores/canvasStore';
 import { useUserStore } from '../stores/userStore';
 import { snapToGrid } from '../utils/canvasMath';
 import { canEditZone } from '../utils/permissions';
-import { X, GripVertical, ExternalLink, Image as ImageIcon, FileText, Code } from 'lucide-react';
+import { X, GripVertical, ExternalLink, Image as ImageIcon, FileText, Code, LayoutGrid, DollarSign, Shield, FileCode } from 'lucide-react';
+import { BMCCard } from './cards/BMCCard';
+import { RevenueCard } from './cards/RevenueCard';
+import { GateCard } from './cards/GateCard';
+import { SpecCard } from './cards/SpecCard';
 
 interface CanvasCardProps {
   card: CardType;
@@ -20,6 +24,10 @@ const typeIcons: Record<string, React.ReactNode> = {
   image: <ImageIcon size={14} />,
   link: <ExternalLink size={14} />,
   embed: <Code size={14} />,
+  bmc: <LayoutGrid size={14} />,
+  revenue: <DollarSign size={14} />,
+  gate: <Shield size={14} />,
+  spec: <FileCode size={14} />,
 };
 
 const typeAccent: Record<string, string> = {
@@ -248,6 +256,24 @@ export const CanvasCard = React.memo(function CanvasCard({
     }
   };
 
+  // Handle BMAD card types
+  const renderBMADContent = () => {
+    switch (card.type) {
+      case 'bmc':
+        return <BMCCard card={card} isEditing={isEditing} editable={editable} onUpdate={(c) => updateCardContent(card.id, c)} onEditDone={() => setIsEditing(false)} />;
+      case 'revenue':
+        return <RevenueCard card={card} editable={editable} onUpdate={(c) => updateCardContent(card.id, c)} />;
+      case 'gate':
+        return <GateCard card={card} editable={editable} onUpdate={(c) => updateCardContent(card.id, c)} />;
+      case 'spec':
+        return <SpecCard card={card} editable={editable} onUpdate={(c) => updateCardContent(card.id, c)} />;
+      default:
+        return null;
+    }
+  };
+
+  const isBMADCard = ['bmc', 'revenue', 'gate', 'spec'].includes(card.type);
+
   return (
     <div
       ref={cardRef}
@@ -290,7 +316,7 @@ export const CanvasCard = React.memo(function CanvasCard({
       </div>
 
       {/* Card content */}
-      {renderContent()}
+      {isBMADCard ? renderBMADContent() : renderContent()}
 
       {/* Read-only indicator */}
       {!editable && (
