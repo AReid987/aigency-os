@@ -234,16 +234,6 @@ curl http://localhost:3001/api/agents/budgets
 
 # View a specific agent's budget
 curl http://localhost:3001/api/agents/{agentId}/budget
-
-# Budget response example:
-# {
-#   "agentId": "bmad-analyst-01",
-#   "tokenBudget": 100000,
-#   "tokensUsed": 42350,
-#   "costBudget": 10.00,
-#   "costIncurred": 3.42,
-#   "status": "within_budget"
-# }
 ```
 
 Budget alerts trigger automatically when:
@@ -483,29 +473,7 @@ docker exec -it aigency-postgres psql -U aigency -d aigency
 | `NODE_ENV` | `development` | `development` or `production` |
 | `DATABASE_URL` | `postgresql://aigency:PASSWORD@localhost:5432/aigency` | PostgreSQL connection string |
 | `REDIS_URL` | `redis://localhost:6379` | Redis connection string |
-| `HCOM_URL` | `http://localhost:3007` | HCOM API base URL |
-| `PAPERCLIP_URL` | `http://localhost:3001` | Paperclip API base URL |
 
 ---
 
-## Useful One-Liners
-
-```bash
-# Count total packages in monorepo
-find apps services packages -name package.json -maxdepth 2 | wc -l
-
-# List all running Node processes
-pgrep -fl "node\|tsx\|vite"
-
-# Kill all dev processes
-pkill -f "turbo run dev"
-
-# Check disk usage of node_modules
-du -sh node_modules apps/*/node_modules services/*/node_modules
-
-# Find TypeScript errors in a specific package
-pnpm --filter bmad exec tsc --noEmit
-
-# Regenerate shared types
-pnpm --filter @aigency/shared-types build
-```
+*v0.1.0 — Aigency OS*
