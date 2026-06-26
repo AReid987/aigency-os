@@ -345,6 +345,22 @@ pnpm lint
 pnpm clean
 ```
 
+### Turborepo-specific commands:
+
+```bash
+# Run a task for a specific package and its dependencies
+pnpm turbo run build --filter=bmad...
+
+# Run a task for a specific package only
+pnpm turbo run build --filter=bmad
+
+# Generate a dependency graph
+pnpm turbo run build --graph
+
+# View the Turborepo pipeline definition
+cat turbo.json
+```
+
 ---
 
 ## Deploying Updates
@@ -379,9 +395,7 @@ docker compose -f infra/docker/docker-compose.yml up -d --build
 
 ## Troubleshooting
 
-### Common Issues
-
-#### Port already in use
+### Port already in use
 
 ```bash
 # Find what's using the port
@@ -394,7 +408,7 @@ kill -9 <PID>
 PORT=3099 pnpm --filter paperclip-api dev
 ```
 
-#### pnpm install fails
+### pnpm install fails
 
 ```bash
 # Clear pnpm store
@@ -406,7 +420,7 @@ rm -rf apps/*/node_modules services/*/node_modules packages/*/node_modules
 pnpm install
 ```
 
-#### TypeScript build errors after pulling changes
+### TypeScript build errors after pulling changes
 
 ```bash
 # Clean and rebuild everything
@@ -415,7 +429,7 @@ pnpm install
 pnpm build
 ```
 
-#### Docker containers won't start
+### Docker containers won't start
 
 ```bash
 # Check container logs
@@ -426,17 +440,17 @@ docker compose -f infra/docker/docker-compose.yml logs redis
 docker compose -f infra/docker/docker-compose.yml down
 docker compose -f infra/docker/docker-compose.yml up -d
 
-# Remove volumes (⚠️ deletes data)
+# Remove volumes (WARNING: deletes data)
 docker compose -f infra/docker/docker-compose.yml down -v
 ```
 
-#### WebSocket connection refused
+### WebSocket connection refused
 
 - Ensure the backend service is running: `curl http://localhost:3007/api/health`
 - Check for CORS issues in browser console (F12 → Console)
 - Verify no proxy is blocking WebSocket upgrades
 
-#### Agent not responding
+### Agent not responding
 
 ```bash
 # Check agent status
@@ -449,7 +463,7 @@ open http://localhost:3005
 curl -X POST http://localhost:3007/api/agents/{agentId}/restart
 ```
 
-#### Database connection errors
+### Database connection errors
 
 ```bash
 # Verify PostgreSQL is running
@@ -467,23 +481,31 @@ docker exec -it aigency-postgres psql -U aigency -d aigency
 |----------|---------|-------------|
 | `PORT` | (per service) | Override service port |
 | `NODE_ENV` | `development` | `development` or `production` |
-| `DATABASE_URL` | `postgresql://aigency:aigency_dev@localhost:5432/aigency` | PostgreSQL connection |
-| `REDIS_URL` | `redis://localhost:6379` | Redis connection |
+| `DATABASE_URL` | `postgresql://aigency:PASSWORD@localhost:5432/aigency` | PostgreSQL connection string |
+| `REDIS_URL` | `redis://localhost:6379` | Redis connection string |
+| `HCOM_URL` | `http://localhost:3007` | HCOM API base URL |
+| `PAPERCLIP_URL` | `http://localhost:3001` | Paperclip API base URL |
 
 ---
 
-## Useful Commands
+## Useful One-Liners
 
 ```bash
-# See all workspace packages
-pnpm ls --depth 0 -r
+# Count total packages in monorepo
+find apps services packages -name package.json -maxdepth 2 | wc -l
 
-# Run a script in a specific package
-pnpm --filter @aigency/bmad exec -- <command>
+# List all running Node processes
+pgrep -fl "node\|tsx\|vite"
 
-# Check dependency graph
-pnpm turbo run build --graph
+# Kill all dev processes
+pkill -f "turbo run dev"
 
-# View Turborepo pipeline
-cat turbo.json
+# Check disk usage of node_modules
+du -sh node_modules apps/*/node_modules services/*/node_modules
+
+# Find TypeScript errors in a specific package
+pnpm --filter bmad exec tsc --noEmit
+
+# Regenerate shared types
+pnpm --filter @aigency/shared-types build
 ```

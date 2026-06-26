@@ -19,7 +19,7 @@ x-service-defaults: &service-defaults
     - aigency-net
 
 services:
-  # ── Infrastructure ──────────────────────────────────────────────
+  # -- Infrastructure -----------------------------------------------
   postgres:
     image: postgres:16-alpine
     container_name: aigency-postgres
@@ -58,7 +58,7 @@ services:
     networks:
       - aigency-net
 
-  # ── API Services ────────────────────────────────────────────────
+  # -- API Services -------------------------------------------------
   paperclip-api:
     <<: *service-defaults
     container_name: aigency-paperclip-api
@@ -68,8 +68,12 @@ services:
       - "3001:3001"
     environment:
       PORT: "3001"
-      DATABASE_URL: postgresql://${POSTGRES_USER:-aigency}:${POSTGRES_PASSWORD:-aigency_dev}@postgres:5432/${POSTGRES_DB:-aigency}
-      REDIS_URL: redis://redis:6379
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: "5432"
+      POSTGRES_USER: ${POSTGRES_USER:-aigency}
+      POSTGRES_DB: ${POSTGRES_DB:-aigency}
+      REDIS_HOST: redis
+      REDIS_PORT: "6379"
     volumes:
       - ../../services/paperclip-api:/app/services/paperclip-api:cached
       - ../../packages:/app/packages:cached
@@ -83,8 +87,12 @@ services:
       - "3010:3010"
     environment:
       PORT: "3010"
-      DATABASE_URL: postgresql://${POSTGRES_USER:-aigency}:${POSTGRES_PASSWORD:-aigency_dev}@postgres:5432/${POSTGRES_DB:-aigency}
-      REDIS_URL: redis://redis:6379
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: "5432"
+      POSTGRES_USER: ${POSTGRES_USER:-aigency}
+      POSTGRES_DB: ${POSTGRES_DB:-aigency}
+      REDIS_HOST: redis
+      REDIS_PORT: "6379"
     volumes:
       - ../../services/bmad:/app/services/bmad:cached
       - ../../packages:/app/packages:cached
@@ -98,8 +106,12 @@ services:
       - "3011:3011"
     environment:
       PORT: "3011"
-      DATABASE_URL: postgresql://${POSTGRES_USER:-aigency}:${POSTGRES_PASSWORD:-aigency_dev}@postgres:5432/${POSTGRES_DB:-aigency}
-      REDIS_URL: redis://redis:6379
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: "5432"
+      POSTGRES_USER: ${POSTGRES_USER:-aigency}
+      POSTGRES_DB: ${POSTGRES_DB:-aigency}
+      REDIS_HOST: redis
+      REDIS_PORT: "6379"
     volumes:
       - ../../services/paul:/app/services/paul:cached
       - ../../packages:/app/packages:cached
@@ -113,8 +125,12 @@ services:
       - "3012:3012"
     environment:
       PORT: "3012"
-      DATABASE_URL: postgresql://${POSTGRES_USER:-aigency}:${POSTGRES_PASSWORD:-aigency_dev}@postgres:5432/${POSTGRES_DB:-aigency}
-      REDIS_URL: redis://redis:6379
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: "5432"
+      POSTGRES_USER: ${POSTGRES_USER:-aigency}
+      POSTGRES_DB: ${POSTGRES_DB:-aigency}
+      REDIS_HOST: redis
+      REDIS_PORT: "6379"
     volumes:
       - ../../services/gstack:/app/services/gstack:cached
       - ../../packages:/app/packages:cached
@@ -128,8 +144,12 @@ services:
       - "3013:3013"
     environment:
       PORT: "3013"
-      DATABASE_URL: postgresql://${POSTGRES_USER:-aigency}:${POSTGRES_PASSWORD:-aigency_dev}@postgres:5432/${POSTGRES_DB:-aigency}
-      REDIS_URL: redis://redis:6379
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: "5432"
+      POSTGRES_USER: ${POSTGRES_USER:-aigency}
+      POSTGRES_DB: ${POSTGRES_DB:-aigency}
+      REDIS_HOST: redis
+      REDIS_PORT: "6379"
     volumes:
       - ../../services/plannotator:/app/services/plannotator:cached
       - ../../packages:/app/packages:cached
@@ -143,8 +163,12 @@ services:
       - "3014:3014"
     environment:
       PORT: "3014"
-      DATABASE_URL: postgresql://${POSTGRES_USER:-aigency}:${POSTGRES_PASSWORD:-aigency_dev}@postgres:5432/${POSTGRES_DB:-aigency}
-      REDIS_URL: redis://redis:6379
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: "5432"
+      POSTGRES_USER: ${POSTGRES_USER:-aigency}
+      POSTGRES_DB: ${POSTGRES_DB:-aigency}
+      REDIS_HOST: redis
+      REDIS_PORT: "6379"
     volumes:
       - ../../services/aegis:/app/services/aegis:cached
       - ../../packages:/app/packages:cached
@@ -158,8 +182,12 @@ services:
       - "3015:3015"
     environment:
       PORT: "3015"
-      DATABASE_URL: postgresql://${POSTGRES_USER:-aigency}:${POSTGRES_PASSWORD:-aigency_dev}@postgres:5432/${POSTGRES_DB:-aigency}
-      REDIS_URL: redis://redis:6379
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: "5432"
+      POSTGRES_USER: ${POSTGRES_USER:-aigency}
+      POSTGRES_DB: ${POSTGRES_DB:-aigency}
+      REDIS_HOST: redis
+      REDIS_PORT: "6379"
     volumes:
       - ../../services/denchclaw:/app/services/denchclaw:cached
       - ../../packages:/app/packages:cached
@@ -173,8 +201,12 @@ services:
       - "3016:3016"
     environment:
       PORT: "3016"
-      DATABASE_URL: postgresql://${POSTGRES_USER:-aigency}:${POSTGRES_PASSWORD:-aigency_dev}@postgres:5432/${POSTGRES_DB:-aigency}
-      REDIS_URL: redis://redis:6379
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: "5432"
+      POSTGRES_USER: ${POSTGRES_USER:-aigency}
+      POSTGRES_DB: ${POSTGRES_DB:-aigency}
+      REDIS_HOST: redis
+      REDIS_PORT: "6379"
     volumes:
       - ../../services/gbrain:/app/services/gbrain:cached
       - ../../packages:/app/packages:cached
@@ -188,8 +220,12 @@ services:
       - "3007:3007"
     environment:
       PORT: "3007"
-      DATABASE_URL: postgresql://${POSTGRES_USER:-aigency}:${POSTGRES_PASSWORD:-aigency_dev}@postgres:5432/${POSTGRES_DB:-aigency}
-      REDIS_URL: redis://redis:6379
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: "5432"
+      POSTGRES_USER: ${POSTGRES_USER:-aigency}
+      POSTGRES_DB: ${POSTGRES_DB:-aigency}
+      REDIS_HOST: redis
+      REDIS_PORT: "6379"
     volumes:
       - ../../services/hcom-api:/app/services/hcom-api:cached
       - ../../packages:/app/packages:cached

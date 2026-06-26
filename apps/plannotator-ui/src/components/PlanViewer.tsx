@@ -28,7 +28,7 @@ interface PlanViewerProps {
   onSectionSelect: (id: string | null) => void;
 }
 
-export function PlanViewer({ plan, sections, annotations, role, selectedSection, onSectionSelect }: PlanViewerProps) {
+export function PlanViewer({ plan, sections, annotations, role: _role, selectedSection, onSectionSelect }: PlanViewerProps) {
   return (
     <div className="bg-surface/70 backdrop-blur-md rounded-md border border-border shadow-[inset_0_1px_0_0_rgba(255,255,255,0.06)] h-full overflow-auto">
       {/* Plan header */}
