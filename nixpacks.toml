@@ -1,4 +1,5 @@
 # nixpacks.toml — Railway build configuration
+# Only builds the packages needed for production (web + paperclip-api)
 
 [phases.setup]
 nixPkgs = ["nodejs_22", "pnpm_9"]
