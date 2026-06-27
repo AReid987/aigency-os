@@ -11,10 +11,10 @@ COPY packages/ packages/
 COPY apps/web/package.json apps/web/
 RUN pnpm install --frozen-lockfile
 
-# Build workspace packages first
-RUN pnpm --filter @vscp/shared-types run build 2>/dev/null || true
-RUN pnpm --filter @vscp/ui run build 2>/dev/null || true
-RUN pnpm --filter @vscp/api-client run build 2>/dev/null || true
+# Build ALL workspace packages first
+RUN pnpm --filter @vscp/shared-types run build
+RUN pnpm --filter @vscp/ui run build
+RUN pnpm --filter @vscp/api-client run build
 
 # Build frontend
 COPY apps/web/ apps/web/
@@ -30,8 +30,10 @@ COPY packages/ packages/
 COPY services/paperclip-api/package.json services/paperclip-api/
 RUN pnpm install --frozen-lockfile
 
-RUN pnpm --filter @vscp/shared-types run build 2>/dev/null || true
+# Build shared-types first (paperclip-api depends on it)
+RUN pnpm --filter @vscp/shared-types run build
 
+# Build API
 COPY services/paperclip-api/ services/paperclip-api/
 RUN pnpm --filter @vscp/paperclip-api run build
 
