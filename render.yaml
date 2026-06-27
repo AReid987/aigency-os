@@ -6,6 +6,7 @@ services:
     name: aigency-os
     runtime: docker
     dockerfilePath: ./Dockerfile
+    repo: https://github.com/AReid987/aigency-os
     plan: free
     region: oregon
     branch: main
