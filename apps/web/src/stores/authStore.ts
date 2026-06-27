@@ -1,4 +1,4 @@
-// ─── Auth Zustand Store ─────────────────────────────────────────────────────
+// ─── Auth Zustand Store — Real JWT Auth ─────────────────────────────────────
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
@@ -11,7 +11,6 @@ export interface User {
   name: string;
   role: AppRole;
   company?: string;
-  createdAt: string;
 }
 
 interface AuthState {
@@ -19,43 +18,13 @@ interface AuthState {
   token: string | null;
   isAuthenticated: boolean;
 
-  // Actions
   login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
   signup: (data: { email: string; password: string; name: string; company?: string }) => Promise<{ success: boolean; error?: string }>;
   logout: () => void;
-  updateProfile: (data: Partial<User>) => void;
+  checkAuth: () => Promise<void>;
 }
 
-// Demo accounts
-const DEMO_ACCOUNTS: Array<{ email: string; password: string; user: User }> = [
-  {
-    email: 'admin@aigency.os',
-    password: 'admin123',
-    user: {
-      id: 'user-admin',
-      email: 'admin@aigency.os',
-      name: 'Antonio Reid',
-      role: 'admin',
-      company: 'Aigency',
-      createdAt: new Date().toISOString(),
-    },
-  },
-  {
-    email: 'demo@domain.expert',
-    password: 'demo123',
-    user: {
-      id: 'user-de',
-      email: 'demo@domain.expert',
-      name: 'Sarah Chen',
-      role: 'domain_expert',
-      company: 'Acme Ventures',
-      createdAt: new Date().toISOString(),
-    },
-  },
-];
-
-// In-memory user registry (supplements demo accounts)
-let userRegistry: Array<{ email: string; password: string; user: User }> = [...DEMO_ACCOUNTS];
+const API_BASE = 'http://localhost:3001';
 
 export const useAuthStore = create<AuthState>()(
   persist(
@@ -65,69 +34,79 @@ export const useAuthStore = create<AuthState>()(
       isAuthenticated: false,
 
       login: async (email: string, password: string) => {
-        const account = userRegistry.find(
-          (a) => a.email.toLowerCase() === email.toLowerCase() && a.password === password
-        );
+        try {
+          const res = await fetch(`${API_BASE}/auth/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password }),
+          });
 
-        if (!account) {
-          return { success: false, error: 'Invalid email or password' };
+          if (!res.ok) {
+            const data = await res.json();
+            return { success: false, error: data.error || 'Login failed' };
+          }
+
+          const data = await res.json();
+          set({ user: data.user, token: data.token, isAuthenticated: true });
+          return { success: true };
+        } catch (err) {
+          return { success: false, error: 'Cannot reach auth server. Is Paperclip API running on port 3001?' };
         }
-
-        const token = `tok_${account.user.id}_${Date.now()}`;
-        set({ user: account.user, token, isAuthenticated: true });
-        return { success: true };
       },
 
       signup: async (data) => {
-        const exists = userRegistry.find(
-          (a) => a.email.toLowerCase() === data.email.toLowerCase()
-        );
+        try {
+          const res = await fetch(`${API_BASE}/auth/register`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+          });
 
-        if (exists) {
-          return { success: false, error: 'An account with this email already exists' };
+          if (!res.ok) {
+            const errData = await res.json();
+            return { success: false, error: errData.error || 'Signup failed' };
+          }
+
+          const resData = await res.json();
+          set({ user: resData.user, token: resData.token, isAuthenticated: true });
+          return { success: true };
+        } catch (err) {
+          return { success: false, error: 'Cannot reach auth server. Is Paperclip API running on port 3001?' };
         }
-
-        const newUser: User = {
-          id: `user-${Date.now()}`,
-          email: data.email,
-          name: data.name,
-          role: 'domain_expert', // All signups are domain experts
-          company: data.company,
-          createdAt: new Date().toISOString(),
-        };
-
-        userRegistry.push({ email: data.email, password: data.password, user: newUser });
-
-        const token = `tok_${newUser.id}_${Date.now()}`;
-        set({ user: newUser, token, isAuthenticated: true });
-        return { success: true };
       },
 
       logout: () => {
         set({ user: null, token: null, isAuthenticated: false });
       },
 
-      updateProfile: (data) => {
-        const { user } = get();
-        if (user) {
-          set({ user: { ...user, ...data } });
+      checkAuth: async () => {
+        const { token } = get();
+        if (!token) return;
+
+        try {
+          const res = await fetch(`${API_BASE}/auth/me`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+
+          if (!res.ok) {
+            set({ user: null, token: null, isAuthenticated: false });
+            return;
+          }
+
+          const user = await res.json();
+          set({ user, isAuthenticated: true });
+        } catch {
+          // Server not reachable — keep cached user
         }
       },
     }),
     {
       name: 'aigency-auth',
-      partialize: (state) => ({ user: state.user, token: state.token, isAuthenticated: state.isAuthenticated }),
+      partialize: (state) => ({
+        user: state.user,
+        token: state.token,
+        isAuthenticated: state.isAuthenticated,
+      }),
     }
   )
 );
-
-// Helper: check if current user is admin
-export function isAdmin(): boolean {
-  return useAuthStore.getState().user?.role === 'admin';
-}
-
-// Helper: check if current user can access admin-only features
-export function canAccessAdmin(): boolean {
-  const role = useAuthStore.getState().user?.role;
-  return role === 'admin' || role === 'technical_founder';
-}

@@ -8,6 +8,7 @@ import { budgetRoutes } from './routes/budgets.js';
 import { heartbeatRoutes } from './routes/heartbeat.js';
 import { boardRoutes } from './routes/board.js';
 import { dashboardRoutes } from './routes/dashboard.js';
+import { authRoutes } from './routes/auth.js';
 import { registerMetrics } from '@vscp/shared-types/metrics-helper';
 
 const app = Fastify({ logger: true });
@@ -35,6 +36,7 @@ await app.register(budgetRoutes);
 await app.register(heartbeatRoutes);
 await app.register(boardRoutes);
 await app.register(dashboardRoutes);
+await app.register(authRoutes);
 
 // ─── Start Server ───────────────────────────────────────────────────────
 const port = Number(process.env.PORT) || 3001;
