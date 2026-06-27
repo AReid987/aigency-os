@@ -1,49 +1,51 @@
 # ─── Aigency OS Production Dockerfile ────────────────────────────────────────
 # Multi-stage build: frontend + API in a single container.
-# Runs on port 3001 by default.
 
-# Stage 1: Build frontend
+# Stage 1: Build workspace packages + frontend
 FROM node:22-slim AS frontend-builder
-RUN corepack enable && corepack prepare pnpm@latest --activate
+RUN corepack enable && corepack prepare pnpm@9.15.0 --activate
 WORKDIR /app
-COPY pnpm-workspace.yaml pnpm-lock.yaml package.json ./
-COPY apps/web/package.json apps/web/
+
+COPY pnpm-workspace.yaml pnpm-lock.yaml package.json tsconfig.base.json ./
 COPY packages/ packages/
-RUN pnpm install --frozen-lockfile --filter @vscp/web...
+COPY apps/web/package.json apps/web/
+RUN pnpm install --frozen-lockfile
+
+# Build workspace packages first
+RUN pnpm --filter @vscp/shared-types run build 2>/dev/null || true
+RUN pnpm --filter @vscp/ui run build 2>/dev/null || true
+RUN pnpm --filter @vscp/api-client run build 2>/dev/null || true
+
+# Build frontend
 COPY apps/web/ apps/web/
-COPY tsconfig.base.json ./
 RUN pnpm --filter @vscp/web run build
 
 # Stage 2: Build API
 FROM node:22-slim AS api-builder
-RUN corepack enable && corepack prepare pnpm@latest --activate
+RUN corepack enable && corepack prepare pnpm@9.15.0 --activate
 WORKDIR /app
-COPY pnpm-workspace.yaml pnpm-lock.yaml package.json ./
-COPY services/paperclip-api/package.json services/paperclip-api/
+
+COPY pnpm-workspace.yaml pnpm-lock.yaml package.json tsconfig.base.json ./
 COPY packages/ packages/
-RUN pnpm install --frozen-lockfile --filter @vscp/paperclip-api...
+COPY services/paperclip-api/package.json services/paperclip-api/
+RUN pnpm install --frozen-lockfile
+
+RUN pnpm --filter @vscp/shared-types run build 2>/dev/null || true
+
 COPY services/paperclip-api/ services/paperclip-api/
-COPY tsconfig.base.json ./
 RUN pnpm --filter @vscp/paperclip-api run build
 
 # Stage 3: Production
 FROM node:22-slim AS production
-RUN corepack enable && corepack prepare pnpm@latest --activate
 WORKDIR /app
 
-# Copy built API
 COPY --from=api-builder /app/services/paperclip-api/dist ./services/paperclip-api/dist
 COPY --from=api-builder /app/services/paperclip-api/package.json ./services/paperclip-api/
 COPY --from=api-builder /app/node_modules ./node_modules
-COPY --from=api-builder /app/services/paperclip-api/node_modules ./services/paperclip-api/node_modules
-
-# Copy built frontend
 COPY --from=frontend-builder /app/apps/web/dist ./apps/web/dist
 
-# Data directory for SQLite
 RUN mkdir -p /app/data
 
-# Environment
 ENV NODE_ENV=production
 ENV PORT=3001
 ENV HOST=0.0.0.0
@@ -56,7 +58,6 @@ ENV ADMIN_NAME="Antonio Reid"
 
 EXPOSE 3001
 
-# Health check
 HEALTHCHECK --interval=30s --timeout=5s --retries=3 \
   CMD curl -f http://localhost:3001/health || exit 1
 
