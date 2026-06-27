@@ -3,12 +3,43 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { z } from 'zod';
 import crypto from 'node:crypto';
+import Database from 'better-sqlite3';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 // ─── Config ─────────────────────────────────────────────────────────────────
 
-const JWT_SECRET = 'aigency-dev-secret-change-in-production';
-const JWT_EXPIRES_IN = '7d';
+const JWT_SECRET = process.env.JWT_SECRET || 'aigency-dev-secret-change-in-production';
+const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '7d';
 const SALT_ROUNDS = 10;
+
+// ─── SQLite Database ────────────────────────────────────────────────────────
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const DB_PATH = process.env.AUTH_DB_PATH || path.join(__dirname, '..', '..', 'data', 'auth.db');
+
+// Ensure data directory exists
+import fs from 'node:fs';
+fs.mkdirSync(path.dirname(DB_PATH), { recursive: true });
+
+const db = new Database(DB_PATH);
+db.pragma('journal_mode = WAL');
+db.pragma('foreign_keys = ON');
+
+db.exec(`
+  CREATE TABLE IF NOT EXISTS users (
+    id TEXT PRIMARY KEY,
+    email TEXT UNIQUE NOT NULL,
+    name TEXT NOT NULL,
+    role TEXT NOT NULL DEFAULT 'domain_expert',
+    company TEXT,
+    password_hash TEXT NOT NULL,
+    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+  );
+  CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
+  CREATE INDEX IF NOT EXISTS idx_users_role ON users(role);
+`);
 
 // ─── Schemas ────────────────────────────────────────────────────────────────
 
@@ -24,7 +55,7 @@ const LoginSchema = z.object({
   password: z.string(),
 });
 
-// ─── In-Memory User Store ───────────────────────────────────────────────────
+// ─── DB Helpers ─────────────────────────────────────────────────────────────
 
 interface StoredUser {
   id: string;
@@ -32,23 +63,44 @@ interface StoredUser {
   name: string;
   role: 'admin' | 'technical_founder' | 'domain_expert';
   company?: string;
-  passwordHash: string;
-  createdAt: string;
+  password_hash: string;
+  created_at: string;
+  updated_at: string;
 }
 
-const users = new Map<string, StoredUser>();
+function findUserByEmail(email: string): StoredUser | undefined {
+  return db.prepare('SELECT * FROM users WHERE email = ?').get(email.toLowerCase()) as StoredUser | undefined;
+}
 
-// Seed admin account
-const adminId = crypto.randomUUID();
-users.set(adminId, {
-  id: adminId,
-  email: 'admin@aigency.os',
-  name: 'Antonio Reid',
-  role: 'admin',
-  company: 'Aigency',
-  passwordHash: bcrypt.hashSync('admin123', SALT_ROUNDS),
-  createdAt: new Date().toISOString(),
-});
+function findUserById(id: string): StoredUser | undefined {
+  return db.prepare('SELECT * FROM users WHERE id = ?').get(id) as StoredUser | undefined;
+}
+
+function createUser(data: { email: string; name: string; role: string; company?: string; passwordHash: string }): StoredUser {
+  const id = crypto.randomUUID();
+  const now = new Date().toISOString();
+  db.prepare(
+    'INSERT INTO users (id, email, name, role, company, password_hash, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
+  ).run(id, data.email.toLowerCase(), data.name, data.role, data.company || null, data.passwordHash, now, now);
+  return findUserById(id)!;
+}
+
+// ─── Seed Admin Account ─────────────────────────────────────────────────────
+
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@aigency.os';
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin123';
+const ADMIN_NAME = process.env.ADMIN_NAME || 'Antonio Reid';
+
+if (!findUserByEmail(ADMIN_EMAIL)) {
+  createUser({
+    email: ADMIN_EMAIL,
+    name: ADMIN_NAME,
+    role: 'admin',
+    company: 'Aigency',
+    passwordHash: bcrypt.hashSync(ADMIN_PASSWORD, SALT_ROUNDS),
+  });
+  console.log(`[Auth] Seeded admin account: ${ADMIN_EMAIL}`);
+}
 
 // ─── JWT Helpers ────────────────────────────────────────────────────────────
 
@@ -56,7 +108,7 @@ function signToken(user: StoredUser): string {
   return jwt.sign(
     { sub: user.id, email: user.email, role: user.role },
     JWT_SECRET,
-    { expiresIn: JWT_EXPIRES_IN }
+    { expiresIn: JWT_EXPIRES_IN } as jwt.SignOptions
   );
 }
 
@@ -70,7 +122,7 @@ function verifyToken(token: string): { sub: string; email: string; role: string 
 
 // ─── Auth Middleware ────────────────────────────────────────────────────────
 
-export function authMiddleware(request: any, reply: any, done: any) {
+export async function authMiddleware(request: any, reply: any) {
   const authHeader = request.headers.authorization;
   if (!authHeader?.startsWith('Bearer ')) {
     return reply.code(401).send({ error: 'Missing or invalid authorization header' });
@@ -83,13 +135,12 @@ export function authMiddleware(request: any, reply: any, done: any) {
   }
 
   request.user = payload;
-  done();
 }
 
 // ─── Routes ─────────────────────────────────────────────────────────────────
 
 export async function authRoutes(app: FastifyInstance) {
-  // POST /auth/register
+  // POST /auth/register — creates domain_expert accounts
   app.post('/auth/register', async (request, reply) => {
     const parsed = RegisterSchema.safeParse(request.body);
     if (!parsed.success) {
@@ -98,25 +149,20 @@ export async function authRoutes(app: FastifyInstance) {
 
     const { email, password, name, company } = parsed.data;
 
-    const existing = Array.from(users.values()).find(
-      (u) => u.email.toLowerCase() === email.toLowerCase()
-    );
+    const existing = findUserByEmail(email);
     if (existing) {
       return reply.code(409).send({ error: 'An account with this email already exists' });
     }
 
     const passwordHash = bcrypt.hashSync(password, SALT_ROUNDS);
-    const user: StoredUser = {
-      id: crypto.randomUUID(),
+    const user = createUser({
       email,
       name,
       role: 'domain_expert',
       company,
       passwordHash,
-      createdAt: new Date().toISOString(),
-    };
+    });
 
-    users.set(user.id, user);
     const token = signToken(user);
 
     return reply.code(201).send({
@@ -133,12 +179,9 @@ export async function authRoutes(app: FastifyInstance) {
     }
 
     const { email, password } = parsed.data;
+    const user = findUserByEmail(email);
 
-    const user = Array.from(users.values()).find(
-      (u) => u.email.toLowerCase() === email.toLowerCase()
-    );
-
-    if (!user || !bcrypt.compareSync(password, user.passwordHash)) {
+    if (!user || !bcrypt.compareSync(password, user.password_hash)) {
       return reply.code(401).send({ error: 'Invalid email or password' });
     }
 
@@ -151,11 +194,11 @@ export async function authRoutes(app: FastifyInstance) {
   });
 
   // GET /auth/me
-  app.get('/auth/me', { preHandler: authMiddleware }, async (request) => {
+  app.get('/auth/me', { preHandler: authMiddleware }, async (request, reply) => {
     const payload = (request as any).user;
-    const user = users.get(payload.sub);
+    const user = findUserById(payload.sub);
     if (!user) {
-      throw new Error('User not found');
+      return reply.code(404).send({ error: 'User not found' });
     }
     return {
       id: user.id,
@@ -173,15 +216,8 @@ export async function authRoutes(app: FastifyInstance) {
       return reply.code(403).send({ error: 'Admin access required' });
     }
 
-    return Array.from(users.values()).map((u) => ({
-      id: u.id,
-      email: u.email,
-      name: u.name,
-      role: u.role,
-      company: u.company,
-      createdAt: u.createdAt,
-    }));
+    return db.prepare('SELECT id, email, name, role, company, created_at FROM users ORDER BY created_at DESC').all();
   });
 }
 
-export { users, signToken, verifyToken };
+export { signToken, verifyToken };

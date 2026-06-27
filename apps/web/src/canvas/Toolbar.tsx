@@ -16,6 +16,9 @@ import {
   DollarSign,
   Shield,
   FileCode,
+  Users,
+  TrendingUp,
+  Target,
 } from 'lucide-react';
 
 interface ToolbarProps {
@@ -31,6 +34,9 @@ const CARD_TYPES: { type: CardType; label: string; icon: React.ReactNode }[] = [
   { type: 'revenue', label: 'Revenue Calc', icon: <DollarSign size={16} className="text-success" /> },
   { type: 'gate', label: 'Milestone Gate', icon: <Shield size={16} className="text-accent" /> },
   { type: 'spec', label: 'TECH-SPEC', icon: <FileCode size={16} className="text-info" /> },
+  { type: 'agent-status', label: 'Agent Status', icon: <Users size={16} className="text-primary" /> },
+  { type: 'crm-pipeline', label: 'CRM Pipeline', icon: <TrendingUp size={16} className="text-success" /> },
+  { type: 'mission', label: 'Missions', icon: <Target size={16} className="text-amber" /> },
 ];
 
 export function Toolbar({ onAddCard }: ToolbarProps) {

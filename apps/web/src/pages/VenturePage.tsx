@@ -1,17 +1,31 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import { useCanvasStore } from '../stores/canvasStore';
 import { useAuthStore } from '../stores/authStore';
 import { Badge } from '@vscp/ui';
-import { Lightbulb, ArrowRight, ArrowLeft, Loader, CheckCircle, MessageSquare } from 'lucide-react';
+import { Lightbulb, ArrowRight, ArrowLeft, Loader, CheckCircle, MessageSquare, Users, Briefcase, Cpu, Zap } from 'lucide-react';
+import { paperclipApi } from '../api/services';
 
-type Step = 'input' | 'questions' | 'rearticulation' | 'plan' | 'approved';
+// ─── Types ───────────────────────────────────────────────────────────────────
+
+type Step = 'input' | 'questions' | 'rearticulation' | 'plan' | 'approved' | 'ceo_hiring' | 'team_assembly' | 'execution_started';
 
 interface Question {
   id: string;
   question: string;
   answer: string;
 }
+
+interface AgentSpec {
+  name: string;
+  role: string;
+  adapterType: string;
+  heartbeatSchedule: string;
+  icon: React.ReactNode;
+  hired: boolean;
+}
+
+// ─── Constants ───────────────────────────────────────────────────────────────
 
 const PAUL_QUESTIONS: Question[] = [
   { id: 'q1', question: 'Who is the target customer? Describe their demographics, pain points, and current solutions they use.', answer: '' },
@@ -20,6 +34,18 @@ const PAUL_QUESTIONS: Question[] = [
   { id: 'q4', question: 'What are the key milestones for the first 90 days?', answer: '' },
   { id: 'q5', question: 'What are the biggest risks or assumptions that need validation?', answer: '' },
 ];
+
+const INITIAL_AGENT_SPECS: AgentSpec[] = [
+  { name: 'Atlas', role: 'CTO', adapterType: 'openai', heartbeatSchedule: '*/5 * * * *', icon: <Cpu size={20} className="text-primary" />, hired: false },
+  { name: 'Nova', role: 'CMO', adapterType: 'anthropic', heartbeatSchedule: '*/10 * * * *', icon: <Lightbulb size={20} className="text-amber" />, hired: false },
+  { name: 'Blitz', role: 'Sales Lead', adapterType: 'openai', heartbeatSchedule: '*/15 * * * *', icon: <Zap size={20} className="text-success" />, hired: false },
+  { name: 'Forge', role: 'Engineer', adapterType: 'openai', heartbeatSchedule: '*/5 * * * *', icon: <Cpu size={20} className="text-accent" />, hired: false },
+];
+
+const STEP_LABELS = ['Idea', 'Questions', 'Rearticulate', 'Plan', 'Approved', 'CEO Hiring', 'Team Assembly', 'Execution'];
+const STEP_KEYS: Step[] = ['input', 'questions', 'rearticulation', 'plan', 'approved', 'ceo_hiring', 'team_assembly', 'execution_started'];
+
+// ─── Component ───────────────────────────────────────────────────────────────
 
 export function VenturePage() {
   const navigate = useNavigate();
@@ -37,6 +63,12 @@ export function VenturePage() {
     sections: Array<{ title: string; content: string; type: string }>;
   } | null>(null);
 
+  // CEO Hiring state
+  const [ceoPhase, setCeoPhase] = useState<'analyzing' | 'summary'>('analyzing');
+  const [agentSpecs, setAgentSpecs] = useState<AgentSpec[]>(INITIAL_AGENT_SPECS);
+  const [hiringIndex, setHiringIndex] = useState(0);
+  const [companyId, setCompanyId] = useState<string | null>(null);
+
   // Step 1: Submit idea → get clarifying questions
   const handleSubmitIdea = () => {
     if (!idea.trim()) return;
@@ -46,9 +78,8 @@ export function VenturePage() {
   // Step 2: Answer questions → generate rearticulation
   const handleAnswerQuestions = () => {
     const answered = questions.filter((q) => q.answer.trim());
-    if (answered.length < 3) return; // Need at least 3 answers
+    if (answered.length < 3) return;
 
-    // Generate rearticulation from answers
     const target = questions.find((q) => q.id === 'q1')?.answer || 'Not specified';
     const value = questions.find((q) => q.id === 'q2')?.answer || 'Not specified';
     const revenue = questions.find((q) => q.id === 'q3')?.answer || 'Subscription model';
@@ -83,7 +114,6 @@ ${risks}`;
   const handleApproveRearticulation = () => {
     setStep('plan');
 
-    // Generate structured plan (in production, this calls PAUL API)
     setTimeout(() => {
       const target = questions.find((q) => q.id === 'q1')?.answer || 'target market';
       const value = questions.find((q) => q.id === 'q2')?.answer || 'value prop';
@@ -112,15 +142,12 @@ ${risks}`;
   const handleApprovePlan = () => {
     if (!plan) return;
 
-    // Create a new zone on the canvas for this venture
     const zoneName = plan.title;
     createZone('business', zoneName, { x: 0, y: 0 });
 
-    // Get the newly created zone ID
     const zones = useCanvasStore.getState().zones;
     const newZone = zones[zones.length - 1];
 
-    // Create BMC card
     createCard('bmc', newZone.id, { x: 60, y: 80 }, {
       title: `${zoneName} — Business Model Canvas`,
       partners: '', activities: '', resources: '',
@@ -130,13 +157,11 @@ ${risks}`;
       cost: '', revenue: questions.find((q) => q.id === 'q3')?.answer || '',
     });
 
-    // Create Revenue card
     createCard('revenue', newZone.id, { x: 500, y: 80 }, {
       title: `${zoneName} — Revenue Model`,
       model: 'subscription', price: 49, customers: 0, churn: 5, cac: 100,
     });
 
-    // Create Gate card for milestone approval
     createCard('gate', newZone.id, { x: 60, y: 440 }, {
       title: 'Venture Approval',
       status: 'approved',
@@ -147,9 +172,73 @@ ${risks}`;
     setStep('approved');
   };
 
+  // Step 5: Approved → begin CEO hiring
+  const handleBeginCeoHiring = () => {
+    setStep('ceo_hiring');
+    setCeoPhase('analyzing');
+
+    // Simulate CEO analysis phase
+    setTimeout(() => setCeoPhase('summary'), 3000);
+  };
+
+  // Step 6: CEO Hiring summary → begin team assembly
+  const handleBeginTeamAssembly = async () => {
+    setStep('team_assembly');
+    setHiringIndex(0);
+
+    // Create company in Paperclip
+    try {
+      const company = await paperclipApi.createCompany({
+        name: plan?.title || idea.slice(0, 60),
+        type: 'venture',
+        founderId: user?.id,
+      });
+      setCompanyId((company as any)?.id || (company as any)?.companyId || 'demo-company');
+    } catch {
+      setCompanyId('demo-company');
+    }
+  };
+
+  // Sequential agent hiring animation
+  useEffect(() => {
+    if (step !== 'team_assembly') return;
+    if (hiringIndex >= INITIAL_AGENT_SPECS.length) {
+      // All agents hired → move to execution
+      setTimeout(() => setStep('execution_started'), 1500);
+      return;
+    }
+
+    const timer = setTimeout(async () => {
+      const agent = INITIAL_AGENT_SPECS[hiringIndex];
+
+      // Try to register agent with Paperclip API
+      if (companyId && companyId !== 'demo-company') {
+        try {
+          await paperclipApi.createAgent(companyId, {
+            name: agent.name,
+            role: agent.role,
+            adapterType: agent.adapterType,
+            heartbeatSchedule: agent.heartbeatSchedule,
+          });
+        } catch {
+          // Continue animation even if API fails
+        }
+      }
+
+      setAgentSpecs((prev) =>
+        prev.map((a, i) => (i === hiringIndex ? { ...a, hired: true } : a))
+      );
+      setHiringIndex((prev) => prev + 1);
+    }, 1800);
+
+    return () => clearTimeout(timer);
+  }, [step, hiringIndex, companyId]);
+
   const updateQuestion = (id: string, answer: string) => {
     setQuestions((prev) => prev.map((q) => (q.id === id ? { ...q, answer } : q)));
   };
+
+  const currentStepIdx = STEP_KEYS.indexOf(step);
 
   return (
     <div className="p-6 h-full overflow-auto">
@@ -161,15 +250,13 @@ ${risks}`;
 
         {/* Progress steps */}
         <div className="flex items-center gap-2 mb-8 flex-wrap">
-          {['Idea', 'Questions', 'Rearticulate', 'Plan', 'Approved'].map((s, i) => {
-            const stepMap: Record<string, Step> = { Idea: 'input', Questions: 'questions', Rearticulate: 'rearticulation', Plan: 'plan', Approved: 'approved' };
-            const currentIdx = ['input', 'questions', 'rearticulation', 'plan', 'approved'].indexOf(step);
-            const isActive = i <= currentIdx;
+          {STEP_LABELS.map((s, i) => {
+            const isActive = i <= currentStepIdx;
             return (
               <React.Fragment key={s}>
                 {i > 0 && <div className={`w-6 h-px ${isActive ? 'bg-primary' : 'bg-border'}`} />}
                 <div className={`flex items-center gap-1 px-2.5 py-1 rounded-md text-[10px] font-medium ${isActive ? 'bg-primary-muted text-primary' : 'text-fg-muted'}`}>
-                  {i < currentIdx ? <CheckCircle size={10} /> : null}
+                  {i < currentStepIdx ? <CheckCircle size={10} /> : null}
                   {s}
                 </div>
               </React.Fragment>
@@ -177,7 +264,7 @@ ${risks}`;
           })}
         </div>
 
-        {/* Step 1: Input idea */}
+        {/* ── Step 1: Input idea ────────────────────────────────────────────── */}
         {step === 'input' && (
           <div className="bg-surface/70 backdrop-blur-md rounded-md border border-border p-6">
             <h2 className="text-lg font-bold mb-4">What venture do you want to build?</h2>
@@ -198,7 +285,7 @@ ${risks}`;
           </div>
         )}
 
-        {/* Step 2: Clarifying questions */}
+        {/* ── Step 2: Clarifying questions ──────────────────────────────────── */}
         {step === 'questions' && (
           <div className="bg-surface/70 backdrop-blur-md rounded-md border border-border p-6">
             <div className="flex items-center gap-2 mb-6">
@@ -235,7 +322,7 @@ ${risks}`;
           </div>
         )}
 
-        {/* Step 3: Rearticulation */}
+        {/* ── Step 3: Rearticulation ────────────────────────────────────────── */}
         {step === 'rearticulation' && (
           <div className="bg-surface/70 backdrop-blur-md rounded-md border border-border p-6">
             <h2 className="text-lg font-bold mb-2">Venture Rearticulation</h2>
@@ -256,7 +343,7 @@ ${risks}`;
           </div>
         )}
 
-        {/* Step 4: Plan */}
+        {/* ── Step 4: Plan ──────────────────────────────────────────────────── */}
         {step === 'plan' && plan && (
           <div className="space-y-6">
             <div className="bg-surface/70 backdrop-blur-md rounded-md border border-border p-6">
@@ -305,18 +392,216 @@ ${risks}`;
           </div>
         )}
 
-        {/* Step 5: Approved */}
+        {/* ── Step 5: Approved ──────────────────────────────────────────────── */}
         {step === 'approved' && (
           <div className="bg-surface/70 backdrop-blur-md rounded-md border border-border p-8 text-center">
             <CheckCircle size={48} className="text-success mx-auto mb-4" />
             <h2 className="text-xl font-bold mb-2">Venture Created!</h2>
             <p className="text-sm text-fg-muted mb-6">Your venture has been added to the canvas with a Business Model Canvas and Revenue Calculator.</p>
-            <button
-              onClick={() => navigate('/')}
-              className="px-6 py-2.5 bg-primary text-fg-inverse font-semibold rounded-md hover:bg-primary-dark transition-colors"
-            >
-              Go to Canvas
-            </button>
+            <div className="flex gap-3 justify-center">
+              <button
+                onClick={handleBeginCeoHiring}
+                className="px-6 py-2.5 bg-primary text-fg-inverse font-semibold rounded-md hover:bg-primary-dark transition-colors flex items-center gap-2"
+              >
+                <Users size={16} /> Begin CEO Hiring
+              </button>
+              <button
+                onClick={() => navigate('/')}
+                className="px-6 py-2.5 text-fg-muted hover:text-fg border border-border rounded-md transition-colors"
+              >
+                Go to Canvas
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* ── Step 6: CEO Hiring ────────────────────────────────────────────── */}
+        {step === 'ceo_hiring' && (
+          <div className="bg-surface/70 backdrop-blur-md rounded-md border border-border p-6">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 rounded-full bg-primary-muted flex items-center justify-center">
+                <Briefcase size={20} className="text-primary" />
+              </div>
+              <div>
+                <h2 className="text-lg font-bold">CEO Agent</h2>
+                <p className="text-xs text-fg-muted">Analyzing venture plan</p>
+              </div>
+            </div>
+
+            {ceoPhase === 'analyzing' ? (
+              <div className="text-center py-12">
+                <Loader size={32} className="animate-spin text-primary mx-auto mb-4" />
+                <p className="text-sm text-fg-secondary mb-2">CEO agent is analyzing your venture plan...</p>
+                <p className="text-xs text-fg-muted">Evaluating requirements, identifying skill gaps, and determining optimal team composition.</p>
+
+                <div className="mt-8 max-w-md mx-auto space-y-2">
+                  {['Reviewing business requirements...', 'Evaluating technical complexity...', 'Identifying required roles...', 'Calculating resource allocation...'].map((text, i) => (
+                    <div key={i} className="flex items-center gap-2 text-xs text-fg-muted" style={{ animationDelay: `${i * 0.7}s` }}>
+                      <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" style={{ animationDelay: `${i * 0.7}s` }} />
+                      {text}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <div>
+                <p className="text-sm text-fg-secondary mb-6">Based on your venture plan, the CEO agent recommends hiring the following team:</p>
+
+                <div className="grid grid-cols-2 gap-3">
+                  {INITIAL_AGENT_SPECS.map((agent) => (
+                    <div key={agent.name} className="p-4 rounded-md bg-hover/40 border border-border">
+                      <div className="flex items-center gap-3 mb-2">
+                        {agent.icon}
+                        <div>
+                          <p className="text-sm font-semibold">{agent.name}</p>
+                          <p className="text-xs text-fg-muted">{agent.role}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2 mt-2">
+                        <Badge variant="neutral">{agent.adapterType}</Badge>
+                        <span className="text-[10px] text-fg-muted">HB: {agent.heartbeatSchedule}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <button
+                  onClick={handleBeginTeamAssembly}
+                  className="mt-6 px-6 py-2.5 bg-primary text-fg-inverse font-semibold rounded-md hover:bg-primary-dark transition-colors flex items-center gap-2"
+                >
+                  <Users size={16} /> Assemble Team
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* ── Step 7: Team Assembly ─────────────────────────────────────────── */}
+        {step === 'team_assembly' && (
+          <div className="bg-surface/70 backdrop-blur-md rounded-md border border-border p-6">
+            <div className="flex items-center gap-3 mb-6">
+              <Users size={20} className="text-primary" />
+              <h2 className="text-lg font-bold">Assembling Team</h2>
+              <Badge variant="info">{agentSpecs.filter((a) => a.hired).length}/{agentSpecs.length} hired</Badge>
+            </div>
+
+            <div className="space-y-3">
+              {agentSpecs.map((agent, i) => (
+                <div
+                  key={agent.name}
+                  className={`p-4 rounded-md border transition-all duration-500 ${
+                    agent.hired
+                      ? 'bg-elevated/50 border-primary/30 opacity-100 translate-x-0'
+                      : i === hiringIndex
+                        ? 'bg-hover/40 border-amber/30 opacity-80'
+                        : 'bg-surface/30 border-border opacity-30'
+                  }`}
+                  style={{
+                    transform: agent.hired ? 'translateX(0)' : i === hiringIndex ? 'translateX(0)' : 'translateX(-10px)',
+                  }}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      {agent.icon}
+                      <div>
+                        <p className="text-sm font-semibold">{agent.name}</p>
+                        <p className="text-xs text-fg-muted">{agent.role} • {agent.adapterType}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {agent.hired ? (
+                        <Badge variant="success">
+                          <CheckCircle size={10} className="mr-1" /> Active
+                        </Badge>
+                      ) : i === hiringIndex ? (
+                        <Badge variant="warning">
+                          <Loader size={10} className="animate-spin mr-1" /> Hiring...
+                        </Badge>
+                      ) : (
+                        <Badge variant="neutral">Pending</Badge>
+                      )}
+                      <span className="text-[10px] text-fg-muted font-mono">{agent.heartbeatSchedule}</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* ── Step 8: Execution Started ─────────────────────────────────────── */}
+        {step === 'execution_started' && (
+          <div className="space-y-6">
+            <div className="bg-surface/70 backdrop-blur-md rounded-md border border-border p-8 text-center">
+              <CheckCircle size={48} className="text-success mx-auto mb-4" />
+              <h2 className="text-xl font-bold mb-2">Execution Started!</h2>
+              <p className="text-sm text-fg-muted mb-6">
+                Your team of {agentSpecs.length} AI agents has been assembled and is now executing the venture plan.
+              </p>
+            </div>
+
+            {/* Team summary */}
+            <div className="bg-surface/70 backdrop-blur-md rounded-md border border-border p-6">
+              <h3 className="text-xs font-semibold text-fg-muted uppercase tracking-wider mb-4">Assembled Team</h3>
+              <div className="grid grid-cols-2 gap-3">
+                {agentSpecs.map((agent) => (
+                  <div key={agent.name} className="flex items-center gap-3 p-3 rounded-md bg-hover/40 border border-border">
+                    {agent.icon}
+                    <div>
+                      <p className="text-sm font-medium">{agent.name}</p>
+                      <p className="text-xs text-fg-muted">{agent.role}</p>
+                    </div>
+                    <Badge variant="success">Active</Badge>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Navigation links */}
+            <div className="bg-surface/70 backdrop-blur-md rounded-md border border-border p-6">
+              <h3 className="text-xs font-semibold text-fg-muted uppercase tracking-wider mb-4">Monitor & Control</h3>
+              <div className="grid grid-cols-3 gap-3">
+                <Link
+                  to="/swarm"
+                  className="p-4 rounded-md bg-hover/40 border border-border hover:border-primary/30 transition-colors text-center"
+                >
+                  <Users size={24} className="text-primary mx-auto mb-2" />
+                  <p className="text-sm font-medium">Swarm</p>
+                  <p className="text-xs text-fg-muted">Agent coordination</p>
+                </Link>
+                <Link
+                  to="/conductor"
+                  className="p-4 rounded-md bg-hover/40 border border-border hover:border-primary/30 transition-colors text-center"
+                >
+                  <Zap size={24} className="text-amber mx-auto mb-2" />
+                  <p className="text-sm font-medium">Conductor</p>
+                  <p className="text-xs text-fg-muted">Task orchestration</p>
+                </Link>
+                <Link
+                  to="/orchestrator"
+                  className="p-4 rounded-md bg-hover/40 border border-border hover:border-primary/30 transition-colors text-center"
+                >
+                  <Cpu size={24} className="text-accent mx-auto mb-2" />
+                  <p className="text-sm font-medium">Orchestrator</p>
+                  <p className="text-xs text-fg-muted">System overview</p>
+                </Link>
+              </div>
+            </div>
+
+            <div className="flex gap-3 justify-center">
+              <button
+                onClick={() => navigate('/swarm')}
+                className="px-6 py-2.5 bg-primary text-fg-inverse font-semibold rounded-md hover:bg-primary-dark transition-colors"
+              >
+                Go to Swarm
+              </button>
+              <button
+                onClick={() => navigate('/')}
+                className="px-6 py-2.5 text-fg-muted hover:text-fg border border-border rounded-md transition-colors"
+              >
+                Go to Canvas
+              </button>
+            </div>
           </div>
         )}
       </div>

@@ -1,0 +1,31 @@
+# render.yaml — Render Blueprint for Aigency OS
+# Free tier: no persistent disk (SQLite resets on deploy — acceptable for launch)
+
+services:
+  - type: web
+    name: aigency-os
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    region: oregon
+    branch: main
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: "10000"
+      - key: HOST
+        value: "0.0.0.0"
+      - key: FRONTEND_PATH
+        value: /app/apps/web/dist
+      - key: AUTH_DB_PATH
+        value: /app/data/auth.db
+      - key: JWT_SECRET
+        generateValue: true
+      - key: ADMIN_EMAIL
+        value: admin@aigency.os
+      - key: ADMIN_PASSWORD
+        generateValue: true
+      - key: ADMIN_NAME
+        value: Antonio Reid

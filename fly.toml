@@ -1,0 +1,45 @@
+# fly.toml — Fly.io configuration for Aigency OS
+# Created automatically. Run 'flyctl launch' to deploy.
+
+app = 'aigency-os'
+primary_region = 'iad'
+
+[build]
+  dockerfile = 'Dockerfile'
+
+[env]
+  NODE_ENV = 'production'
+  PORT = '3001'
+  HOST = '0.0.0.0'
+  FRONTEND_PATH = '/app/apps/web/dist'
+  AUTH_DB_PATH = '/data/auth.db'
+  ADMIN_EMAIL = 'admin@aigency.os'
+  ADMIN_NAME = 'Antonio Reid'
+
+[http_service]
+  internal_port = 3001
+  force_https = true
+  auto_stop_machines = 'stop'
+  auto_start_machines = true
+  min_machines_running = 0
+
+  [http_service.concurrency]
+    type = 'connections'
+    hard_limit = 250
+    soft_limit = 200
+
+[[http_service.checks]]
+  grace_period = '10s'
+  interval = '30s'
+  method = 'GET'
+  timeout = '5s'
+  path = '/health'
+
+# Persistent volume for SQLite database
+[[mounts]]
+  source = 'aigency_data'
+  destination = '/data'
+
+[[vm]]
+  size = 'shared-cpu-1x'
+  memory = '512mb'

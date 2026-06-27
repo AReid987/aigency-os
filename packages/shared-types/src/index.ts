@@ -10,7 +10,7 @@ export interface Size {
   height: number;
 }
 
-export type CardType = 'text' | 'image' | 'link' | 'embed' | 'calculator' | 'preview' | 'bmc' | 'revenue' | 'gate' | 'spec';
+export type CardType = 'text' | 'image' | 'link' | 'embed' | 'calculator' | 'preview' | 'bmc' | 'revenue' | 'gate' | 'spec' | 'agent-status' | 'crm-pipeline' | 'mission';
 export type ZoneType = 'business' | 'engineering' | 'shared';
 
 export interface Card {

@@ -6,11 +6,14 @@ import { useCanvasStore } from '../stores/canvasStore';
 import { useUserStore } from '../stores/userStore';
 import { snapToGrid } from '../utils/canvasMath';
 import { canEditZone } from '../utils/permissions';
-import { X, GripVertical, ExternalLink, Image as ImageIcon, FileText, Code, LayoutGrid, DollarSign, Shield, FileCode } from 'lucide-react';
+import { X, GripVertical, ExternalLink, Image as ImageIcon, FileText, Code, LayoutGrid, DollarSign, Shield, FileCode, Users, TrendingUp, Target } from 'lucide-react';
 import { BMCCard } from './cards/BMCCard';
 import { RevenueCard } from './cards/RevenueCard';
 import { GateCard } from './cards/GateCard';
 import { SpecCard } from './cards/SpecCard';
+import { AgentStatusCard } from './cards/AgentStatusCard';
+import { CRMPipelineCard } from './cards/CRMPipelineCard';
+import { MissionCard } from './cards/MissionCard';
 
 interface CanvasCardProps {
   card: CardType;
@@ -28,6 +31,9 @@ const typeIcons: Record<string, React.ReactNode> = {
   revenue: <DollarSign size={14} />,
   gate: <Shield size={14} />,
   spec: <FileCode size={14} />,
+  'agent-status': <Users size={14} />,
+  'crm-pipeline': <TrendingUp size={14} />,
+  mission: <Target size={14} />,
 };
 
 const typeAccent: Record<string, string> = {
@@ -267,12 +273,18 @@ export const CanvasCard = React.memo(function CanvasCard({
         return <GateCard card={card} editable={editable} onUpdate={(c) => updateCardContent(card.id, c)} />;
       case 'spec':
         return <SpecCard card={card} editable={editable} onUpdate={(c) => updateCardContent(card.id, c)} />;
+      case 'agent-status':
+        return <AgentStatusCard card={card} editable={editable} onUpdate={(c) => updateCardContent(card.id, c)} />;
+      case 'crm-pipeline':
+        return <CRMPipelineCard card={card} editable={editable} onUpdate={(c) => updateCardContent(card.id, c)} />;
+      case 'mission':
+        return <MissionCard card={card} editable={editable} onUpdate={(c) => updateCardContent(card.id, c)} />;
       default:
         return null;
     }
   };
 
-  const isBMADCard = ['bmc', 'revenue', 'gate', 'spec'].includes(card.type);
+  const isBMADCard = ['bmc', 'revenue', 'gate', 'spec', 'agent-status', 'crm-pipeline', 'mission'].includes(card.type);
 
   return (
     <div

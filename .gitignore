@@ -38,3 +38,8 @@ coverage/
 
 # Data directories
 data/
+*.db
+*.db-shm
+*.db-wal
+data/
+.env

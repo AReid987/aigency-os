@@ -254,6 +254,9 @@ export const useCanvasStore = create<CanvasState>((set, get) => ({
       revenue: { width: 280, height: 340 },
       gate: { width: 260, height: 200 },
       spec: { width: 300, height: 260 },
+      'agent-status': { width: 300, height: 380 },
+      'crm-pipeline': { width: 320, height: 340 },
+      mission: { width: 300, height: 360 },
     };
     const newCard: Card = {
       id,
