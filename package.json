@@ -3,7 +3,7 @@
   "private": true,
   "packageManager": "pnpm@9.15.0",
   "scripts": {
-    "build": "turbo run build",
+    "build": "pnpm --filter @vscp/shared-types build && pnpm --filter @vscp/ui build && pnpm --filter @vscp/api-client build && pnpm --filter @vscp/paperclip-api build && pnpm --filter @vscp/web build",
     "dev": "turbo run dev",
     "lint": "turbo run lint",
     "test": "turbo run test",
