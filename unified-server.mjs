@@ -196,7 +196,8 @@ try {
   console.log(`✅ Aigency OS Unified Server listening at ${address}`);
   console.log(`📁 Frontend: ${path.resolve(FRONTEND_PATH)}`);
   console.log(`🔐 Auth: ${JWT_SECRET === 'dev-secret-change-me' ? 'WARNING using default JWT secret' : 'JWT configured'}`);
-  const heapMB = (require('v8').getHeapStatistics().heap_size_limit / 1024 / 1024).toFixed(0);
+  const v8 = await import('node:v8');
+  const heapMB = (v8.getHeapStatistics().heap_size_limit / 1024 / 1024).toFixed(0);
   console.log(`💾 V8 heap limit: ${heapMB}MB`);
 } catch (err) {
   console.error('❌ Failed to start server:', err);
