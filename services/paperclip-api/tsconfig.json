@@ -5,7 +5,11 @@
     "rootDir": "./src",
     "module": "ESNext",
     "moduleResolution": "bundler",
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "paths": {
+      "@vscp/shared-types": ["../../packages/shared-types/src/index.ts"],
+      "@vscp/shared-types/*": ["../../packages/shared-types/src/*"]
+    }
   },
   "include": [
     "src"
