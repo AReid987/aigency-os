@@ -1,0 +1,4 @@
+[build]
+buildCommand = "pnpm install && pnpm --filter @vscp/shared-types build && pnpm --filter @vscp/ui build && pnpm --filter @vscp/api-client build && pnpm --filter @vscp/paperclip-api build && cd apps/web && npx vite build"
+startCommand = "node services/paperclip-api/dist/server.js"
+provider = "nixpacks"
