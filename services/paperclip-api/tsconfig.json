@@ -5,8 +5,7 @@
     "rootDir": "./src",
     "module": "ESNext",
     "moduleResolution": "bundler",
-    "skipLibCheck": true,
-    "strict": false
+    "skipLibCheck": true
   },
   "include": [
     "src"
