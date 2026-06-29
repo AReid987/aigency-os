@@ -173,9 +173,9 @@ export const gbrainApi = {
 export const aegisApi = {
   health: () => checkHealth(AEGIS_URL),
 
-  getAudits: () => aegisRaw.get<unknown[]>(p('aegis', '/audits')),
-  getAudit: (id: string) => aegisRaw.get<unknown>(p('aegis', `/audits/${id}`)),
-  triggerAudit: (data: unknown) => aegisRaw.post<unknown>(p('aegis', '/audits'), data),
+  getAudits: () => aegisRaw.get<unknown[]>(p('aegis', '/audit')),
+  getAudit: (id: string) => aegisRaw.get<unknown>(p('aegis', `/audit/${id}`)),
+  triggerAudit: (data: unknown) => aegisRaw.post<unknown>(p('aegis', '/audit'), data),
   getDomains: () => aegisRaw.get<unknown[]>(p('aegis', '/domains')),
 };
 
