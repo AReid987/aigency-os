@@ -1,0 +1,6 @@
+interface:
+  display_name: "Aigency Os"
+  short_description: "Repo-specific patterns and workflows for aigency-os"
+  default_prompt: "Use the aigency-os repo skill to follow existing architecture, testing, and workflow conventions."
+policy:
+  allow_implicit_invocation: true

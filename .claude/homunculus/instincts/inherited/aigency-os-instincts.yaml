@@ -1,0 +1,345 @@
+# Instincts generated from https://github.com/AReid987/aigency-os
+# Generated: 2026-06-29T05:49:14.698Z
+# Version: 2.0
+# NOTE: This file supplements (does not replace) any existing curated instincts.
+# High-confidence manually curated instincts should be preserved alongside these.
+
+---
+id: aigency-os-commit-conventional
+trigger: "when writing a commit message"
+confidence: 0.85
+domain: git
+source: repo-analysis
+source_repo: https://github.com/AReid987/aigency-os
+---
+
+# Aigency Os Commit Conventional
+
+## Action
+
+Use conventional commit format with prefixes: chore
+
+## Evidence
+
+- 1 commits analyzed
+- Detected conventional commit pattern
+- Examples: chore(deps): bump the npm_and_yarn group across 21 directories with 3 updates
+
+---
+id: aigency-os-commit-length
+trigger: "when writing a commit message"
+confidence: 0.6
+domain: git
+source: repo-analysis
+source_repo: https://github.com/AReid987/aigency-os
+---
+
+# Aigency Os Commit Length
+
+## Action
+
+Write moderate-length commit messages (~77 characters)
+
+## Evidence
+
+- Average commit message length: 77 chars
+- Based on 1 commits
+
+---
+id: aigency-os-naming-files
+trigger: "when creating a new file"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: https://github.com/AReid987/aigency-os
+---
+
+# Aigency Os Naming Files
+
+## Action
+
+Use camelCase naming convention
+
+## Evidence
+
+- Analyzed file naming patterns in repository
+- Dominant pattern: camelCase
+
+---
+id: aigency-os-import-relative
+trigger: "when importing modules"
+confidence: 0.75
+domain: code-style
+source: repo-analysis
+source_repo: https://github.com/AReid987/aigency-os
+---
+
+# Aigency Os Import Relative
+
+## Action
+
+Use relative imports for project files
+
+## Evidence
+
+- Import analysis shows relative import pattern
+- Example: import { x } from '../lib/x'
+
+---
+id: aigency-os-export-style
+trigger: "when exporting from a module"
+confidence: 0.7
+domain: code-style
+source: repo-analysis
+source_repo: https://github.com/AReid987/aigency-os
+---
+
+# Aigency Os Export Style
+
+## Action
+
+Prefer named exports
+
+## Evidence
+
+- Export pattern analysis
+- Dominant style: named
+
+---
+id: aigency-os-test-separate
+trigger: "when writing tests"
+confidence: 0.8
+domain: testing
+source: repo-analysis
+source_repo: https://github.com/AReid987/aigency-os
+---
+
+# Aigency Os Test Separate
+
+## Action
+
+Place tests in the tests/ or __tests__/ directory, mirroring src structure
+
+## Evidence
+
+- Separate test directory pattern detected
+- Tests live in dedicated test folders
+
+---
+id: aigency-os-workflow-multi-package-dependency-upgrade
+trigger: "when doing multi package dependency upgrade"
+confidence: 0.6
+domain: workflow
+source: repo-analysis
+source_repo: https://github.com/AReid987/aigency-os
+---
+
+# Aigency Os Workflow Multi Package Dependency Upgrade
+
+## Action
+
+Follow the multi-package-dependency-upgrade workflow:
+1. Identify all packages and apps using the dependency.
+2. Update the dependency version in each package.json.
+3. Update the shared pnpm-lock.yaml file to reflect new dependency versions.
+4. Commit all changed package.json files and the lockfile together.
+
+## Evidence
+
+- Workflow detected from commit patterns
+- Frequency: ~2x per month
+- Files: */package.json, pnpm-lock.yaml
+
+---
+id: aigency-os-instinct-camelcase-files
+trigger: "When creating or renaming a file in the codebase"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: AReid987/aigency-os
+---
+
+# Aigency Os Instinct Camelcase Files
+
+## Action
+
+Use camelCase for file names
+
+## Evidence
+
+- Pattern in namingConventions.files: camelCase
+
+---
+id: aigency-os-instinct-camelcase-functions
+trigger: "When defining a function"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: AReid987/aigency-os
+---
+
+# Aigency Os Instinct Camelcase Functions
+
+## Action
+
+Use camelCase for function names
+
+## Evidence
+
+- Pattern in namingConventions.functions: camelCase
+
+---
+id: aigency-os-instinct-pascalcase-classes
+trigger: "When defining a class"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: AReid987/aigency-os
+---
+
+# Aigency Os Instinct Pascalcase Classes
+
+## Action
+
+Use PascalCase for class names
+
+## Evidence
+
+- Pattern in namingConventions.classes: PascalCase
+
+---
+id: aigency-os-instinct-screaming-constants
+trigger: "When declaring a constant"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: AReid987/aigency-os
+---
+
+# Aigency Os Instinct Screaming Constants
+
+## Action
+
+Use SCREAMING_SNAKE_CASE for constant names
+
+## Evidence
+
+- Pattern in namingConventions.constants: SCREAMING_SNAKE_CASE
+
+---
+id: aigency-os-instinct-relative-imports
+trigger: "When importing modules"
+confidence: 0.7
+domain: code-style
+source: repo-analysis
+source_repo: AReid987/aigency-os
+---
+
+# Aigency Os Instinct Relative Imports
+
+## Action
+
+Use relative import paths
+
+## Evidence
+
+- Pattern in importStyle: relative
+
+---
+id: aigency-os-instinct-named-exports
+trigger: "When exporting from a module"
+confidence: 0.7
+domain: code-style
+source: repo-analysis
+source_repo: AReid987/aigency-os
+---
+
+# Aigency Os Instinct Named Exports
+
+## Action
+
+Use named exports
+
+## Evidence
+
+- Pattern in exportStyle: named
+
+---
+id: aigency-os-instinct-separate-tests
+trigger: "When adding or organizing tests"
+confidence: 0.8
+domain: testing
+source: repo-analysis
+source_repo: AReid987/aigency-os
+---
+
+# Aigency Os Instinct Separate Tests
+
+## Action
+
+Place test files in a separate location from source files
+
+## Evidence
+
+- Pattern in architecture.folderStructure.testLocation: separate
+
+---
+id: aigency-os-instinct-conventional-commits-chore
+trigger: "When committing dependency updates or maintenance changes"
+confidence: 0.9
+domain: git
+source: repo-analysis
+source_repo: AReid987/aigency-os
+---
+
+# Aigency Os Instinct Conventional Commits Chore
+
+## Action
+
+Use 'chore' as the commit prefix following conventional commit format
+
+## Evidence
+
+- Pattern in commits.prefixes: chore
+- Seen in commit: chore(deps): bump the npm_and_yarn group across 21 directories with 3 updates
+
+---
+id: aigency-os-instinct-conventional-commits-format
+trigger: "When writing a commit message"
+confidence: 0.9
+domain: git
+source: repo-analysis
+source_repo: AReid987/aigency-os
+---
+
+# Aigency Os Instinct Conventional Commits Format
+
+## Action
+
+Follow the conventional commit format: <type>(<scope>): <description>
+
+## Evidence
+
+- Pattern in commits.type: conventional
+- Seen in commit: chore(deps): bump the npm_and_yarn group across 21 directories with 3 updates
+
+---
+id: aigency-os-instinct-multi-package-dependency-upgrade
+trigger: "When someone wants to update a dependency across multiple packages/apps in the monorepo"
+confidence: 0.95
+domain: workflow
+source: repo-analysis
+source_repo: AReid987/aigency-os
+---
+
+# Aigency Os Instinct Multi Package Dependency Upgrade
+
+## Action
+
+Identify all affected package.json files, update the dependency version, update pnpm-lock.yaml, and commit all changes together
+
+## Evidence
+
+- multi-package-dependency-upgrade workflow
+- Seen in commit: chore(deps): bump the npm_and_yarn group across 21 directories with 3 updates
+
