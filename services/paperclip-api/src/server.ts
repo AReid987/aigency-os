@@ -59,7 +59,7 @@ try {
   await app.register(fastifyStatic, {
     root: path.resolve(FRONTEND_PATH),
     prefix: '/',
-    decorateReply: false,
+    wildcard: false,
   });
 
   // SPA fallback — serve index.html for all non-API routes

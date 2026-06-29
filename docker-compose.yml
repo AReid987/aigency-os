@@ -1,0 +1,58 @@
+# ─── Aigency OS — Docker Compose (One-Command Local Deployment) ────────────
+# Usage:
+#   docker compose up -d        # Start everything
+#   docker compose logs -f      # Follow logs
+#   docker compose down         # Stop everything
+#   docker compose down -v      # Stop and delete data volume
+#
+# The app will be available at: http://localhost:3001
+# ─────────────────────────────────────────────────────────────────────────────
+
+version: "3.9"
+
+services:
+  aigency-os:
+    build:
+      context: .
+      dockerfile: Dockerfile.lightweight
+    container_name: aigency-os
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    environment:
+      # Required: generate strong secrets for production
+      - JWT_SECRET=${JWT_SECRET:?error: JWT_SECRET is required. Run: export JWT_SECRET=$(openssl rand -hex 32)}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin}
+      - ADMIN_EMAIL=${ADMIN_EMAIL:-admin@aigency.os}
+      - ADMIN_NAME=${ADMIN_NAME:-Admin}
+      - NODE_ENV=production
+      - PORT=3001
+      - HOST=0.0.0.0
+      - FRONTEND_PATH=/app/apps/web/dist
+      - AUTH_DB_PATH=/data/auth.db
+      - CORS_ORIGIN=${CORS_ORIGIN:-*}
+      - LOG_LEVEL=${LOG_LEVEL:-warn}
+      # Limit memory for 512MB VPS compatibility
+      - NODE_OPTIONS=--max-old-space-size=256
+    volumes:
+      # Persistent SQLite database across container restarts
+      - aigency-data:/data
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3001/health', (r) => r.statusCode === 200 ? process.exit(0) : process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      start_period: 30s
+      retries: 3
+    # Resource limits for lightweight VPS (optional but recommended)
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '1.0'
+        reservations:
+          memory: 256M
+          cpus: '0.5'
+
+volumes:
+  aigency-data:
+    driver: local

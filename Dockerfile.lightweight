@@ -1,0 +1,235 @@
+# ─── Aigency OS — Lightweight Dockerfile (512MB RAM Optimized) ───────────────
+# Multi-stage build optimized for minimal memory footprint.
+# Runs all 11 services in a single Node.js process (unified monolith).
+#
+# Build:  docker build -f Dockerfile.lightweight -t aigency-os-light .
+# Run:    docker run -p 3001:3001 -e JWT_SECRET=... -e ADMIN_PASSWORD=... aigency-os-light
+#
+# Memory target: ~200-300MB at idle (fits in 512MB VPS).
+# ─────────────────────────────────────────────────────────────────────────────
+
+# ─── Stage 1: Dependencies ─────────────────────────────────────────────────
+FROM node:22-alpine AS deps
+
+RUN corepack enable && corepack prepare pnpm@9.15.0 --activate
+WORKDIR /app
+
+# Copy workspace configs
+COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
+
+# Copy all package.json files (for workspace resolution)
+COPY packages/shared-types/package.json ./packages/shared-types/
+COPY packages/ui/package.json ./packages/ui/
+COPY packages/api-client/package.json ./packages/api-client/
+COPY packages/config/package.json ./packages/config/
+COPY packages/prisma/package.json ./packages/prisma/
+COPY packages/redis/package.json ./packages/redis/
+COPY services/paperclip-api/package.json ./services/paperclip-api/
+COPY services/hcom-api/package.json ./services/hcom-api/
+COPY services/bmad/package.json ./services/bmad/
+COPY services/paul/package.json ./services/paul/
+COPY services/gstack/package.json ./services/gstack/
+COPY services/plannotator/package.json ./services/plannotator/
+COPY services/aegis/package.json ./services/aegis/
+COPY services/denchclaw/package.json ./services/denchclaw/
+COPY services/gbrain/package.json ./services/gbrain/
+COPY services/skills/package.json ./services/skills/
+COPY apps/web/package.json ./apps/web/
+COPY apps/web/vite.config.ts ./apps/web/vite.config.ts
+COPY apps/web/index.html ./apps/web/index.html
+COPY apps/web/tsconfig.json ./apps/web/tsconfig.json
+COPY apps/web/tsconfig.app.json ./apps/web/tsconfig.app.json
+COPY apps/web/tsconfig.node.json ./apps/web/tsconfig.node.json
+COPY tsconfig.base.json ./tsconfig.base.json
+COPY turbo.json ./turbo.json
+
+RUN pnpm install --frozen-lockfile
+
+# ─── Stage 2: Build ──────────────────────────────────────────────────────────
+FROM node:22-alpine AS builder
+
+RUN corepack enable && corepack prepare pnpm@9.15.0 --activate
+WORKDIR /app
+
+# Copy deps from previous stage
+COPY --from=deps /app/node_modules ./node_modules
+COPY --from=deps /app/package.json ./package.json
+COPY --from=deps /app/pnpm-workspace.yaml ./pnpm-workspace.yaml
+COPY --from=deps /app/pnpm-lock.yaml ./pnpm-lock.yaml
+COPY --from=deps /app/tsconfig.base.json ./tsconfig.base.json
+
+# Copy all package.json files (to maintain workspace structure)
+COPY packages/shared-types/package.json ./packages/shared-types/
+COPY packages/ui/package.json ./packages/ui/
+COPY packages/api-client/package.json ./packages/api-client/
+COPY packages/config/package.json ./packages/config/
+COPY packages/prisma/package.json ./packages/prisma/
+COPY packages/redis/package.json ./packages/redis/
+COPY services/paperclip-api/package.json ./services/paperclip-api/
+COPY services/hcom-api/package.json ./services/hcom-api/
+COPY services/bmad/package.json ./services/bmad/
+COPY services/paul/package.json ./services/paul/
+COPY services/gstack/package.json ./services/gstack/
+COPY services/plannotator/package.json ./services/plannotator/
+COPY services/aegis/package.json ./services/aegis/
+COPY services/denchclaw/package.json ./services/denchclaw/
+COPY services/gbrain/package.json ./services/gbrain/
+COPY services/skills/package.json ./services/skills/
+COPY apps/web/package.json ./apps/web/
+COPY apps/web/vite.config.ts ./apps/web/vite.config.ts
+COPY apps/web/index.html ./apps/web/index.html
+COPY apps/web/tsconfig.json ./apps/web/tsconfig.json
+COPY apps/web/tsconfig.app.json ./apps/web/tsconfig.app.json
+COPY apps/web/tsconfig.node.json ./apps/web/tsconfig.node.json
+
+# Copy source code
+COPY packages/shared-types/src ./packages/shared-types/src
+COPY packages/shared-types/tsconfig.json ./packages/shared-types/tsconfig.json
+COPY packages/ui/src ./packages/ui/src
+COPY packages/ui/tsconfig.json ./packages/ui/tsconfig.json
+COPY packages/api-client/src ./packages/api-client/src
+COPY packages/api-client/tsconfig.json ./packages/api-client/tsconfig.json
+COPY packages/config/src ./packages/config/src
+COPY packages/config/tsconfig.json ./packages/config/tsconfig.json
+COPY packages/prisma/src ./packages/prisma/src
+COPY packages/prisma/tsconfig.json ./packages/prisma/tsconfig.json
+COPY packages/redis/src ./packages/redis/src
+COPY packages/redis/tsconfig.json ./packages/redis/tsconfig.json
+COPY services/paperclip-api/src ./services/paperclip-api/src
+COPY services/paperclip-api/tsconfig.json ./services/paperclip-api/tsconfig.json
+COPY services/hcom-api/src ./services/hcom-api/src
+COPY services/hcom-api/tsconfig.json ./services/hcom-api/tsconfig.json
+COPY services/bmad/src ./services/bmad/src
+COPY services/bmad/tsconfig.json ./services/bmad/tsconfig.json
+COPY services/paul/src ./services/paul/src
+COPY services/paul/tsconfig.json ./services/paul/tsconfig.json
+COPY services/gstack/src ./services/gstack/src
+COPY services/gstack/tsconfig.json ./services/gstack/tsconfig.json
+COPY services/plannotator/src ./services/plannotator/src
+COPY services/plannotator/tsconfig.json ./services/plannotator/tsconfig.json
+COPY services/aegis/src ./services/aegis/src
+COPY services/aegis/tsconfig.json ./services/aegis/tsconfig.json
+COPY services/denchclaw/src ./services/denchclaw/src
+COPY services/denchclaw/tsconfig.json ./services/denchclaw/tsconfig.json
+COPY services/gbrain/src ./services/gbrain/src
+COPY services/gbrain/tsconfig.json ./services/gbrain/tsconfig.json
+COPY services/skills/src ./services/skills/src
+COPY services/skills/tsconfig.json ./services/skills/tsconfig.json
+COPY apps/web/src ./apps/web/src
+COPY apps/web/public ./apps/web/public
+COPY apps/web/index.html ./apps/web/index.html
+COPY apps/web/vite.config.ts ./apps/web/vite.config.ts
+COPY apps/web/tsconfig.json ./apps/web/tsconfig.json
+COPY apps/web/tsconfig.app.json ./apps/web/tsconfig.app.json
+COPY apps/web/tsconfig.node.json ./apps/web/tsconfig.node.json
+
+# Build all packages in dependency order
+RUN pnpm --filter @vscp/shared-types build
+RUN pnpm --filter @vscp/ui build
+RUN pnpm --filter @vscp/api-client build
+RUN pnpm --filter @vscp/config build
+RUN pnpm --filter @vscp/prisma build
+RUN pnpm --filter @vscp/redis build
+
+# Build all services
+RUN pnpm --filter @vscp/paperclip-api build
+RUN pnpm --filter @vscp/hcom-api build
+RUN pnpm --filter @vscp/bmad build
+RUN pnpm --filter @vscp/paul build
+RUN pnpm --filter @vscp/gstack build
+RUN pnpm --filter @vscp/plannotator build
+RUN pnpm --filter @vscp/aegis build
+RUN pnpm --filter @vscp/denchclaw build
+RUN pnpm --filter @vscp/gbrain build
+RUN pnpm --filter @vscp/skills build
+
+# Build web frontend
+RUN pnpm --filter @vscp/web build
+
+# Copy the unified server entry point
+COPY unified-server.mjs ./unified-server.mjs
+
+# ─── Stage 3: Production ─────────────────────────────────────────────────────
+FROM node:22-alpine AS production
+
+RUN corepack enable && corepack prepare pnpm@9.15.0 --activate
+
+# Runtime dependency for better-sqlite3
+RUN apk add --no-cache libc6-compat
+
+# Create non-root user
+RUN addgroup -g 1001 -S nodejs && adduser -S aigency -u 1001
+
+WORKDIR /app
+
+# Copy package files for workspace resolution
+COPY --from=builder --chown=aigency:nodejs /app/package.json ./package.json
+COPY --from=builder --chown=aigency:nodejs /app/pnpm-workspace.yaml ./pnpm-workspace.yaml
+COPY --from=builder --chown=aigency:nodejs /app/pnpm-lock.yaml ./pnpm-lock.yaml
+COPY --from=builder --chown=aigency:nodejs /app/tsconfig.base.json ./tsconfig.base.json
+
+# Copy all package.json files (needed for pnpm to install only prod deps)
+COPY --from=builder --chown=aigency:nodejs /app/packages/shared-types/package.json ./packages/shared-types/package.json
+COPY --from=builder --chown=aigency:nodejs /app/packages/ui/package.json ./packages/ui/package.json
+COPY --from=builder --chown=aigency:nodejs /app/packages/api-client/package.json ./packages/api-client/package.json
+COPY --from=builder --chown=aigency:nodejs /app/packages/config/package.json ./packages/config/package.json
+COPY --from=builder --chown=aigency:nodejs /app/packages/prisma/package.json ./packages/prisma/package.json
+COPY --from=builder --chown=aigency:nodejs /app/packages/redis/package.json ./packages/redis/package.json
+COPY --from=builder --chown=aigency:nodejs /app/services/paperclip-api/package.json ./services/paperclip-api/package.json
+COPY --from=builder --chown=aigency:nodejs /app/services/hcom-api/package.json ./services/hcom-api/package.json
+COPY --from=builder --chown=aigency:nodejs /app/services/bmad/package.json ./services/bmad/package.json
+COPY --from=builder --chown=aigency:nodejs /app/services/paul/package.json ./services/paul/package.json
+COPY --from=builder --chown=aigency:nodejs /app/services/gstack/package.json ./services/gstack/package.json
+COPY --from=builder --chown=aigency:nodejs /app/services/plannotator/package.json ./services/plannotator/package.json
+COPY --from=builder --chown=aigency:nodejs /app/services/aegis/package.json ./services/aegis/package.json
+COPY --from=builder --chown=aigency:nodejs /app/services/denchclaw/package.json ./services/denchclaw/package.json
+COPY --from=builder --chown=aigency:nodejs /app/services/gbrain/package.json ./services/gbrain/package.json
+COPY --from=builder --chown=aigency:nodejs /app/services/skills/package.json ./services/skills/package.json
+COPY --from=builder --chown=aigency:nodejs /app/apps/web/package.json ./apps/web/package.json
+
+# Install ONLY production dependencies
+RUN pnpm install --frozen-lockfile --prod
+
+# Copy built artifacts from all services
+COPY --from=builder --chown=aigency:nodejs /app/packages/shared-types/dist ./packages/shared-types/dist
+COPY --from=builder --chown=aigency:nodejs /app/packages/ui/dist ./packages/ui/dist
+COPY --from=builder --chown=aigency:nodejs /app/packages/api-client/dist ./packages/api-client/dist
+COPY --from=builder --chown=aigency:nodejs /app/packages/config/dist ./packages/config/dist
+COPY --from=builder --chown=aigency:nodejs /app/packages/prisma/dist ./packages/prisma/dist
+COPY --from=builder --chown=aigency:nodejs /app/packages/redis/dist ./packages/redis/dist
+COPY --from=builder --chown=aigency:nodejs /app/services/paperclip-api/dist ./services/paperclip-api/dist
+COPY --from=builder --chown=aigency:nodejs /app/services/hcom-api/dist ./services/hcom-api/dist
+COPY --from=builder --chown=aigency:nodejs /app/services/bmad/dist ./services/bmad/dist
+COPY --from=builder --chown=aigency:nodejs /app/services/paul/dist ./services/paul/dist
+COPY --from=builder --chown=aigency:nodejs /app/services/gstack/dist ./services/gstack/dist
+COPY --from=builder --chown=aigency:nodejs /app/services/plannotator/dist ./services/plannotator/dist
+COPY --from=builder --chown=aigency:nodejs /app/services/aegis/dist ./services/aegis/dist
+COPY --from=builder --chown=aigency:nodejs /app/services/denchclaw/dist ./services/denchclaw/dist
+COPY --from=builder --chown=aigency:nodejs /app/services/gbrain/dist ./services/gbrain/dist
+COPY --from=builder --chown=aigency:nodejs /app/services/skills/dist ./services/skills/dist
+COPY --from=builder --chown=aigency:nodejs /app/apps/web/dist ./apps/web/dist
+
+# Copy unified server entry point
+COPY --from=builder --chown=aigency:nodejs /app/unified-server.mjs ./unified-server.mjs
+
+# Create data directory for SQLite
+RUN mkdir -p /data && chown -R aigency:nodejs /data
+
+USER aigency
+
+ENV NODE_ENV=production
+ENV PORT=3001
+ENV HOST=0.0.0.0
+ENV FRONTEND_PATH=/app/apps/web/dist
+ENV AUTH_DB_PATH=/data/auth.db
+ENV LOG_LEVEL=warn
+
+# Limit Node.js heap to 256MB (for 512MB total VPS)
+ENV NODE_OPTIONS=--max-old-space-size=256
+
+EXPOSE 3001
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
+  CMD node -e "require('http').get('http://localhost:3001/health', (r) => r.statusCode === 200 ? process.exit(0) : process.exit(1))"
+
+CMD ["node", "unified-server.mjs"]

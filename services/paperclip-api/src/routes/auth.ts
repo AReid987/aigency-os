@@ -3,9 +3,6 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { z } from 'zod';
 import crypto from 'node:crypto';
-import Database from 'better-sqlite3';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
 
 // ─── Config ─────────────────────────────────────────────────────────────────
 
@@ -13,33 +10,98 @@ const JWT_SECRET = process.env.JWT_SECRET || 'aigency-dev-secret-change-in-produ
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '7d';
 const SALT_ROUNDS = 10;
 
-// ─── SQLite Database ────────────────────────────────────────────────────────
+// ─── User Store (SQLite with in-memory fallback) ────────────────────────────
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const DB_PATH = process.env.AUTH_DB_PATH || path.join(__dirname, '..', '..', 'data', 'auth.db');
+interface StoredUser {
+  id: string;
+  email: string;
+  name: string;
+  role: 'admin' | 'technical_founder' | 'domain_expert';
+  company?: string;
+  password_hash: string;
+  created_at: string;
+  updated_at: string;
+}
 
-// Ensure data directory exists
-import fs from 'node:fs';
-fs.mkdirSync(path.dirname(DB_PATH), { recursive: true });
+// Try SQLite, fall back to in-memory Map
+let useSqlite = false;
+let db: any = null;
 
-const db = new Database(DB_PATH);
-db.pragma('journal_mode = WAL');
-db.pragma('foreign_keys = ON');
+try {
+  const { default: Database } = await import('better-sqlite3');
+  const path = await import('node:path');
+  const fs = await import('node:fs');
+  const { fileURLToPath } = await import('node:url');
 
-db.exec(`
-  CREATE TABLE IF NOT EXISTS users (
-    id TEXT PRIMARY KEY,
-    email TEXT UNIQUE NOT NULL,
-    name TEXT NOT NULL,
-    role TEXT NOT NULL DEFAULT 'domain_expert',
-    company TEXT,
-    password_hash TEXT NOT NULL,
-    created_at TEXT NOT NULL DEFAULT (datetime('now')),
-    updated_at TEXT NOT NULL DEFAULT (datetime('now'))
-  );
-  CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
-  CREATE INDEX IF NOT EXISTS idx_users_role ON users(role);
-`);
+  const __dirname = path.dirname(fileURLToPath(import.meta.url));
+  const DB_PATH = process.env.AUTH_DB_PATH || path.join(__dirname, '..', '..', 'data', 'auth.db');
+  fs.mkdirSync(path.dirname(DB_PATH), { recursive: true });
+
+  db = new Database(DB_PATH);
+  db.pragma('journal_mode = WAL');
+  db.pragma('foreign_keys = ON');
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS users (
+      id TEXT PRIMARY KEY,
+      email TEXT UNIQUE NOT NULL,
+      name TEXT NOT NULL,
+      role TEXT NOT NULL DEFAULT 'domain_expert',
+      company TEXT,
+      password_hash TEXT NOT NULL,
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+    CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
+    CREATE INDEX IF NOT EXISTS idx_users_role ON users(role);
+  `);
+  useSqlite = true;
+  console.log('[Auth] Using SQLite database');
+} catch (err) {
+  console.warn('[Auth] SQLite unavailable, using in-memory store:', (err as Error).message);
+}
+
+const memoryUsers = new Map<string, StoredUser>();
+
+// ─── DB Helpers ─────────────────────────────────────────────────────────────
+
+function findUserByEmail(email: string): StoredUser | undefined {
+  if (useSqlite && db) {
+    return db.prepare('SELECT * FROM users WHERE email = ?').get(email.toLowerCase()) as StoredUser | undefined;
+  }
+  return Array.from(memoryUsers.values()).find(u => u.email.toLowerCase() === email.toLowerCase());
+}
+
+function findUserById(id: string): StoredUser | undefined {
+  if (useSqlite && db) {
+    return db.prepare('SELECT * FROM users WHERE id = ?').get(id) as StoredUser | undefined;
+  }
+  return memoryUsers.get(id);
+}
+
+function createUser(data: { email: string; name: string; role: string; company?: string; passwordHash: string }): StoredUser {
+  const id = crypto.randomUUID();
+  const now = new Date().toISOString();
+  const user: StoredUser = {
+    id, email: data.email.toLowerCase(), name: data.name, role: data.role as StoredUser['role'],
+    company: data.company, password_hash: data.passwordHash, created_at: now, updated_at: now,
+  };
+
+  if (useSqlite && db) {
+    db.prepare(
+      'INSERT INTO users (id, email, name, role, company, password_hash, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
+    ).run(id, user.email, user.name, user.role, user.company || null, user.password_hash, now, now);
+  } else {
+    memoryUsers.set(id, user);
+  }
+  return user;
+}
+
+function getAllUsers() {
+  if (useSqlite && db) {
+    return db.prepare('SELECT id, email, name, role, company, created_at FROM users ORDER BY created_at DESC').all() as StoredUser[];
+  }
+  return Array.from(memoryUsers.values()).map(u => ({ id: u.id, email: u.email, name: u.name, role: u.role, company: u.company, created_at: u.created_at }));
+}
 
 // ─── Schemas ────────────────────────────────────────────────────────────────
 
@@ -54,36 +116,6 @@ const LoginSchema = z.object({
   email: z.string().email(),
   password: z.string(),
 });
-
-// ─── DB Helpers ─────────────────────────────────────────────────────────────
-
-interface StoredUser {
-  id: string;
-  email: string;
-  name: string;
-  role: 'admin' | 'technical_founder' | 'domain_expert';
-  company?: string;
-  password_hash: string;
-  created_at: string;
-  updated_at: string;
-}
-
-function findUserByEmail(email: string): StoredUser | undefined {
-  return db.prepare('SELECT * FROM users WHERE email = ?').get(email.toLowerCase()) as StoredUser | undefined;
-}
-
-function findUserById(id: string): StoredUser | undefined {
-  return db.prepare('SELECT * FROM users WHERE id = ?').get(id) as StoredUser | undefined;
-}
-
-function createUser(data: { email: string; name: string; role: string; company?: string; passwordHash: string }): StoredUser {
-  const id = crypto.randomUUID();
-  const now = new Date().toISOString();
-  db.prepare(
-    'INSERT INTO users (id, email, name, role, company, password_hash, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
-  ).run(id, data.email.toLowerCase(), data.name, data.role, data.company || null, data.passwordHash, now, now);
-  return findUserById(id)!;
-}
 
 // ─── Seed Admin Account ─────────────────────────────────────────────────────
 
@@ -140,7 +172,7 @@ export async function authMiddleware(request: any, reply: any) {
 // ─── Routes ─────────────────────────────────────────────────────────────────
 
 export async function authRoutes(app: FastifyInstance) {
-  // POST /auth/register — creates domain_expert accounts
+  // POST /auth/register
   app.post('/auth/register', async (request, reply) => {
     const parsed = RegisterSchema.safeParse(request.body);
     if (!parsed.success) {
@@ -148,21 +180,13 @@ export async function authRoutes(app: FastifyInstance) {
     }
 
     const { email, password, name, company } = parsed.data;
-
     const existing = findUserByEmail(email);
     if (existing) {
       return reply.code(409).send({ error: 'An account with this email already exists' });
     }
 
     const passwordHash = bcrypt.hashSync(password, SALT_ROUNDS);
-    const user = createUser({
-      email,
-      name,
-      role: 'domain_expert',
-      company,
-      passwordHash,
-    });
-
+    const user = createUser({ email, name, role: 'domain_expert', company, passwordHash });
     const token = signToken(user);
 
     return reply.code(201).send({
@@ -186,7 +210,6 @@ export async function authRoutes(app: FastifyInstance) {
     }
 
     const token = signToken(user);
-
     return {
       user: { id: user.id, email: user.email, name: user.name, role: user.role, company: user.company },
       token,
@@ -200,13 +223,7 @@ export async function authRoutes(app: FastifyInstance) {
     if (!user) {
       return reply.code(404).send({ error: 'User not found' });
     }
-    return {
-      id: user.id,
-      email: user.email,
-      name: user.name,
-      role: user.role,
-      company: user.company,
-    };
+    return { id: user.id, email: user.email, name: user.name, role: user.role, company: user.company };
   });
 
   // GET /auth/users — admin only
@@ -215,8 +232,7 @@ export async function authRoutes(app: FastifyInstance) {
     if (payload.role !== 'admin') {
       return reply.code(403).send({ error: 'Admin access required' });
     }
-
-    return db.prepare('SELECT id, email, name, role, company, created_at FROM users ORDER BY created_at DESC').all();
+    return getAllUsers();
   });
 }
 

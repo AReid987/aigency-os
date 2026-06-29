@@ -1,0 +1,73 @@
+node_modules/
+.pnpm-store/
+dist/
+.next/
+.turbo/
+
+# Environment
+.env
+.env.local
+.env.*.local
+.env.production
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Database
+data/
+*.db
+*.db-journal
+*.db-shm
+*.db-wal
+
+# Coverage
+coverage/
+
+# Git
+.git/
+.gitignore
+
+# Documentation
+docs/
+*.md
+
+# Deployment scripts
+deploy*.sh
+fly.toml
+render.yaml
+nixpacks.toml
+
+# Docker
+Dockerfile
+.dockerignore
+
+# Tests
+tests/
+__tests__/
+*.test.ts
+*.test.tsx
+*.spec.ts
+*.spec.tsx
+
+# Misc
+CHANGELOG.md
+README.md
+PRODUCT.md
+DESIGN.md
+_verify.sh
+
+# Large directories that shouldn't be in build context
+.a5c/
+.anton/
+.sugar/

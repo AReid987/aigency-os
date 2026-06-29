@@ -1,51 +1,132 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useCanvasStore } from '../stores/canvasStore';
 import { useAuthStore } from '../stores/authStore';
 import { Badge } from '@vscp/ui';
-import { Lightbulb, ArrowRight, ArrowLeft, Loader, CheckCircle, MessageSquare, Users, Briefcase, Cpu, Zap } from 'lucide-react';
+import {
+  Lightbulb, ArrowRight, ArrowLeft, CheckCircle, MessageSquare,
+  FileText, Send, Cpu, Loader, Zap, Users,
+} from 'lucide-react';
 import { paperclipApi } from '../api/services';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
-type Step = 'input' | 'questions' | 'rearticulation' | 'plan' | 'approved' | 'ceo_hiring' | 'team_assembly' | 'execution_started';
+type Phase = 'idea' | 'requirements' | 'review' | 'goal' | 'launching' | 'launched';
 
-interface Question {
+interface Requirement {
   id: string;
+  category: string;
   question: string;
-  answer: string;
+  options: string[];
+  selected: string;
+  custom: string;
 }
 
-interface AgentSpec {
-  name: string;
-  role: string;
-  adapterType: string;
-  heartbeatSchedule: string;
-  icon: React.ReactNode;
-  hired: boolean;
+interface GoalDocument {
+  title: string;
+  mission: string;
+  requirements: Array<{ category: string; decision: string }>;
+  createdAt: string;
 }
 
-// ─── Constants ───────────────────────────────────────────────────────────────
+// ─── Requirement Generator ───────────────────────────────────────────────────
 
-const PAUL_QUESTIONS: Question[] = [
-  { id: 'q1', question: 'Who is the target customer? Describe their demographics, pain points, and current solutions they use.', answer: '' },
-  { id: 'q2', question: 'What is the core value proposition? What makes this different from existing solutions?', answer: '' },
-  { id: 'q3', question: 'What is the revenue model? (subscription, usage-based, one-time, freemium)', answer: '' },
-  { id: 'q4', question: 'What are the key milestones for the first 90 days?', answer: '' },
-  { id: 'q5', question: 'What are the biggest risks or assumptions that need validation?', answer: '' },
-];
+function generateRequirements(idea: string): Requirement[] {
+  return [
+    {
+      id: 'target',
+      category: 'Target Customer',
+      question: `For "${idea.slice(0, 60)}...", who is the primary target customer?`,
+      options: [
+        'Small businesses (1-50 employees) looking to automate workflows',
+        'Enterprise teams (500+) seeking productivity gains',
+        'Individual creators and freelancers wanting AI assistance',
+      ],
+      selected: '',
+      custom: '',
+    },
+    {
+      id: 'value',
+      category: 'Value Proposition',
+      question: 'What is the core value proposition that differentiates this venture?',
+      options: [
+        'AI-first approach — agents handle the work autonomously',
+        'Lower cost than existing solutions with better UX',
+        'Unique data or methodology that competitors lack',
+      ],
+      selected: '',
+      custom: '',
+    },
+    {
+      id: 'revenue',
+      category: 'Revenue Model',
+      question: 'How will this venture generate revenue?',
+      options: [
+        'Subscription (SaaS) — monthly/annual tiers',
+        'Usage-based — pay per action or API call',
+        'Freemium — free tier + paid premium features',
+      ],
+      selected: '',
+      custom: '',
+    },
+    {
+      id: 'mvp',
+      category: 'MVP Scope',
+      question: 'What is the minimum viable product for the first 30 days?',
+      options: [
+        'Core feature only — one thing done exceptionally well',
+        'Full workflow — end-to-end for a single use case',
+        'Platform — multi-tenant with API for integrations',
+      ],
+      selected: '',
+      custom: '',
+    },
+    {
+      id: 'risk',
+      category: 'Biggest Risk',
+      question: 'What is the biggest risk that needs early validation?',
+      options: [
+        'Market demand — will people actually pay for this?',
+        'Technical feasibility — can AI agents deliver quality?',
+        'Distribution — how do we reach the first 100 customers?',
+      ],
+      selected: '',
+      custom: '',
+    },
+    {
+      id: 'team',
+      category: 'Team Structure',
+      question: 'What agent team composition should the CEO assemble first?',
+      options: [
+        'Technical-heavy: CTO + 2 Engineers + QA',
+        'Balanced: CTO + Engineer + CMO + Sales',
+        'Growth-first: CMO + Sales + Content + Engineer',
+      ],
+      selected: '',
+      custom: '',
+    },
+  ];
+}
 
-const INITIAL_AGENT_SPECS: AgentSpec[] = [
-  { name: 'Atlas', role: 'CTO', adapterType: 'openai', heartbeatSchedule: '*/5 * * * *', icon: <Cpu size={20} className="text-primary" />, hired: false },
-  { name: 'Nova', role: 'CMO', adapterType: 'anthropic', heartbeatSchedule: '*/10 * * * *', icon: <Lightbulb size={20} className="text-amber" />, hired: false },
-  { name: 'Blitz', role: 'Sales Lead', adapterType: 'openai', heartbeatSchedule: '*/15 * * * *', icon: <Zap size={20} className="text-success" />, hired: false },
-  { name: 'Forge', role: 'Engineer', adapterType: 'openai', heartbeatSchedule: '*/5 * * * *', icon: <Cpu size={20} className="text-accent" />, hired: false },
-];
+// ─── Chat Bubble Component ───────────────────────────────────────────────────
 
-const STEP_LABELS = ['Idea', 'Questions', 'Rearticulate', 'Plan', 'Approved', 'CEO Hiring', 'Team Assembly', 'Execution'];
-const STEP_KEYS: Step[] = ['input', 'questions', 'rearticulation', 'plan', 'approved', 'ceo_hiring', 'team_assembly', 'execution_started'];
+function Bubble({ role, children }: { role: 'system' | 'user'; children: React.ReactNode }) {
+  return (
+    <div className={`flex ${role === 'user' ? 'justify-end' : 'justify-start'} mb-4`}>
+      <div
+        className={`max-w-[85%] rounded-lg px-4 py-3 text-sm ${
+          role === 'user'
+            ? 'bg-primary text-fg-inverse'
+            : 'bg-surface/70 backdrop-blur-md border border-border'
+        }`}
+      >
+        {children}
+      </div>
+    </div>
+  );
+}
 
-// ─── Component ───────────────────────────────────────────────────────────────
+// ─── Main Component ──────────────────────────────────────────────────────────
 
 export function VenturePage() {
   const navigate = useNavigate();
@@ -53,554 +134,355 @@ export function VenturePage() {
   const createCard = useCanvasStore((s) => s.createCard);
   const user = useAuthStore((s) => s.user);
 
-  const [step, setStep] = useState<Step>('input');
+  const [phase, setPhase] = useState<Phase>('idea');
   const [idea, setIdea] = useState('');
-  const [questions, setQuestions] = useState<Question[]>(PAUL_QUESTIONS);
-  const [rearticulation, setRearticulation] = useState('');
-  const [plan, setPlan] = useState<{
-    title: string;
-    tasks: Array<{ title: string; criteria: string[] }>;
-    sections: Array<{ title: string; content: string; type: string }>;
-  } | null>(null);
+  const [requirements, setRequirements] = useState<Requirement[]>([]);
+  const [goalDoc, setGoalDoc] = useState<GoalDocument | null>(null);
+  const [launchStatus, setLaunchStatus] = useState('');
 
-  // CEO Hiring state
-  const [ceoPhase, setCeoPhase] = useState<'analyzing' | 'summary'>('analyzing');
-  const [agentSpecs, setAgentSpecs] = useState<AgentSpec[]>(INITIAL_AGENT_SPECS);
-  const [hiringIndex, setHiringIndex] = useState(0);
-  const [companyId, setCompanyId] = useState<string | null>(null);
+  // ── Phase 1: Submit idea → generate requirements ─────────────────────────
 
-  // Step 1: Submit idea → get clarifying questions
-  const handleSubmitIdea = () => {
+  const handleIdeaSubmit = () => {
     if (!idea.trim()) return;
-    setStep('questions');
+    setRequirements(generateRequirements(idea));
+    setPhase('requirements');
   };
 
-  // Step 2: Answer questions → generate rearticulation
-  const handleAnswerQuestions = () => {
-    const answered = questions.filter((q) => q.answer.trim());
-    if (answered.length < 3) return;
+  // ── Phase 2: Select requirements ─────────────────────────────────────────
 
-    const target = questions.find((q) => q.id === 'q1')?.answer || 'Not specified';
-    const value = questions.find((q) => q.id === 'q2')?.answer || 'Not specified';
-    const revenue = questions.find((q) => q.id === 'q3')?.answer || 'Subscription model';
-    const milestones = questions.find((q) => q.id === 'q4')?.answer || 'MVP in 30 days';
-    const risks = questions.find((q) => q.id === 'q5')?.answer || 'Market validation needed';
-
-    const reartic = `# Venture: ${idea.slice(0, 60)}
-
-## Problem Statement
-${idea}
-
-## Target Customer
-${target}
-
-## Value Proposition
-${value}
-
-## Revenue Model
-${revenue}
-
-## 90-Day Milestones
-${milestones}
-
-## Key Risks & Assumptions
-${risks}`;
-
-    setRearticulation(reartic);
-    setStep('rearticulation');
+  const handleSelect = (reqId: string, option: string) => {
+    setRequirements((prev) =>
+      prev.map((r) => (r.id === reqId ? { ...r, selected: option, custom: '' } : r)),
+    );
   };
 
-  // Step 3: Approve rearticulation → generate plan
-  const handleApproveRearticulation = () => {
-    setStep('plan');
+  const handleCustom = (reqId: string, value: string) => {
+    setRequirements((prev) =>
+      prev.map((r) => (r.id === reqId ? { ...r, custom: value, selected: 'Other' } : r)),
+    );
+  };
 
-    setTimeout(() => {
-      const target = questions.find((q) => q.id === 'q1')?.answer || 'target market';
-      const value = questions.find((q) => q.id === 'q2')?.answer || 'value prop';
-      const revenue = questions.find((q) => q.id === 'q3')?.answer || 'subscription';
+  const allAnswered = requirements.every((r) => r.selected && (r.selected !== 'Other' || r.custom.trim()));
 
-      setPlan({
-        title: idea.slice(0, 60),
-        tasks: [
-          { title: 'Define Business Model Canvas', criteria: ['All 9 BMC sections filled', 'Revenue streams validated', 'Cost structure estimated'] },
-          { title: 'Build Revenue Model', criteria: ['Pricing tiers defined', 'Unit economics calculated (CAC, LTV, payback)', 'Revenue projections for 12 months'] },
-          { title: 'Create MVP Technical Specification', criteria: ['Architecture documented', 'API endpoints defined', 'Data model designed', 'Acceptance criteria per feature'] },
-          { title: 'Implement Core Features', criteria: ['Authentication system', 'Core business logic', 'API endpoints', 'Basic UI'] },
-          { title: 'Quality Audit', criteria: ['AEGIS audit passes with no critical findings', 'Security review complete', 'Performance benchmarks met'] },
-          { title: 'Launch & Track Metrics', criteria: ['Dashboard shows real-time metrics', 'Customer feedback loop established', 'Iteration plan defined'] },
-        ],
-        sections: [
-          { title: 'Business Overview', content: `Target: ${target}\n\nValue: ${value}\n\nRevenue: ${revenue}`, type: 'business' },
-          { title: 'Technical Architecture', content: 'To be defined by PAUL after business approval.\n\nStack: React + Fastify + PostgreSQL\nDeployment: Docker Compose\nMonitoring: Prometheus + Grafana', type: 'technical' },
-          { title: 'Success Metrics', content: 'MRR target, customer acquisition cost, LTV/CAC ratio, churn rate to be established during BMAD process.', type: 'business' },
-        ],
+  // ── Phase 3: Review → generate goal document ─────────────────────────────
+
+  const handleReview = () => {
+    const doc: GoalDocument = {
+      title: idea.slice(0, 80),
+      mission: `Build and launch "${idea.slice(0, 80)}" using an AI-agent team.`,
+      requirements: requirements.map((r) => ({
+        category: r.category,
+        decision: r.selected === 'Other' ? r.custom : r.selected,
+      })),
+      createdAt: new Date().toISOString(),
+    };
+    setGoalDoc(doc);
+    setPhase('review');
+  };
+
+  // ── Phase 4: Approve → create company + hand off to CEO ──────────────────
+
+  const handleApprove = async () => {
+    if (!goalDoc) return;
+    setPhase('launching');
+    setLaunchStatus('Creating venture company...');
+
+    // 1. Create company in Paperclip
+    let cId = 'demo-company';
+    try {
+      const company = await paperclipApi.createCompany({
+        name: goalDoc.title,
+        mission: goalDoc.mission,
+        goal: goalDoc.requirements.map((r) => `${r.category}: ${r.decision}`).join('\n'),
       });
-    }, 500);
-  };
+      cId = (company as any)?.id || (company as any)?.companyId || 'demo-company';
+    } catch {
+      // API unreachable — continue with demo
+    }
 
-  // Step 4: Approve plan → create venture on canvas
-  const handleApprovePlan = () => {
-    if (!plan) return;
+    // 2. Create CEO agent
+    setLaunchStatus('Hiring CEO agent...');
+    try {
+      await paperclipApi.createAgent(cId, {
+        name: 'CEO',
+        role: 'CEO',
+        adapterType: 'hermes',
+        heartbeatSchedule: '*/5 * * * *',
+      });
+    } catch {
+      // Continue
+    }
 
-    const zoneName = plan.title;
-    createZone('business', zoneName, { x: 0, y: 0 });
+    // 3. Create initial goal
+    setLaunchStatus('Handing goal document to CEO...');
+    try {
+      await paperclipApi.createGoal(cId, {
+        title: goalDoc.title,
+        description: goalDoc.mission,
+        priority: 'P0',
+      });
+    } catch {
+      // Continue
+    }
 
+    // 4. Create canvas zone with goal doc
+    createZone('business', goalDoc.title, { x: 0, y: 0 });
     const zones = useCanvasStore.getState().zones;
     const newZone = zones[zones.length - 1];
 
     createCard('bmc', newZone.id, { x: 60, y: 80 }, {
-      title: `${zoneName} — Business Model Canvas`,
+      title: `${goalDoc.title} — Goal Document`,
       partners: '', activities: '', resources: '',
-      value: questions.find((q) => q.id === 'q2')?.answer || '',
+      value: goalDoc.requirements.find((r) => r.category === 'Value Proposition')?.decision || '',
       relationships: '', channels: '',
-      segments: questions.find((q) => q.id === 'q1')?.answer || '',
-      cost: '', revenue: questions.find((q) => q.id === 'q3')?.answer || '',
-    });
-
-    createCard('revenue', newZone.id, { x: 500, y: 80 }, {
-      title: `${zoneName} — Revenue Model`,
-      model: 'subscription', price: 49, customers: 0, churn: 5, cac: 100,
+      segments: goalDoc.requirements.find((r) => r.category === 'Target Customer')?.decision || '',
+      cost: '', revenue: goalDoc.requirements.find((r) => r.category === 'Revenue Model')?.decision || '',
     });
 
     createCard('gate', newZone.id, { x: 60, y: 440 }, {
-      title: 'Venture Approval',
+      title: 'Goal Approved',
       status: 'approved',
-      description: `Venture approved by ${user?.name || 'founder'}. Proceeding to technical implementation.`,
+      description: `Goal approved by ${user?.name || 'founder'}. CEO agent has received the goal document.`,
       milestone: 'Venture Kickoff',
     });
 
-    setStep('approved');
+    setLaunchStatus('CEO has received the goal document and is beginning execution.');
+    setPhase('launched');
   };
 
-  // Step 5: Approved → begin CEO hiring
-  const handleBeginCeoHiring = () => {
-    setStep('ceo_hiring');
-    setCeoPhase('analyzing');
-
-    // Simulate CEO analysis phase
-    setTimeout(() => setCeoPhase('summary'), 3000);
-  };
-
-  // Step 6: CEO Hiring summary → begin team assembly
-  const handleBeginTeamAssembly = async () => {
-    setStep('team_assembly');
-    setHiringIndex(0);
-
-    // Create company in Paperclip
-    try {
-      const company = await paperclipApi.createCompany({
-        name: plan?.title || idea.slice(0, 60),
-        type: 'venture',
-        founderId: user?.id,
-      });
-      setCompanyId((company as any)?.id || (company as any)?.companyId || 'demo-company');
-    } catch {
-      setCompanyId('demo-company');
-    }
-  };
-
-  // Sequential agent hiring animation
-  useEffect(() => {
-    if (step !== 'team_assembly') return;
-    if (hiringIndex >= INITIAL_AGENT_SPECS.length) {
-      // All agents hired → move to execution
-      setTimeout(() => setStep('execution_started'), 1500);
-      return;
-    }
-
-    const timer = setTimeout(async () => {
-      const agent = INITIAL_AGENT_SPECS[hiringIndex];
-
-      // Try to register agent with Paperclip API
-      if (companyId && companyId !== 'demo-company') {
-        try {
-          await paperclipApi.createAgent(companyId, {
-            name: agent.name,
-            role: agent.role,
-            adapterType: agent.adapterType,
-            heartbeatSchedule: agent.heartbeatSchedule,
-          });
-        } catch {
-          // Continue animation even if API fails
-        }
-      }
-
-      setAgentSpecs((prev) =>
-        prev.map((a, i) => (i === hiringIndex ? { ...a, hired: true } : a))
-      );
-      setHiringIndex((prev) => prev + 1);
-    }, 1800);
-
-    return () => clearTimeout(timer);
-  }, [step, hiringIndex, companyId]);
-
-  const updateQuestion = (id: string, answer: string) => {
-    setQuestions((prev) => prev.map((q) => (q.id === id ? { ...q, answer } : q)));
-  };
-
-  const currentStepIdx = STEP_KEYS.indexOf(step);
+  // ─── Render ──────────────────────────────────────────────────────────────
 
   return (
     <div className="p-6 h-full overflow-auto">
-      <div className="max-w-3xl mx-auto">
-        <div className="flex items-center gap-3 mb-8">
+      <div className="max-w-2xl mx-auto">
+        {/* Header */}
+        <div className="flex items-center gap-3 mb-6">
           <Lightbulb size={24} className="text-amber" />
-          <h1 className="text-2xl font-bold">New Venture</h1>
+          <h1 className="text-2xl font-bold font-display">New Venture</h1>
         </div>
 
-        {/* Progress steps */}
-        <div className="flex items-center gap-2 mb-8 flex-wrap">
-          {STEP_LABELS.map((s, i) => {
-            const isActive = i <= currentStepIdx;
-            return (
-              <React.Fragment key={s}>
-                {i > 0 && <div className={`w-6 h-px ${isActive ? 'bg-primary' : 'bg-border'}`} />}
-                <div className={`flex items-center gap-1 px-2.5 py-1 rounded-md text-[10px] font-medium ${isActive ? 'bg-primary-muted text-primary' : 'text-fg-muted'}`}>
-                  {i < currentStepIdx ? <CheckCircle size={10} /> : null}
-                  {s}
-                </div>
-              </React.Fragment>
-            );
-          })}
-        </div>
+        {/* Phase: Idea Input */}
+        {phase === 'idea' && (
+          <div>
+            <Bubble role="system">
+              <p className="font-medium mb-1">Describe your venture idea.</p>
+              <p className="text-fg-muted">I'll break it into structured requirements with options for each. You pick the best fit or write your own.</p>
+            </Bubble>
 
-        {/* ── Step 1: Input idea ────────────────────────────────────────────── */}
-        {step === 'input' && (
-          <div className="bg-surface/70 backdrop-blur-md rounded-md border border-border p-6">
-            <h2 className="text-lg font-bold mb-4">What venture do you want to build?</h2>
-            <p className="text-sm text-fg-muted mb-4">Describe your idea. PAUL will ask clarifying questions to help shape it into a structured plan.</p>
-            <textarea
-              value={idea}
-              onChange={(e) => setIdea(e.target.value)}
-              placeholder="e.g., An AI-powered note-taking app that automatically organizes and connects ideas across meetings, documents, and conversations..."
-              className="w-full h-40 p-4 bg-elevated/70 border border-border rounded-md text-sm focus:border-primary focus:outline-none resize-none"
-            />
+            <div className="mb-4">
+              <textarea
+                value={idea}
+                onChange={(e) => setIdea(e.target.value)}
+                placeholder="e.g., An AI-powered customer support platform that resolves tickets autonomously..."
+                className="w-full h-32 p-4 bg-elevated/70 border border-border rounded-lg text-sm focus:border-primary focus:outline-none resize-none"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    handleIdeaSubmit();
+                  }
+                }}
+              />
+            </div>
+
             <button
-              onClick={handleSubmitIdea}
+              onClick={handleIdeaSubmit}
               disabled={!idea.trim()}
-              className="mt-4 px-6 py-2.5 bg-primary text-fg-inverse font-semibold rounded-md hover:bg-primary-dark transition-colors disabled:opacity-50 flex items-center gap-2"
+              className="px-5 py-2.5 bg-primary text-fg-inverse font-semibold rounded-lg hover:bg-primary-dark transition-colors disabled:opacity-50 flex items-center gap-2"
             >
-              Continue <ArrowRight size={16} />
+              <Send size={16} /> Analyze Requirements
             </button>
           </div>
         )}
 
-        {/* ── Step 2: Clarifying questions ──────────────────────────────────── */}
-        {step === 'questions' && (
-          <div className="bg-surface/70 backdrop-blur-md rounded-md border border-border p-6">
-            <div className="flex items-center gap-2 mb-6">
-              <MessageSquare size={20} className="text-accent" />
-              <h2 className="text-lg font-bold">PAUL needs more context</h2>
-            </div>
-            <p className="text-sm text-fg-muted mb-6">Answer these questions to help PAUL generate a structured plan. At least 3 answers required.</p>
+        {/* Phase: Requirements Selection */}
+        {phase === 'requirements' && (
+          <div>
+            <Bubble role="system">
+              <p className="font-medium mb-1">Here are the key decisions for your venture.</p>
+              <p className="text-fg-muted">Pick the best option for each, or write your own in "Other".</p>
+            </Bubble>
 
-            <div className="space-y-6">
-              {questions.map((q, i) => (
-                <div key={q.id}>
-                  <label className="block text-sm font-medium mb-2">
-                    <span className="text-primary mr-2">{i + 1}.</span>
-                    {q.question}
-                  </label>
-                  <textarea
-                    value={q.answer}
-                    onChange={(e) => updateQuestion(q.id, e.target.value)}
-                    placeholder="Your answer..."
-                    className="w-full h-20 p-3 bg-elevated/70 border border-border rounded-md text-sm focus:border-primary focus:outline-none resize-none"
-                  />
+            <div className="space-y-6 mb-6">
+              {requirements.map((req, i) => (
+                <div key={req.id} className="bg-surface/70 backdrop-blur-md rounded-lg border border-border p-4">
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className="w-6 h-6 rounded-full bg-primary-muted text-primary flex items-center justify-center text-xs font-bold">{i + 1}</span>
+                    <div>
+                      <span className="text-xs font-semibold text-primary uppercase tracking-wider">{req.category}</span>
+                      <p className="text-sm text-fg mt-0.5">{req.question}</p>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2 ml-8">
+                    {req.options.map((opt, j) => (
+                      <button
+                        key={j}
+                        onClick={() => handleSelect(req.id, opt)}
+                        className={`w-full text-left px-3 py-2.5 rounded-md border text-sm transition-colors ${
+                          req.selected === opt
+                            ? 'border-primary bg-primary-muted/30 text-fg'
+                            : 'border-border hover:border-border-hover text-fg-secondary'
+                        }`}
+                      >
+                        <span className="font-mono text-xs text-fg-muted mr-2">{String.fromCharCode(65 + j)}.</span>
+                        {opt}
+                      </button>
+                    ))}
+
+                    {/* Other option */}
+                    <div
+                      className={`rounded-md border transition-colors ${
+                        req.selected === 'Other' ? 'border-primary bg-primary-muted/30' : 'border-border'
+                      }`}
+                    >
+                      <button
+                        onClick={() => handleSelect(req.id, 'Other')}
+                        className="w-full text-left px-3 py-2 text-sm text-fg-secondary"
+                      >
+                        <span className="font-mono text-xs text-fg-muted mr-2">D.</span>
+                        Other
+                      </button>
+                      {req.selected === 'Other' && (
+                        <div className="px-3 pb-2">
+                          <input
+                            type="text"
+                            value={req.custom}
+                            onChange={(e) => handleCustom(req.id, e.target.value)}
+                            placeholder="Type your answer..."
+                            className="w-full px-3 py-2 bg-elevated/70 border border-border rounded-md text-sm focus:border-primary focus:outline-none"
+                            autoFocus
+                          />
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 </div>
               ))}
             </div>
 
-            <div className="flex gap-3 mt-6">
-              <button onClick={handleAnswerQuestions} className="px-6 py-2.5 bg-primary text-fg-inverse font-semibold rounded-md hover:bg-primary-dark transition-colors flex items-center gap-2">
-                Generate Rearticulation <ArrowRight size={16} />
+            <div className="flex gap-3">
+              <button
+                onClick={handleReview}
+                disabled={!allAnswered}
+                className="px-5 py-2.5 bg-primary text-fg-inverse font-semibold rounded-lg hover:bg-primary-dark transition-colors disabled:opacity-50 flex items-center gap-2"
+              >
+                <ArrowRight size={16} /> Review Decisions
               </button>
-              <button onClick={() => setStep('input')} className="px-4 py-2.5 text-fg-muted hover:text-fg flex items-center gap-1">
+              <button
+                onClick={() => setPhase('idea')}
+                className="px-4 py-2.5 text-fg-muted hover:text-fg flex items-center gap-1"
+              >
                 <ArrowLeft size={14} /> Back
               </button>
             </div>
           </div>
         )}
 
-        {/* ── Step 3: Rearticulation ────────────────────────────────────────── */}
-        {step === 'rearticulation' && (
-          <div className="bg-surface/70 backdrop-blur-md rounded-md border border-border p-6">
-            <h2 className="text-lg font-bold mb-2">Venture Rearticulation</h2>
-            <p className="text-sm text-fg-muted mb-4">PAUL has rearticulated your idea into a structured format. Review and approve to proceed.</p>
+        {/* Phase: Review */}
+        {phase === 'review' && goalDoc && (
+          <div>
+            <Bubble role="system">
+              <p className="font-medium mb-1">Here's your venture plan based on your choices.</p>
+              <p className="text-fg-muted">Review and approve to hand this goal document to the CEO agent.</p>
+            </Bubble>
 
-            <div className="p-4 bg-elevated/70 border border-border rounded-md">
-              <pre className="text-sm text-fg-secondary whitespace-pre-wrap font-body">{rearticulation}</pre>
-            </div>
+            <div className="bg-surface/70 backdrop-blur-md rounded-lg border border-border p-5 mb-6">
+              <h2 className="text-lg font-bold mb-4">{goalDoc.title}</h2>
 
-            <div className="flex gap-3 mt-6">
-              <button onClick={handleApproveRearticulation} className="px-6 py-2.5 bg-success text-fg-inverse font-semibold rounded-md hover:bg-success/80 transition-colors flex items-center gap-2">
-                <CheckCircle size={16} /> Approve & Generate Plan
-              </button>
-              <button onClick={() => setStep('questions')} className="px-4 py-2.5 text-fg-muted hover:text-fg flex items-center gap-1">
-                <ArrowLeft size={14} /> Revise Answers
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* ── Step 4: Plan ──────────────────────────────────────────────────── */}
-        {step === 'plan' && plan && (
-          <div className="space-y-6">
-            <div className="bg-surface/70 backdrop-blur-md rounded-md border border-border p-6">
-              <h2 className="text-lg font-bold mb-1">{plan.title}</h2>
-              <Badge variant="info">Generated by PAUL</Badge>
-
-              <div className="mt-6 space-y-3">
-                <h3 className="text-xs font-semibold text-fg-muted uppercase tracking-wider">Tasks & Acceptance Criteria</h3>
-                {plan.tasks.map((task, i) => (
-                  <div key={i} className="p-3 rounded-md bg-hover/40 border border-border">
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="w-5 h-5 rounded-full bg-primary-muted text-primary flex items-center justify-center text-[10px] font-bold">{i + 1}</span>
-                      <span className="text-sm font-medium">{task.title}</span>
+              <div className="space-y-4">
+                {goalDoc.requirements.map((r, i) => (
+                  <div key={i} className="flex gap-3">
+                    <span className="w-6 h-6 rounded-full bg-primary-muted text-primary flex items-center justify-center text-xs font-bold shrink-0">{i + 1}</span>
+                    <div>
+                      <p className="text-xs font-semibold text-primary uppercase tracking-wider">{r.category}</p>
+                      <p className="text-sm text-fg mt-0.5">{r.decision}</p>
                     </div>
-                    <ul className="ml-7 space-y-0.5">
-                      {task.criteria.map((c, j) => (
-                        <li key={j} className="text-xs text-fg-muted">• {c}</li>
-                      ))}
-                    </ul>
                   </div>
                 ))}
               </div>
             </div>
 
-            <div className="bg-surface/70 backdrop-blur-md rounded-md border border-border p-6">
-              <h3 className="text-xs font-semibold text-fg-muted uppercase tracking-wider mb-4">Sections for Review</h3>
-              {plan.sections.map((section, i) => (
-                <div key={i} className="mb-4 p-4 rounded-md bg-hover/40 border border-border">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Badge variant={section.type === 'business' ? 'warning' : 'info'}>{section.type}</Badge>
-                    <h4 className="text-sm font-semibold">{section.title}</h4>
-                  </div>
-                  <p className="text-sm text-fg-secondary whitespace-pre-wrap">{section.content}</p>
-                </div>
-              ))}
-            </div>
-
             <div className="flex gap-3">
-              <button onClick={handleApprovePlan} className="px-6 py-2.5 bg-success text-fg-inverse font-semibold rounded-md hover:bg-success/80 transition-colors flex items-center gap-2">
-                <CheckCircle size={16} /> Approve & Create Venture
+              <button
+                onClick={handleApprove}
+                className="px-6 py-2.5 bg-success text-fg-inverse font-semibold rounded-lg hover:bg-success/80 transition-colors flex items-center gap-2"
+              >
+                <CheckCircle size={16} /> Approve & Launch
               </button>
-              <button onClick={() => setStep('rearticulation')} className="px-4 py-2.5 text-fg-muted hover:text-fg flex items-center gap-1">
+              <button
+                onClick={() => setPhase('requirements')}
+                className="px-4 py-2.5 text-fg-muted hover:text-fg flex items-center gap-1"
+              >
                 <ArrowLeft size={14} /> Revise
               </button>
             </div>
           </div>
         )}
 
-        {/* ── Step 5: Approved ──────────────────────────────────────────────── */}
-        {step === 'approved' && (
-          <div className="bg-surface/70 backdrop-blur-md rounded-md border border-border p-8 text-center">
-            <CheckCircle size={48} className="text-success mx-auto mb-4" />
-            <h2 className="text-xl font-bold mb-2">Venture Created!</h2>
-            <p className="text-sm text-fg-muted mb-6">Your venture has been added to the canvas with a Business Model Canvas and Revenue Calculator.</p>
-            <div className="flex gap-3 justify-center">
-              <button
-                onClick={handleBeginCeoHiring}
-                className="px-6 py-2.5 bg-primary text-fg-inverse font-semibold rounded-md hover:bg-primary-dark transition-colors flex items-center gap-2"
-              >
-                <Users size={16} /> Begin CEO Hiring
-              </button>
-              <button
-                onClick={() => navigate('/')}
-                className="px-6 py-2.5 text-fg-muted hover:text-fg border border-border rounded-md transition-colors"
-              >
-                Go to Canvas
-              </button>
+        {/* Phase: Launching */}
+        {phase === 'launching' && (
+          <div>
+            <Bubble role="system">
+              <div className="flex items-center gap-2">
+                <Loader size={16} className="animate-spin text-primary" />
+                <p>{launchStatus}</p>
+              </div>
+            </Bubble>
+
+            <div className="flex items-center gap-4 mt-6 text-xs text-fg-muted">
+              <div className="flex items-center gap-1.5">
+                <Cpu size={14} className="text-primary" /> Creating company
+              </div>
+              <div className="flex items-center gap-1.5">
+                <Users size={14} className="text-accent" /> Hiring CEO
+              </div>
+              <div className="flex items-center gap-1.5">
+                <FileText size={14} className="text-amber" /> Handing off goal
+              </div>
             </div>
           </div>
         )}
 
-        {/* ── Step 6: CEO Hiring ────────────────────────────────────────────── */}
-        {step === 'ceo_hiring' && (
-          <div className="bg-surface/70 backdrop-blur-md rounded-md border border-border p-6">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 rounded-full bg-primary-muted flex items-center justify-center">
-                <Briefcase size={20} className="text-primary" />
-              </div>
-              <div>
-                <h2 className="text-lg font-bold">CEO Agent</h2>
-                <p className="text-xs text-fg-muted">Analyzing venture plan</p>
-              </div>
-            </div>
+        {/* Phase: Launched */}
+        {phase === 'launched' && goalDoc && (
+          <div>
+            <Bubble role="system">
+              <p className="font-medium mb-2">Venture launched successfully.</p>
+              <p className="text-fg-muted">The CEO agent has received the goal document and is assembling the team.</p>
+            </Bubble>
 
-            {ceoPhase === 'analyzing' ? (
-              <div className="text-center py-12">
-                <Loader size={32} className="animate-spin text-primary mx-auto mb-4" />
-                <p className="text-sm text-fg-secondary mb-2">CEO agent is analyzing your venture plan...</p>
-                <p className="text-xs text-fg-muted">Evaluating requirements, identifying skill gaps, and determining optimal team composition.</p>
-
-                <div className="mt-8 max-w-md mx-auto space-y-2">
-                  {['Reviewing business requirements...', 'Evaluating technical complexity...', 'Identifying required roles...', 'Calculating resource allocation...'].map((text, i) => (
-                    <div key={i} className="flex items-center gap-2 text-xs text-fg-muted" style={{ animationDelay: `${i * 0.7}s` }}>
-                      <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" style={{ animationDelay: `${i * 0.7}s` }} />
-                      {text}
-                    </div>
-                  ))}
+            <div className="bg-surface/70 backdrop-blur-md rounded-lg border border-border p-5 mt-4">
+              <div className="flex items-center gap-3 mb-4">
+                <CheckCircle size={24} className="text-success" />
+                <div>
+                  <h2 className="text-lg font-bold">{goalDoc.title}</h2>
+                  <p className="text-xs text-fg-muted">Launched {new Date().toLocaleString()}</p>
                 </div>
               </div>
-            ) : (
-              <div>
-                <p className="text-sm text-fg-secondary mb-6">Based on your venture plan, the CEO agent recommends hiring the following team:</p>
 
-                <div className="grid grid-cols-2 gap-3">
-                  {INITIAL_AGENT_SPECS.map((agent) => (
-                    <div key={agent.name} className="p-4 rounded-md bg-hover/40 border border-border">
-                      <div className="flex items-center gap-3 mb-2">
-                        {agent.icon}
-                        <div>
-                          <p className="text-sm font-semibold">{agent.name}</p>
-                          <p className="text-xs text-fg-muted">{agent.role}</p>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2 mt-2">
-                        <Badge variant="neutral">{agent.adapterType}</Badge>
-                        <span className="text-[10px] text-fg-muted">HB: {agent.heartbeatSchedule}</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
+              <div className="grid grid-cols-3 gap-3 mt-4">
                 <button
-                  onClick={handleBeginTeamAssembly}
-                  className="mt-6 px-6 py-2.5 bg-primary text-fg-inverse font-semibold rounded-md hover:bg-primary-dark transition-colors flex items-center gap-2"
+                  onClick={() => navigate('/swarm')}
+                  className="p-3 rounded-md bg-hover/40 border border-border hover:border-border-hover text-center transition-colors"
                 >
-                  <Users size={16} /> Assemble Team
+                  <Zap size={18} className="mx-auto mb-1 text-primary" />
+                  <span className="text-xs font-medium">Swarm</span>
+                </button>
+                <button
+                  onClick={() => navigate('/conductor')}
+                  className="p-3 rounded-md bg-hover/40 border border-border hover:border-border-hover text-center transition-colors"
+                >
+                  <Cpu size={18} className="mx-auto mb-1 text-accent" />
+                  <span className="text-xs font-medium">Conductor</span>
+                </button>
+                <button
+                  onClick={() => navigate('/canvas')}
+                  className="p-3 rounded-md bg-hover/40 border border-border hover:border-border-hover text-center transition-colors"
+                >
+                  <FileText size={18} className="mx-auto mb-1 text-amber" />
+                  <span className="text-xs font-medium">Canvas</span>
                 </button>
               </div>
-            )}
-          </div>
-        )}
-
-        {/* ── Step 7: Team Assembly ─────────────────────────────────────────── */}
-        {step === 'team_assembly' && (
-          <div className="bg-surface/70 backdrop-blur-md rounded-md border border-border p-6">
-            <div className="flex items-center gap-3 mb-6">
-              <Users size={20} className="text-primary" />
-              <h2 className="text-lg font-bold">Assembling Team</h2>
-              <Badge variant="info">{agentSpecs.filter((a) => a.hired).length}/{agentSpecs.length} hired</Badge>
-            </div>
-
-            <div className="space-y-3">
-              {agentSpecs.map((agent, i) => (
-                <div
-                  key={agent.name}
-                  className={`p-4 rounded-md border transition-all duration-500 ${
-                    agent.hired
-                      ? 'bg-elevated/50 border-primary/30 opacity-100 translate-x-0'
-                      : i === hiringIndex
-                        ? 'bg-hover/40 border-amber/30 opacity-80'
-                        : 'bg-surface/30 border-border opacity-30'
-                  }`}
-                  style={{
-                    transform: agent.hired ? 'translateX(0)' : i === hiringIndex ? 'translateX(0)' : 'translateX(-10px)',
-                  }}
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      {agent.icon}
-                      <div>
-                        <p className="text-sm font-semibold">{agent.name}</p>
-                        <p className="text-xs text-fg-muted">{agent.role} • {agent.adapterType}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      {agent.hired ? (
-                        <Badge variant="success">
-                          <CheckCircle size={10} className="mr-1" /> Active
-                        </Badge>
-                      ) : i === hiringIndex ? (
-                        <Badge variant="warning">
-                          <Loader size={10} className="animate-spin mr-1" /> Hiring...
-                        </Badge>
-                      ) : (
-                        <Badge variant="neutral">Pending</Badge>
-                      )}
-                      <span className="text-[10px] text-fg-muted font-mono">{agent.heartbeatSchedule}</span>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* ── Step 8: Execution Started ─────────────────────────────────────── */}
-        {step === 'execution_started' && (
-          <div className="space-y-6">
-            <div className="bg-surface/70 backdrop-blur-md rounded-md border border-border p-8 text-center">
-              <CheckCircle size={48} className="text-success mx-auto mb-4" />
-              <h2 className="text-xl font-bold mb-2">Execution Started!</h2>
-              <p className="text-sm text-fg-muted mb-6">
-                Your team of {agentSpecs.length} AI agents has been assembled and is now executing the venture plan.
-              </p>
-            </div>
-
-            {/* Team summary */}
-            <div className="bg-surface/70 backdrop-blur-md rounded-md border border-border p-6">
-              <h3 className="text-xs font-semibold text-fg-muted uppercase tracking-wider mb-4">Assembled Team</h3>
-              <div className="grid grid-cols-2 gap-3">
-                {agentSpecs.map((agent) => (
-                  <div key={agent.name} className="flex items-center gap-3 p-3 rounded-md bg-hover/40 border border-border">
-                    {agent.icon}
-                    <div>
-                      <p className="text-sm font-medium">{agent.name}</p>
-                      <p className="text-xs text-fg-muted">{agent.role}</p>
-                    </div>
-                    <Badge variant="success">Active</Badge>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Navigation links */}
-            <div className="bg-surface/70 backdrop-blur-md rounded-md border border-border p-6">
-              <h3 className="text-xs font-semibold text-fg-muted uppercase tracking-wider mb-4">Monitor & Control</h3>
-              <div className="grid grid-cols-3 gap-3">
-                <Link
-                  to="/swarm"
-                  className="p-4 rounded-md bg-hover/40 border border-border hover:border-primary/30 transition-colors text-center"
-                >
-                  <Users size={24} className="text-primary mx-auto mb-2" />
-                  <p className="text-sm font-medium">Swarm</p>
-                  <p className="text-xs text-fg-muted">Agent coordination</p>
-                </Link>
-                <Link
-                  to="/conductor"
-                  className="p-4 rounded-md bg-hover/40 border border-border hover:border-primary/30 transition-colors text-center"
-                >
-                  <Zap size={24} className="text-amber mx-auto mb-2" />
-                  <p className="text-sm font-medium">Conductor</p>
-                  <p className="text-xs text-fg-muted">Task orchestration</p>
-                </Link>
-                <Link
-                  to="/orchestrator"
-                  className="p-4 rounded-md bg-hover/40 border border-border hover:border-primary/30 transition-colors text-center"
-                >
-                  <Cpu size={24} className="text-accent mx-auto mb-2" />
-                  <p className="text-sm font-medium">Orchestrator</p>
-                  <p className="text-xs text-fg-muted">System overview</p>
-                </Link>
-              </div>
-            </div>
-
-            <div className="flex gap-3 justify-center">
-              <button
-                onClick={() => navigate('/swarm')}
-                className="px-6 py-2.5 bg-primary text-fg-inverse font-semibold rounded-md hover:bg-primary-dark transition-colors"
-              >
-                Go to Swarm
-              </button>
-              <button
-                onClick={() => navigate('/')}
-                className="px-6 py-2.5 text-fg-muted hover:text-fg border border-border rounded-md transition-colors"
-              >
-                Go to Canvas
-              </button>
             </div>
           </div>
         )}

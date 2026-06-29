@@ -4,12 +4,16 @@
   "packageManager": "pnpm@9.15.0",
   "scripts": {
     "build": "pnpm --filter @vscp/shared-types build && pnpm --filter @vscp/ui build && pnpm --filter @vscp/api-client build && pnpm --filter @vscp/paperclip-api build && pnpm --filter @vscp/web build",
+    "build:all": "pnpm build && pnpm build:services",
+    "build:services": "pnpm --filter @vscp/hcom-api build && pnpm --filter @vscp/bmad build && pnpm --filter @vscp/paul build && pnpm --filter @vscp/gstack build && pnpm --filter @vscp/plannotator build && pnpm --filter @vscp/aegis build && pnpm --filter @vscp/denchclaw build && pnpm --filter @vscp/gbrain build && pnpm --filter @vscp/skills build",
+    "build:unified": "pnpm build:all && pnpm --filter @vscp/web build",
+    "start": "node services/paperclip-api/dist/server.js",
+    "start:unified": "node unified-server.mjs",
     "dev": "turbo run dev",
     "lint": "turbo run lint",
     "test": "turbo run test",
     "typecheck": "turbo run typecheck",
     "clean": "turbo run clean",
-    "start": "node services/paperclip-api/dist/server.js",
     "deploy": "bash deploy.sh"
   },
   "devDependencies": {
