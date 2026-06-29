@@ -110,71 +110,71 @@ app.get('/health', async () => ({
 await app.register(authRoutes);
 
 // ─── Paperclip (Core) ────────────────────────────────────────────────────────
-await app.register(companyRoutes, { prefix: '/api/v1/companies' });
-await app.register(agentRoutes, { prefix: '/api/v1/companies/:companyId/agents' });
-await app.register(goalRoutes, { prefix: '/api/v1/companies/:companyId/goals' });
-await app.register(ticketRoutes, { prefix: '/api/v1/companies/:companyId/tickets' });
-await app.register(budgetRoutes, { prefix: '/api/v1/companies/:companyId/budgets' });
-await app.register(boardRoutes, { prefix: '/api/v1/companies/:companyId/board' });
-await app.register(dashboardRoutes, { prefix: '/api/v1/companies/:companyId/dashboard' });
-await app.register(heartbeatRoutes, { prefix: '/api/v1/companies/:companyId/heartbeat' });
+await app.register(companyRoutes);
+await app.register(agentRoutes);
+await app.register(goalRoutes);
+await app.register(ticketRoutes);
+await app.register(budgetRoutes);
+await app.register(boardRoutes);
+await app.register(dashboardRoutes);
+await app.register(heartbeatRoutes);
 
 // ─── BMAD ────────────────────────────────────────────────────────────────────
-await app.register(canvasRoutes, { prefix: '/api/bmad' });
-await app.register(revenueRoutes, { prefix: '/api/bmad' });
-await app.register(milestoneRoutes, { prefix: '/api/bmad' });
-await app.register(competitiveRoutes, { prefix: '/api/bmad' });
+await app.register(canvasRoutes);
+await app.register(revenueRoutes);
+await app.register(milestoneRoutes);
+await app.register(competitiveRoutes);
 
 // ─── PAUL ────────────────────────────────────────────────────────────────────
-await app.register(planRoutes, { prefix: '/api/paul' });
-await app.register(applyRoutes, { prefix: '/api/paul' });
-await app.register(unifyRoutes, { prefix: '/api/paul' });
-await app.register(criteriaRoutes, { prefix: '/api/paul' });
+await app.register(planRoutes);
+await app.register(applyRoutes);
+await app.register(unifyRoutes);
+await app.register(criteriaRoutes);
 
 // ─── GStack ──────────────────────────────────────────────────────────────────
-await app.register(autoplanRoutes, { prefix: '/api/gstack' });
-await app.register(shipRoutes, { prefix: '/api/gstack' });
-await app.register(qaRoutes, { prefix: '/api/gstack' });
-await app.register(designRoutes, { prefix: '/api/gstack' });
-await app.register(jobRoutes, { prefix: '/api/gstack' });
+await app.register(autoplanRoutes);
+await app.register(shipRoutes);
+await app.register(qaRoutes);
+await app.register(designRoutes);
+await app.register(jobRoutes);
 
 // ─── DenchClaw ───────────────────────────────────────────────────────────────
-await app.register(contactRoutes, { prefix: '/api/denchclaw' });
-await app.register(dealRoutes, { prefix: '/api/denchclaw' });
-await app.register(leadRoutes, { prefix: '/api/denchclaw' });
-await app.register(pipelineRoutes, { prefix: '/api/denchclaw' });
-await app.register(sequenceRoutes, { prefix: '/api/denchclaw' });
+await app.register(contactRoutes);
+await app.register(dealRoutes);
+await app.register(leadRoutes);
+await app.register(pipelineRoutes);
+await app.register(sequenceRoutes);
 
 // ─── HCOM ────────────────────────────────────────────────────────────────────
-await app.register(hcomAgentRoutes, { prefix: '/api/hcom' });
-await app.register(messageRoutes, { prefix: '/api/hcom' });
-await app.register(collisionRoutes, { prefix: '/api/hcom' });
-await app.register(lifecycleRoutes, { prefix: '/api/hcom' });
-await app.register(subscriptionRoutes, { prefix: '/api/hcom' });
-await app.register(hcomDashboardRoutes, { prefix: '/api/hcom' });
+await app.register(hcomAgentRoutes);
+await app.register(messageRoutes);
+await app.register(collisionRoutes);
+await app.register(lifecycleRoutes);
+await app.register(subscriptionRoutes);
+await app.register(hcomDashboardRoutes);
 
 // ─── GBrain ──────────────────────────────────────────────────────────────────
-await app.register(pageRoutes, { prefix: '/api/gbrain' });
-await app.register(queryRoutes, { prefix: '/api/gbrain' });
-await app.register(graphRoutes, { prefix: '/api/gbrain' });
-await app.register(captureRoutes, { prefix: '/api/gbrain' });
-await app.register(synthesizeRoutes, { prefix: '/api/gbrain' });
+await app.register(pageRoutes);
+await app.register(queryRoutes);
+await app.register(graphRoutes);
+await app.register(captureRoutes);
+await app.register(synthesizeRoutes);
 
 // ─── AEGIS ───────────────────────────────────────────────────────────────────
-await app.register(auditRoutes, { prefix: '/api/aegis' });
-await app.register(continuousRoutes, { prefix: '/api/aegis' });
-await app.register(personaRoutes, { prefix: '/api/aegis' });
-await app.register(summaryRoutes, { prefix: '/api/aegis' });
-await app.register(transformRoutes, { prefix: '/api/aegis' });
+await app.register(auditRoutes);
+await app.register(continuousRoutes);
+await app.register(personaRoutes);
+await app.register(summaryRoutes);
+await app.register(transformRoutes);
 
 // ─── Plannotator ─────────────────────────────────────────────────────────────
-await app.register(plannotatorPlanRoutes, { prefix: '/api/plannotator' });
-await app.register(annotationRoutes, { prefix: '/api/plannotator' });
-await app.register(diffRoutes, { prefix: '/api/plannotator' });
+await app.register(plannotatorPlanRoutes);
+await app.register(annotationRoutes);
+await app.register(diffRoutes);
 
 // ─── Skills ──────────────────────────────────────────────────────────────────
-await app.register(skillRoutes, { prefix: '/api/skills' });
-await app.register(ratingRoutes, { prefix: '/api/skills' });
+await app.register(skillRoutes);
+await app.register(ratingRoutes);
 
 // ─── Static Frontend ─────────────────────────────────────────────────────────
 await app.register(fastifyStatic, {

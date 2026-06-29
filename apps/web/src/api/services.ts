@@ -30,7 +30,7 @@ const GSTACK_URL = isUnified ? PAPERCLIP_URL : (import.meta.env.VITE_GSTACK_URL 
 // ─── Path Prefix Helpers ─────────────────────────────────────────────────────
 // In unified mode, prepend the service prefix to routes.
 
-const p = (service: string, path: string) => isUnified ? `/api/${service}${path}` : path;
+const p = (_service: string, path: string) => path;
 
 // ─── Raw API Clients ─────────────────────────────────────────────────────────
 
