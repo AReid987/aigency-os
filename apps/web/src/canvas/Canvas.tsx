@@ -2,7 +2,7 @@
 
 import React, { useRef, useCallback, useEffect, useState } from 'react';
 import { useCanvasStore } from '../stores/canvasStore';
-import { useUserStore } from '../stores/userStore';
+import { useAuthStore } from '../stores/authStore';
 import { useWebSocket } from '../hooks/useWebSocket';
 import { calculateZoomFromDelta, zoomTowardsPoint, screenToCanvas } from '../utils/canvasMath';
 import { Grid } from './Grid';
@@ -25,7 +25,7 @@ export function Canvas() {
     deselectAll,
   } = useCanvasStore();
 
-  const { user } = useUserStore();
+  const user = useAuthStore((s) => s.user);
   const { emitCursorMove } = useWebSocket(
     user?.id,
     user?.name,

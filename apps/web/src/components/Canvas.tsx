@@ -2,7 +2,7 @@
 
 import React, { useRef, useCallback, useEffect, useState } from 'react';
 import { useCanvasStore } from '../stores/canvasStore';
-import { useUserStore } from '../stores/userStore';
+import { useAuthStore } from '../stores/authStore';
 import { useWebSocket } from '../hooks/useWebSocket';
 import {
   calculateZoomFromDelta,
@@ -29,7 +29,7 @@ export function Canvas() {
     deselectAll,
   } = useCanvasStore();
 
-  const { user } = useUserStore();
+  const { user } = useAuthStore();
   const { emitCursorMove, emitCardMove } = useWebSocket(user?.id, user?.name);
 
   const containerRef = useRef<HTMLDivElement>(null);

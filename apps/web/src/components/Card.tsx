@@ -3,7 +3,7 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import type { Card as CardData, ZoneType } from '@vscp/shared-types';
 import { useCanvasStore } from '../stores/canvasStore';
-import { useUserStore } from '../stores/userStore';
+import { useAuthStore } from '../stores/authStore';
 import { snapToGrid } from '../utils/canvasMath';
 import { canEditZone } from '../utils/permissions';
 import { X, GripVertical, FileText, Image as ImageIcon, ExternalLink, Code } from 'lucide-react';
@@ -42,7 +42,7 @@ export const Card = React.memo(function Card({
   onCardMove,
 }: CardProps) {
   const { selectedCards, selectCard, moveCard, deleteCard, updateCardContent } = useCanvasStore();
-  const { role } = useUserStore();
+  const role = useAuthStore((s) => s.user?.role ?? 'domain_expert');
   const isSelected = selectedCards.includes(card.id);
   const editable = canEditZone(role, zoneType);
 

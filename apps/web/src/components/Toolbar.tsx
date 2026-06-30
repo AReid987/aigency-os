@@ -3,7 +3,7 @@
 import React, { useState, useCallback } from 'react';
 import type { CardType, ZoneType } from '@vscp/shared-types';
 import { useCanvasStore } from '../stores/canvasStore';
-import { useUserStore } from '../stores/userStore';
+import { useAuthStore } from '../stores/authStore';
 import { Button } from '@vscp/ui';
 import {
   Plus,
@@ -31,7 +31,7 @@ const CARD_TYPES: { type: CardType; label: string; icon: React.ReactNode }[] = [
 export function Toolbar({ onAddCard }: ToolbarProps) {
   const [expanded, setExpanded] = useState(false);
   const { zones, zoneLayouts, createCard, createZone, zoom, setZoom, setPan } = useCanvasStore();
-  const { role } = useUserStore();
+  const role = useAuthStore((s) => s.user?.role ?? 'domain_expert');
 
   const handleAddCard = useCallback(
     (type: CardType) => {
