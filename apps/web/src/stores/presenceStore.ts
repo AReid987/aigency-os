@@ -16,6 +16,7 @@ interface PresenceState {
   isOnline: (userId: string) => boolean;
   setOnline: (userId: string, name: string) => void;
   setOffline: (userId: string) => void;
+  clearAll: () => void;
   getOnlineCount: () => number;
   getOnlineUsers: () => PresenceUser[];
 }
@@ -51,6 +52,10 @@ export const usePresenceStore = create<PresenceState>((set, get) => ({
     });
   },
 
+  clearAll: () => {
+    set({ onlineUsers: new Map() });
+  },
+
   getOnlineCount: () => {
     return Array.from(get().onlineUsers.values()).filter((u) => u.online).length;
   },
@@ -70,7 +75,7 @@ export function usePresencePolling(intervalMs = 15_000) {
   const user = useAuthStore((s) => s.user);
   const token = useAuthStore((s) => s.token);
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
-  const { setOnline, setOffline } = usePresenceStore();
+  const { setOnline, setOffline, clearAll } = usePresenceStore();
   const prevUserId = useRef<string | null>(null);
 
   // Mark current user online/offline on auth changes
@@ -79,7 +84,7 @@ export function usePresencePolling(intervalMs = 15_000) {
       setOnline(user.id, user.name);
       prevUserId.current = user.id;
     } else if (prevUserId.current) {
-      setOffline(prevUserId.current);
+      clearAll();
       prevUserId.current = null;
     }
   }, [isAuthenticated, user, setOnline, setOffline]);
