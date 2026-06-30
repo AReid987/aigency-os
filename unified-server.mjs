@@ -106,6 +106,36 @@ app.get('/health', async () => ({
   timestamp: new Date().toISOString(),
 }));
 
+// ─── Presence (in-memory) ───────────────────────────────────────────────────
+const presenceMap = new Map(); // userId -> { id, name, lastSeen }
+
+// Heartbeat — called by clients every 15s
+app.post('/presence/heartbeat', async (request, reply) => {
+  try {
+    const decoded = await request.jwtVerify();
+    const userId = decoded.sub || decoded.id;
+    const userName = decoded.name || decoded.email || 'Unknown';
+    presenceMap.set(userId, { id: userId, name: userName, lastSeen: Date.now() });
+    return { ok: true };
+  } catch {
+    return reply.code(401).send({ error: 'Unauthorized' });
+  }
+});
+
+// Get online users — returns users who heartbeat in last 60s
+app.get('/presence/online', async () => {
+  const cutoff = Date.now() - 60_000;
+  const online = [];
+  for (const [id, data] of presenceMap) {
+    if (data.lastSeen > cutoff) {
+      online.push({ id, name: data.name });
+    } else {
+      presenceMap.delete(id);
+    }
+  }
+  return online;
+});
+
 // ─── Auth (backward compatible paths) ──────────────────────────────────────
 await app.register(authRoutes);
 

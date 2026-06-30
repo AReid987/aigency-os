@@ -64,9 +64,9 @@ export const usePresenceStore = create<PresenceState>((set, get) => ({
 // Polls the server for online users every 30 seconds.
 // Falls back to marking the current user as online if server is unreachable.
 
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+const API_BASE = import.meta.env.VITE_API_URL || window.location.origin;
 
-export function usePresencePolling(intervalMs = 30_000) {
+export function usePresencePolling(intervalMs = 15_000) {
   const user = useAuthStore((s) => s.user);
   const token = useAuthStore((s) => s.token);
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
@@ -84,29 +84,38 @@ export function usePresencePolling(intervalMs = 30_000) {
     }
   }, [isAuthenticated, user, setOnline, setOffline]);
 
-  // Poll for other online users
+  // Send heartbeat + poll for other online users
   useEffect(() => {
     if (!isAuthenticated || !token) return;
 
-    const poll = async () => {
+    const heartbeatAndPoll = async () => {
       try {
+        // Send heartbeat
+        await fetch(`${API_BASE}/presence/heartbeat`, {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+        });
+
+        // Poll for other online users
         const res = await fetch(`${API_BASE}/presence/online`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (res.ok) {
-          const data: { id: string; name: string }[] = await res.json();
+          const data = await res.json();
           const currentUserId = user?.id;
-          data.forEach((u) => {
-            if (u.id !== currentUserId) setOnline(u.id, u.name);
-          });
+          if (Array.isArray(data)) {
+            data.forEach((u: { id: string; name: string }) => {
+              if (u.id !== currentUserId) setOnline(u.id, u.name);
+            });
+          }
         }
       } catch {
         // Server unreachable — presence tracked locally only
       }
     };
 
-    poll();
-    const id = setInterval(poll, intervalMs);
+    heartbeatAndPoll();
+    const id = setInterval(heartbeatAndPoll, intervalMs);
     return () => clearInterval(id);
   }, [isAuthenticated, token, intervalMs, user?.id, setOnline]);
 }

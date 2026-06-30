@@ -3,15 +3,16 @@ import { useNavigate } from 'react-router-dom';
 import { useCanvasStore } from '../stores/canvasStore';
 import { useAuthStore } from '../stores/authStore';
 import { Badge } from '@vscp/ui';
+import { VentureUploadPage } from './VentureUploadPage';
 import {
   Lightbulb, ArrowRight, ArrowLeft, CheckCircle, MessageSquare,
-  FileText, Send, Cpu, Loader, Zap, Users,
+  FileText, Send, Cpu, Loader, Zap, Users, Upload,
 } from 'lucide-react';
 import { paperclipApi } from '../api/services';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
-type Phase = 'idea' | 'requirements' | 'review' | 'goal' | 'launching' | 'launched';
+type Phase = 'idea' | 'requirements' | 'review' | 'files' | 'goal' | 'launching' | 'launched';
 
 interface Requirement {
   id: string;
@@ -383,7 +384,7 @@ export function VenturePage() {
           <div>
             <Bubble role="system">
               <p className="font-medium mb-1">Here's your venture plan based on your choices.</p>
-              <p className="text-fg-muted">Review and approve to hand this goal document to the CEO agent.</p>
+              <p className="text-fg-muted">Review your decisions, then continue to upload any supporting files.</p>
             </Bubble>
 
             <div className="bg-surface/70 backdrop-blur-md rounded-lg border border-border p-5 mb-6">
@@ -404,16 +405,92 @@ export function VenturePage() {
 
             <div className="flex gap-3">
               <button
-                onClick={handleApprove}
-                className="px-6 py-2.5 bg-success text-fg-inverse font-semibold rounded-lg hover:bg-success/80 transition-colors flex items-center gap-2"
+                onClick={() => setPhase('files')}
+                className="px-6 py-2.5 bg-primary text-fg-inverse font-semibold rounded-lg hover:bg-primary-dark transition-colors flex items-center gap-2"
               >
-                <CheckCircle size={16} /> Approve & Launch
+                <Upload size={16} /> Continue to File Upload
               </button>
               <button
                 onClick={() => setPhase('requirements')}
                 className="px-4 py-2.5 text-fg-muted hover:text-fg flex items-center gap-1"
               >
                 <ArrowLeft size={14} /> Revise
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Phase: File Upload */}
+        {phase === 'files' && goalDoc && (
+          <div>
+            <Bubble role="system">
+              <p className="font-medium mb-1">Upload supporting files for your venture.</p>
+              <p className="text-fg-muted">Add any documents, assets, or reference files that will help the CEO agent get started. This step is optional.</p>
+            </Bubble>
+
+            <div className="mb-6">
+              <VentureUploadPage ventureName={goalDoc.title} />
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => setPhase('goal')}
+                className="px-5 py-2.5 bg-primary text-fg-inverse font-semibold rounded-lg hover:bg-primary-dark transition-colors flex items-center gap-2"
+              >
+                <ArrowRight size={16} /> Continue to Goal
+              </button>
+              <button
+                onClick={() => setPhase('review')}
+                className="px-4 py-2.5 text-fg-muted hover:text-fg flex items-center gap-1"
+              >
+                <ArrowLeft size={14} /> Back to Review
+              </button>
+              <button
+                onClick={() => setPhase('goal')}
+                className="px-4 py-2.5 text-fg-muted hover:text-fg text-sm ml-auto"
+              >
+                Skip Upload →
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Phase: Goal Approval */}
+        {phase === 'goal' && goalDoc && (
+          <div>
+            <Bubble role="system">
+              <p className="font-medium mb-1">Ready to launch your venture.</p>
+              <p className="text-fg-muted">Review your goal document one final time and approve to hand it off to the CEO agent.</p>
+            </Bubble>
+
+            <div className="bg-surface/70 backdrop-blur-md rounded-lg border border-border p-5 mb-6">
+              <h2 className="text-lg font-bold mb-4">{goalDoc.title}</h2>
+
+              <div className="space-y-3">
+                {goalDoc.requirements.map((r, i) => (
+                  <div key={i} className="flex gap-3">
+                    <span className="w-6 h-6 rounded-full bg-primary-muted text-primary flex items-center justify-center text-xs font-bold shrink-0">{i + 1}</span>
+                    <div>
+                      <p className="text-xs font-semibold text-primary uppercase tracking-wider">{r.category}</p>
+                      <p className="text-sm text-fg mt-0.5">{r.decision}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={handleApprove}
+                className="px-6 py-2.5 bg-success text-fg-inverse font-semibold rounded-lg hover:bg-success/80 transition-colors flex items-center gap-2"
+              >
+                <CheckCircle size={16} /> Approve & Launch
+              </button>
+              <button
+                onClick={() => setPhase('files')}
+                className="px-4 py-2.5 text-fg-muted hover:text-fg flex items-center gap-1"
+              >
+                <ArrowLeft size={14} /> Back to Files
               </button>
             </div>
           </div>

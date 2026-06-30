@@ -234,6 +234,21 @@ function Sidebar({ collapsed, onToggle }: { collapsed: boolean; onToggle: () => 
             </button>
           )}
         </div>
+
+        {/* Online collaborators */}
+        {!collapsed && onlineUsers.size > 0 && (
+          <div className="mt-3 px-3">
+            <p className="text-[10px] font-medium text-fg-muted uppercase tracking-wider mb-2">Online</p>
+            <div className="space-y-1.5">
+              {Array.from(onlineUsers.values()).filter((u) => u.online).map((u) => (
+                <div key={u.id} className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-success shadow-[0_0_4px_rgba(34,197,94,0.5)]" />
+                  <span className="text-[11px] text-fg-secondary truncate">{u.name}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </aside>
   );
