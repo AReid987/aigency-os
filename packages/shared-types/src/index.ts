@@ -188,7 +188,7 @@ export interface Collision {
 
 // ─── User Types ──────────────────────────────────────────────────────────────
 
-export type UserRole = 'domain_expert' | 'technical_founder' | 'agent';
+export type UserRole = 'admin' | 'domain_expert' | 'technical_founder' | 'agent';
 
 export interface User {
   id: string;
