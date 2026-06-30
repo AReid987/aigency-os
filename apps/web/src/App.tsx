@@ -275,7 +275,7 @@ function AppLayout({ children }: { children: React.ReactNode }) {
     <div className="relative h-screen min-h-screen text-fg flex z-10 overflow-hidden">
       <Atmosphere />
       <Sidebar collapsed={sidebarCollapsed} onToggle={() => setSidebarCollapsed(!sidebarCollapsed)} />
-      <main className={`flex-1 min-h-0 transition-all duration-200 ${sidebarCollapsed ? 'ml-14' : 'ml-52'}`}>
+      <main className={`flex-1 min-h-0 overflow-x-auto transition-all duration-200 ${sidebarCollapsed ? 'ml-14' : 'ml-52'}`}>
         {children}
       </main>
     </div>
