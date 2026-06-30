@@ -250,6 +250,32 @@ export function Canvas() {
             <path d="M3 3v5h5" />
           </svg>
         </button>
+        <button
+          onClick={() => {
+            // Fit all zones within the viewport
+            const state = useCanvasStore.getState();
+            const layouts = Object.values(state.zoneLayouts);
+            if (layouts.length === 0) return;
+            const minX = Math.min(...layouts.map((l) => l.x));
+            const minY = Math.min(...layouts.map((l) => l.y));
+            const maxX = Math.max(...layouts.map((l) => l.x + l.width));
+            const maxY = Math.max(...layouts.map((l) => l.y + l.height));
+            const contentW = maxX - minX;
+            const contentH = maxY - minY;
+            const vw = window.innerWidth - 300; // sidebar
+            const vh = window.innerHeight - 100; // header
+            const fitZoom = Math.min(vw / contentW, vh / contentH, 2);
+            setZoom(fitZoom);
+            setPan({ x: -minX * fitZoom + 50, y: -minY * fitZoom + 50 });
+          }}
+          className="w-8 h-8 bg-elevated/70 backdrop-blur-sm rounded-md shadow-[0_1px_3px_rgba(0,0,0,0.4),inset_0_1px_0_0_rgba(255,255,255,0.06)] border border-border flex items-center justify-center hover:bg-hover/60 text-fg-secondary"
+          aria-label="Fit to view"
+          title="Fit all zones to view"
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
+          </svg>
+        </button>
       </div>
 
       {/* Minimap */}

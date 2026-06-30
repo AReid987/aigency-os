@@ -96,7 +96,7 @@ export function TasksPage() {
       </div>
 
       {/* Kanban Board */}
-      <div className="flex-1 flex gap-4 overflow-x-auto pb-2">
+      <div className="flex-1 flex gap-4 overflow-x-auto pb-2" style={{ minWidth: 0 }}>
         {columns.map((col) => {
           const colTasks = tasks.filter((t) => t.column === col);
           const columnProps = getColumnProps(col);

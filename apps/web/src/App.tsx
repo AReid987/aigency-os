@@ -30,8 +30,9 @@ import {
   Layout, Brain, Users, FileText, Shield, Terminal, Lightbulb,
   LogOut, ChevronLeft, ChevronRight, Plus, Layers, Bug, Radio,
   Network, MessageSquare, FolderOpen, CheckSquare, Monitor,
-  Clock, Settings,
+  Clock, Settings, Trash2,
 } from 'lucide-react';
+import { usePresenceStore, usePresencePolling } from './stores/presenceStore';
 
 // ─── Sidebar Nav Groups ─────────────────────────────────────────────────────
 
@@ -90,10 +91,12 @@ function Sidebar({ collapsed, onToggle }: { collapsed: boolean; onToggle: () => 
   const location = useLocation();
   const user = useAuthStore((s) => s.user);
   const logout = useAuthStore((s) => s.logout);
-  const { ventures, activeVentureId, setActiveVenture } = useVentureStore();
+  const { ventures, activeVentureId, setActiveVenture, deleteVenture } = useVentureStore();
+  const onlineUsers = usePresenceStore((s) => s.onlineUsers);
   const [ventureOpen, setVentureOpen] = useState(false);
 
   const activeVenture = ventures.find((v) => v.id === activeVentureId);
+  const isCurrentUserOnline = user ? (onlineUsers.get(user.id)?.online ?? false) : false;
 
   return (
     <aside className={`fixed left-0 top-0 bottom-0 z-50 bg-surface/80 backdrop-blur-md border-r border-border flex flex-col transition-all duration-200 ${collapsed ? 'w-14' : 'w-52'}`}>
@@ -118,14 +121,30 @@ function Sidebar({ collapsed, onToggle }: { collapsed: boolean; onToggle: () => 
           {ventureOpen && (
             <div className="mt-1 bg-elevated/90 border border-border rounded-md overflow-hidden">
               {ventures.map((v) => (
-                <button
+                <div
                   key={v.id}
-                  onClick={() => { setActiveVenture(v.id); setVentureOpen(false); }}
-                  className={`w-full text-left px-3 py-2 text-xs hover:bg-hover/60 transition-colors ${v.id === activeVentureId ? 'bg-primary-muted/30 text-primary' : 'text-fg-secondary'}`}
+                  className={`flex items-center group ${v.id === activeVentureId ? 'bg-primary-muted/30' : ''}`}
                 >
-                  <p className="font-medium">{v.name}</p>
-                  <p className="text-[10px] text-fg-muted truncate">{v.mission}</p>
-                </button>
+                  <button
+                    onClick={() => { setActiveVenture(v.id); setVentureOpen(false); }}
+                    className={`flex-1 text-left px-3 py-2 text-xs hover:bg-hover/60 transition-colors ${v.id === activeVentureId ? 'text-primary' : 'text-fg-secondary'}`}
+                  >
+                    <p className="font-medium">{v.name}</p>
+                    <p className="text-[10px] text-fg-muted truncate">{v.mission}</p>
+                  </button>
+                  {ventures.length > 1 && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        deleteVenture(v.id);
+                      }}
+                      className="p-1.5 mr-1 rounded text-fg-muted hover:text-error hover:bg-error-muted/30 opacity-0 group-hover:opacity-100 transition-opacity"
+                      title={`Delete ${v.name}`}
+                    >
+                      <Trash2 size={12} />
+                    </button>
+                  )}
+                </div>
               ))}
               <button
                 onClick={() => { navigate('/venture/new'); setVentureOpen(false); }}
@@ -191,8 +210,13 @@ function Sidebar({ collapsed, onToggle }: { collapsed: boolean; onToggle: () => 
       {/* User */}
       <div className="px-2 py-3 border-t border-border">
         <div className={`flex items-center gap-2 px-2 py-1.5 ${collapsed ? 'justify-center' : ''}`}>
-          <div className="w-7 h-7 rounded-sm bg-primary-muted text-primary flex items-center justify-center text-xs font-bold shrink-0">
-            {user?.name?.charAt(0) || '?'}
+          <div className="relative shrink-0">
+            <div className="w-7 h-7 rounded-sm bg-primary-muted text-primary flex items-center justify-center text-xs font-bold">
+              {user?.name?.charAt(0) || '?'}
+            </div>
+            {user && isCurrentUserOnline && (
+              <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-success ring-2 ring-surface shadow-[0_0_5px_rgba(34,197,94,0.5)]" />
+            )}
           </div>
           {!collapsed && (
             <div className="flex-1 min-w-0">
@@ -226,6 +250,7 @@ function AuthGuard({ children, roles }: { children: React.ReactNode; roles?: str
 
 function AppLayout({ children }: { children: React.ReactNode }) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  usePresencePolling();
 
   return (
     <div className="relative h-screen min-h-screen text-fg flex z-10 overflow-hidden">

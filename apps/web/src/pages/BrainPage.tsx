@@ -1,8 +1,9 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useRef, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Badge } from '@vscp/ui';
 import {
   Brain, Search, GitBranch, FileText, Plus, X, Loader2,
+  ZoomIn, ZoomOut, Maximize2, Minimize2,
 } from 'lucide-react';
 import { gbrainApi } from '../api/services';
 import { useAuthStore } from '../stores/authStore';
@@ -135,6 +136,65 @@ function CaptureForm({ onClose }: { onClose: () => void }) {
   );
 }
 
+// ─── Resize Handle (shared pattern from Zone.tsx) ─────────────────────────
+
+function GraphResizeHandle({
+  position,
+  onResize,
+}: {
+  position: 'se' | 'e' | 's';
+  onResize: (dx: number, dy: number) => void;
+}) {
+  const [dragging, setDragging] = useState(false);
+  const startRef = useRef<{ x: number; y: number } | null>(null);
+
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+    setDragging(true);
+    startRef.current = { x: e.clientX, y: e.clientY };
+  }, []);
+
+  useEffect(() => {
+    if (!dragging) return;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!startRef.current) return;
+      const dx = e.clientX - startRef.current.x;
+      const dy = e.clientY - startRef.current.y;
+      startRef.current = { x: e.clientX, y: e.clientY };
+      onResize(dx, dy);
+    };
+
+    const handleMouseUp = () => {
+      setDragging(false);
+      startRef.current = null;
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mouseup', handleMouseUp);
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [dragging, onResize]);
+
+  const positionStyles: Record<string, string> = {
+    se: 'bottom-0 right-0 w-4 h-4 cursor-se-resize',
+    e: 'top-12 right-0 w-2 h-8 cursor-e-resize -translate-y-1/2',
+    s: 'bottom-0 left-1/2 -translate-x-1/2 w-8 h-2 cursor-s-resize',
+  };
+
+  return (
+    <div
+      onMouseDown={handleMouseDown}
+      className={`absolute z-20 ${positionStyles[position]} ${
+        dragging ? 'bg-primary/20' : 'hover:bg-primary/10'
+      } rounded-sm transition-colors`}
+    />
+  );
+}
+
 // ─── Main BrainPage ──────────────────────────────────────────────────────────
 
 interface BrainPageItem {
@@ -212,6 +272,95 @@ export function BrainPage() {
     () => (Array.isArray(graphData?.edges) ? (graphData!.edges as GraphEdge[]) : []),
     [graphData],
   );
+
+  // ── Graph zoom / resize state ───────────────────────────────────────────
+
+  const [zoom, setZoom] = useState(1);
+  const [panelWidth, setPanelWidth] = useState(0); // 0 = use CSS default (col-span-4)
+  const [panelHeight, setPanelHeight] = useState(0); // 0 = auto
+  const [isExpanded, setIsExpanded] = useState(false);
+  const svgContainerRef = useRef<HTMLDivElement>(null);
+  const svgRef = useRef<SVGSVGElement>(null);
+
+  const MIN_ZOOM = 0.1;
+  const MAX_ZOOM = 5;
+
+  const zoomIn = useCallback(() => {
+    setZoom((z) => Math.min(MAX_ZOOM, +(z + 0.2).toFixed(2)));
+  }, []);
+
+  const zoomOut = useCallback(() => {
+    setZoom((z) => Math.max(MIN_ZOOM, +(z - 0.2).toFixed(2)));
+  }, []);
+
+  const fitToView = useCallback(() => {
+    if (graphNodes.length === 0) {
+      setZoom(1);
+      return;
+    }
+    // Calculate bounding box of all nodes
+    const xs = graphNodes.map((n) => n.x);
+    const ys = graphNodes.map((n) => n.y);
+    const pad = 60;
+    const nodeR = 20;
+    const minX = Math.min(...xs) - nodeR - pad;
+    const maxX = Math.max(...xs) + nodeR + pad;
+    const minY = Math.min(...ys) - nodeR - pad;
+    const maxY = Math.max(...ys) + nodeR + pad + 28; // +28 for label below node
+
+    const contentW = maxX - minX;
+    const contentH = maxY - minY;
+
+    const container = svgContainerRef.current;
+    if (!container) return;
+    const containerW = container.clientWidth;
+    const containerH = container.clientHeight;
+
+    if (contentW <= 0 || contentH <= 0) {
+      setZoom(1);
+      return;
+    }
+
+    const scaleX = containerW / contentW;
+    const scaleY = containerH / contentH;
+    const newZoom = Math.min(scaleX, scaleY, MAX_ZOOM);
+    setZoom(+newZoom.toFixed(2));
+
+    // Scroll to top-left after zoom settles
+    requestAnimationFrame(() => {
+      if (container) {
+        container.scrollLeft = 0;
+        container.scrollTop = 0;
+      }
+    });
+  }, [graphNodes]);
+
+  // Wheel-to-zoom on the graph container (Ctrl/Cmd + scroll)
+  const handleWheel = useCallback((e: React.WheelEvent) => {
+    if (e.ctrlKey || e.metaKey) {
+      e.preventDefault();
+      const delta = e.deltaY > 0 ? -0.15 : 0.15;
+      setZoom((z) => Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, +(z + delta).toFixed(2))));
+    }
+  }, []);
+
+  // Resize handlers (drag handles)
+  const handleResizeSE = useCallback((dx: number, dy: number) => {
+    setPanelWidth((w) => Math.max(300, (w || 400) + dx));
+    setPanelHeight((h) => Math.max(250, (h || 400) + dy));
+  }, []);
+
+  const handleResizeE = useCallback((dx: number) => {
+    setPanelWidth((w) => Math.max(300, (w || 400) + dx));
+  }, []);
+
+  const handleResizeS = useCallback((_dx: number, dy: number) => {
+    setPanelHeight((h) => Math.max(250, (h || 400) + dy));
+  }, []);
+
+  const toggleExpand = useCallback(() => {
+    setIsExpanded((prev) => !prev);
+  }, []);
 
   // ── Filtering (client-side scope + local text search when no API search) ──
 
@@ -293,70 +442,147 @@ export function BrainPage() {
       </div>
 
       {/* Main grid */}
-      <div className="grid grid-cols-12 gap-6 flex-1 min-h-0">
+      <div className={`grid gap-6 flex-1 min-h-0 ${isExpanded ? 'grid-cols-1' : 'grid-cols-12'}`}>
         {/* Knowledge graph */}
-        <div className="col-span-4 bg-surface/70 backdrop-blur-md rounded-md border border-border overflow-hidden">
-          <div className="px-4 py-3 border-b border-border bg-elevated/60">
+        <div
+          className={`${
+            isExpanded ? 'col-span-1' : 'col-span-4'
+          } bg-surface/70 backdrop-blur-md rounded-md border border-border overflow-hidden relative`}
+          style={
+            panelWidth > 0 && !isExpanded
+              ? { width: panelWidth }
+              : panelHeight > 0
+                ? { height: panelHeight }
+                : undefined
+          }
+        >
+          <div className="px-4 py-3 border-b border-border bg-elevated/60 flex items-center justify-between">
             <h2 className="font-semibold text-sm flex items-center gap-2">
               <GitBranch size={14} className="text-primary" /> Knowledge Graph
             </h2>
+            <div className="flex items-center gap-1" data-no-drag>
+              <span className="text-[10px] text-fg-muted font-mono mr-1">
+                {Math.round(zoom * 100)}%
+              </span>
+              <button
+                onClick={zoomOut}
+                title="Zoom out"
+                className="p-1 text-fg-muted hover:text-fg hover:bg-hover/30 rounded transition-colors"
+              >
+                <ZoomOut size={14} />
+              </button>
+              <button
+                onClick={zoomIn}
+                title="Zoom in"
+                className="p-1 text-fg-muted hover:text-fg hover:bg-hover/30 rounded transition-colors"
+              >
+                <ZoomIn size={14} />
+              </button>
+              <button
+                onClick={fitToView}
+                title="Fit to view"
+                className="p-1 text-fg-muted hover:text-fg hover:bg-hover/30 rounded transition-colors"
+              >
+                <Maximize2 size={14} />
+              </button>
+              <button
+                onClick={toggleExpand}
+                title={isExpanded ? 'Collapse' : 'Expand'}
+                className="p-1 text-fg-muted hover:text-fg hover:bg-hover/30 rounded transition-colors"
+              >
+                <Minimize2 size={14} />
+              </button>
+            </div>
           </div>
-          <svg className="w-full h-[calc(100%-3rem)]">
-            {graphNodes.length === 0 && (
-              <text x="50%" y="50%" textAnchor="middle" fill="#9aa4b2" fontSize="12" fontFamily="Satoshi, system-ui">
-                No knowledge graph data
-              </text>
-            )}
-            {graphEdges.map((edge, i) => {
-              const from = graphNodes.find((n) => n.id === edge.from);
-              const to = graphNodes.find((n) => n.id === edge.to);
-              if (!from || !to) return null;
-              return (
-                <line
-                  key={i}
-                  x1={from.x}
-                  y1={from.y}
-                  x2={to.x}
-                  y2={to.y}
-                  stroke="#1a1f2e"
-                  strokeWidth="2"
-                />
-              );
-            })}
-            {graphNodes.map((node) => {
-              const isSelected = selectedPage === node.id;
-              return (
-                <g
-                  key={node.id}
-                  onClick={() => handleNodeClick(node.id)}
-                  className="cursor-pointer"
+          {/* Scrollable + zoomable container */}
+          <div
+            ref={svgContainerRef}
+            className="w-full overflow-auto"
+            style={{
+              height: panelHeight > 0
+                ? panelHeight - 44
+                : 'calc(100% - 3rem)',
+              cursor: 'grab',
+            }}
+            onWheel={handleWheel}
+          >
+            <svg
+              ref={svgRef}
+              className="w-full h-full"
+              style={{
+                transform: `scale(${zoom})`,
+                transformOrigin: '0 0',
+                minWidth: `${100 / zoom}%`,
+                minHeight: `${100 / zoom}%`,
+              }}
+            >
+              {graphNodes.length === 0 && (
+                <text
+                  x="50%"
+                  y="50%"
+                  textAnchor="middle"
+                  fill="#9aa4b2"
+                  fontSize="12"
+                  fontFamily="Satoshi, system-ui"
                 >
-                  <circle
-                    cx={node.x}
-                    cy={node.y}
-                    r={isSelected ? 20 : 16}
-                    fill={isSelected ? '#12a594' : '#141c28'}
-                    stroke={isSelected ? '#12a594' : '#1a1f2e'}
+                  No knowledge graph data
+                </text>
+              )}
+              {graphEdges.map((edge, i) => {
+                const from = graphNodes.find((n) => n.id === edge.from);
+                const to = graphNodes.find((n) => n.id === edge.to);
+                if (!from || !to) return null;
+                return (
+                  <line
+                    key={i}
+                    x1={from.x}
+                    y1={from.y}
+                    x2={to.x}
+                    y2={to.y}
+                    stroke="#1a1f2e"
                     strokeWidth="2"
                   />
-                  <text
-                    x={node.x}
-                    y={node.y + 28}
-                    textAnchor="middle"
-                    fill="#9aa4b2"
-                    fontSize="10"
-                    fontFamily="Satoshi, system-ui"
+                );
+              })}
+              {graphNodes.map((node) => {
+                const isSelected = selectedPage === node.id;
+                return (
+                  <g
+                    key={node.id}
+                    onClick={() => handleNodeClick(node.id)}
+                    className="cursor-pointer"
                   >
-                    {node.label}
-                  </text>
-                </g>
-              );
-            })}
-          </svg>
+                    <circle
+                      cx={node.x}
+                      cy={node.y}
+                      r={isSelected ? 20 : 16}
+                      fill={isSelected ? '#12a594' : '#141c28'}
+                      stroke={isSelected ? '#12a594' : '#1a1f2e'}
+                      strokeWidth="2"
+                    />
+                    <text
+                      x={node.x}
+                      y={node.y + 28}
+                      textAnchor="middle"
+                      fill="#9aa4b2"
+                      fontSize="10"
+                      fontFamily="Satoshi, system-ui"
+                    >
+                      {node.label}
+                    </text>
+                  </g>
+                );
+              })}
+            </svg>
+          </div>
+          {/* Resize handles */}
+          <GraphResizeHandle position="se" onResize={handleResizeSE} />
+          <GraphResizeHandle position="e" onResize={handleResizeE} />
+          <GraphResizeHandle position="s" onResize={handleResizeS} />
         </div>
 
         {/* Page list */}
-        <div className="col-span-8 bg-surface/70 backdrop-blur-md rounded-md border border-border overflow-auto">
+        <div className={`${isExpanded ? 'hidden' : 'col-span-8'} bg-surface/70 backdrop-blur-md rounded-md border border-border overflow-auto`}>
           {filteredPages.length === 0 && !pagesLoading ? (
             <div className="flex items-center justify-center h-full text-fg-muted text-sm">
               No pages found

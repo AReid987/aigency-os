@@ -24,6 +24,7 @@ interface VentureState {
   setVentures: (ventures: Venture[]) => void;
   setActiveVenture: (id: string) => void;
   addVenture: (venture: Venture) => void;
+  deleteVenture: (id: string) => void;
   getActiveVenture: () => Venture | undefined;
 }
 
@@ -37,5 +38,13 @@ export const useVentureStore = create<VentureState>((set, get) => ({
     ventures: [...state.ventures, venture],
     activeVentureId: venture.id,
   })),
+  deleteVenture: (id) => set((state) => {
+    const remaining = state.ventures.filter((v) => v.id !== id);
+    // If we deleted the active venture, switch to the first remaining one
+    const nextActiveId = state.activeVentureId === id
+      ? (remaining[0]?.id ?? '')
+      : state.activeVentureId;
+    return { ventures: remaining, activeVentureId: nextActiveId };
+  }),
   getActiveVenture: () => get().ventures.find((v) => v.id === get().activeVentureId),
 }));

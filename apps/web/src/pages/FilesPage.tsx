@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {
   FolderOpen, File, FileText, FileCode,
-  ChevronRight, ChevronDown, Search, Folder, X,
+  ChevronRight, ChevronDown, Search, Folder, X, Trash2,
 } from 'lucide-react';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -602,11 +602,13 @@ function FileTreeItem({
   depth,
   selectedPath,
   onFileClick,
+  onDelete,
 }: {
   node: FileNode;
   depth: number;
   selectedPath: string | null;
   onFileClick: (path: string) => void;
+  onDelete: (name: string) => void;
 }) {
   const [expanded, setExpanded] = useState(node.expanded ?? false);
   const isFolder = node.type === 'folder';
@@ -623,7 +625,7 @@ function FileTreeItem({
             onFileClick(node.path);
           }
         }}
-        className={`w-full flex items-center gap-2 px-3 py-1.5 text-xs transition-colors ${
+        className={`w-full flex items-center gap-2 px-3 py-1.5 text-xs transition-colors group ${
           isSelected
             ? 'bg-primary/15 text-primary'
             : isFolder
@@ -639,6 +641,24 @@ function FileTreeItem({
         )}
         <Icon size={14} className={isFolder ? 'text-amber' : isSelected ? 'text-primary' : 'text-fg-muted'} />
         <span className="flex-1 text-left truncate">{node.name}</span>
+        <span
+          role="button"
+          tabIndex={0}
+          onClick={(e) => {
+            e.stopPropagation();
+            onDelete(node.name);
+          }}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              e.stopPropagation();
+              onDelete(node.name);
+            }
+          }}
+          className="p-0.5 rounded text-fg-muted hover:text-error hover:bg-error-muted/30 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+          title={`Delete ${node.name}`}
+        >
+          <Trash2 size={12} />
+        </span>
       </button>
       {isFolder && expanded && node.children?.map((child) => (
         <FileTreeItem
@@ -647,6 +667,7 @@ function FileTreeItem({
           depth={depth + 1}
           selectedPath={selectedPath}
           onFileClick={onFileClick}
+          onDelete={onDelete}
         />
       ))}
     </div>
@@ -696,6 +717,7 @@ export function FilesPage() {
   const [search, setSearch] = useState('');
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
   const [openFiles, setOpenFiles] = useState<string[]>([]);
+  const [fileTree, setFileTree] = useState<FileNode[]>(DEMO_TREE);
 
   const handleFileClick = (path: string) => {
     setSelectedFile(path);
@@ -710,6 +732,28 @@ export function FilesPage() {
     if (selectedFile === path) {
       const remaining = openFiles.filter((f) => f !== path);
       setSelectedFile(remaining.length > 0 ? remaining[remaining.length - 1] : null);
+    }
+  };
+
+  const handleDeleteFile = (name: string) => {
+    const removeFromTree = (nodes: FileNode[]): FileNode[] =>
+      nodes
+        .filter((n) => n.name !== name)
+        .map((n) =>
+          n.children ? { ...n, children: removeFromTree(n.children) } : n,
+        );
+    setFileTree((prev) => removeFromTree(prev));
+    // Also close any open tab for this file
+    const deletedPath = fileTree
+      .flatMap(function flatten(n: FileNode): FileNode[] {
+        return [n, ...(n.children?.flatMap(flatten) ?? [])];
+      })
+      .find((n) => n.name === name)?.path;
+    if (deletedPath) {
+      setOpenFiles((prev) => prev.filter((f) => f !== deletedPath));
+      if (selectedFile === deletedPath) {
+        setSelectedFile(null);
+      }
     }
   };
 
@@ -743,13 +787,14 @@ export function FilesPage() {
             Explorer
           </div>
           <div className="flex-1 overflow-auto">
-            {DEMO_TREE.map((node) => (
+            {fileTree.map((node) => (
               <FileTreeItem
                 key={node.name}
                 node={node}
                 depth={0}
                 selectedPath={selectedFile}
                 onFileClick={handleFileClick}
+                onDelete={handleDeleteFile}
               />
             ))}
           </div>
