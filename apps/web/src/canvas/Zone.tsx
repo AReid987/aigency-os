@@ -3,7 +3,7 @@
 import React, { useMemo, useCallback, useRef, useState, useEffect } from 'react';
 import type { Zone as ZoneType } from '@vscp/shared-types';
 import { useCanvasStore } from '../stores/canvasStore';
-import { useUserStore } from '../stores/userStore';
+import { useAuthStore } from '../stores/authStore';
 import { CanvasCard } from './Card';
 import { canEditZone, getZonePermissionLabel } from '../utils/permissions';
 import { Badge } from '@vscp/ui';
@@ -97,7 +97,7 @@ function ResizeHandle({
 
 export const Zone = React.memo(function Zone({ zone, zoom, onCardMove }: ZoneProps) {
   const { cards, activeZone, setActiveZone, moveZone, resizeZone, zoneLayouts } = useCanvasStore();
-  const { role } = useUserStore();
+  const role = useAuthStore((s) => s.user?.role ?? 'domain_expert');
 
   const editable = canEditZone(role, zone.type);
   const permLabel = getZonePermissionLabel(role, zone.type);
