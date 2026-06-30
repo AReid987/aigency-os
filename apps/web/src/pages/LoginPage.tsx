@@ -96,13 +96,6 @@ export function LoginPage({ onSwitchToSignup }: LoginPageProps) {
           </p>
         </div>
 
-        <div className="mt-4 p-3 bg-elevated/50 rounded-md border border-border">
-          <p className="text-[10px] text-fg-muted font-mono">
-            Demo accounts:<br />
-            Admin: admin@aigency.os / admin123<br />
-            Domain Expert: demo@domain.expert / demo123
-          </p>
-        </div>
       </div>
     </div>
   );

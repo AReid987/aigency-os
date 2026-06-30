@@ -1,10 +1,10 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { Badge, ProgressBar } from '@vscp/ui';
+import { Badge } from '@vscp/ui';
 import {
-  Terminal, Ticket, Radio, Brain, Users, DollarSign,
-  Clock, Activity, ArrowRight, Layers, CheckSquare, Zap,
+  Terminal, Ticket, Radio, Brain, Users,
+  Activity, ArrowRight, Layers, CheckSquare, Zap,
   RefreshCw,
 } from 'lucide-react';
 import { paperclipApi, denchclawApi, gbrainApi, checkAllServices } from '../api/services';
@@ -73,7 +73,7 @@ export function OfficePage() {
     staleTime: 60_000,
   });
 
-  // Demo data for summary cards (falls back when services are down)
+  // Summary card data
   const { data: agents } = useQuery({
     queryKey: ['paperclip', 'agents'],
     queryFn: () => paperclipApi.getAgents('default'),
@@ -109,12 +109,12 @@ export function OfficePage() {
       }));
   }, [queryClient, services, agents, contacts, pages]);
 
-  const agentCount = Array.isArray(agents) ? agents.length : 4;
+  const agentCount = Array.isArray(agents) ? agents.length : 0;
   // denchclaw returns { contacts: [...] }, gbrain returns { pages: [...] }
   const contactData = contacts as { contacts?: unknown[] } | undefined;
-  const contactCount = contactData?.contacts?.length ?? 3;
+  const contactCount = contactData?.contacts?.length ?? 0;
   const pageData = pages as { pages?: unknown[] } | undefined;
-  const brainCount = pageData?.pages?.length ?? 5;
+  const brainCount = pageData?.pages?.length ?? 0;
   const onlineServices = services?.filter((s) => s.status === 'up').length ?? 0;
   const totalServices = services?.length ?? 7;
 
@@ -140,15 +140,13 @@ export function OfficePage() {
           icon={Terminal}
           label="Active Agents"
           value={agentCount}
-          sub="3 online, 1 blocked"
           color="bg-primary-muted text-primary"
           onClick={() => navigate('/orchestrator')}
         />
         <SummaryCard
           icon={Ticket}
           label="Open Tickets"
-          value={12}
-          sub="3 high priority"
+          value={0}
           color="bg-amber-muted text-amber"
           onClick={() => navigate('/tasks')}
         />
@@ -156,7 +154,6 @@ export function OfficePage() {
           icon={Users}
           label="CRM Contacts"
           value={contactCount}
-          sub="$195k pipeline"
           color="bg-success-muted text-success"
           onClick={() => navigate('/crm')}
         />
@@ -164,7 +161,6 @@ export function OfficePage() {
           icon={Brain}
           label="Brain Pages"
           value={brainCount}
-          sub="Last captured 2h ago"
           color="bg-accent-muted text-accent"
           onClick={() => navigate('/brain')}
         />
@@ -183,23 +179,9 @@ export function OfficePage() {
             </button>
           </div>
           <div className="p-3 space-y-2">
-            {[
-              { name: 'MVP Auth System', agents: 2, progress: 75, status: 'running' },
-              { name: 'Market Research', agents: 1, progress: 45, status: 'running' },
-              { name: 'Revenue Dashboard', agents: 1, progress: 100, status: 'complete' },
-            ].map((m, i) => (
-              <div key={i} className="p-3 rounded-md bg-hover/40 border border-border">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-medium">{m.name}</span>
-                  <Badge variant={m.status === 'complete' ? 'success' : 'info'}>{m.status}</Badge>
-                </div>
-                <div className="flex items-center gap-3">
-                  <ProgressBar value={m.progress} className="flex-1 h-1.5" />
-                  <span className="text-[10px] text-fg-muted font-mono">{m.progress}%</span>
-                </div>
-                <p className="text-[10px] text-fg-muted mt-1">{m.agents} agent{m.agents > 1 ? 's' : ''} assigned</p>
-              </div>
-            ))}
+            <div className="flex items-center justify-center p-8">
+              <p className="text-sm text-fg-muted">No active missions</p>
+            </div>
           </div>
         </div>
 
@@ -214,20 +196,9 @@ export function OfficePage() {
             </button>
           </div>
           <div className="divide-y divide-border">
-            {[
-              { title: 'Pricing Decision: $49/mo Pro', type: 'decision', time: '2h ago' },
-              { title: 'Auth Architecture Plan', type: 'plan', time: '5h ago' },
-              { title: 'Security Audit: JWT', type: 'audit', time: '1d ago' },
-              { title: 'Market TAM Assumption', type: 'assumption', time: '3d ago' },
-            ].map((p, i) => (
-              <div key={i} className="px-4 py-2.5 hover:bg-hover/30 cursor-pointer" onClick={() => navigate('/brain')}>
-                <p className="text-xs font-medium">{p.title}</p>
-                <div className="flex items-center gap-2 mt-1">
-                  <Badge variant="neutral">{p.type}</Badge>
-                  <span className="text-[10px] text-fg-muted">{p.time}</span>
-                </div>
-              </div>
-            ))}
+            <div className="flex items-center justify-center p-8">
+              <p className="text-sm text-fg-muted">No recent captures</p>
+            </div>
           </div>
         </div>
 
@@ -242,17 +213,14 @@ export function OfficePage() {
             </h2>
           </div>
           <div className="px-4 py-2 divide-y divide-border">
-            {(services ?? [
-              { name: 'Paperclip', status: 'down' as const },
-              { name: 'DenchClaw', status: 'down' as const },
-              { name: 'HCOM', status: 'down' as const },
-              { name: 'Gbrain', status: 'down' as const },
-              { name: 'AEGIS', status: 'down' as const },
-              { name: 'Plannotator', status: 'down' as const },
-              { name: 'Skills', status: 'down' as const },
-            ]).map((s) => (
+            {(services ?? []).map((s) => (
               <ServiceStatusRow key={s.name} name={s.name} status={s.status} />
             ))}
+            {(!services || services.length === 0) && (
+              <div className="flex items-center justify-center py-4">
+                <p className="text-sm text-fg-muted">No services detected</p>
+              </div>
+            )}
           </div>
           {/* Quick Actions */}
           <div className="px-4 py-3 border-t border-border">

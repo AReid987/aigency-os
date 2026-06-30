@@ -54,8 +54,8 @@ export function QualityPage() {
   });
 
   const findings = Array.isArray(audits) && audits.length > 0
-    ? (audits[0] as { findings?: typeof DEMO_FINDINGS }).findings ?? DEMO_FINDINGS
-    : DEMO_FINDINGS;
+    ? (audits[0] as { findings?: typeof DEMO_FINDINGS }).findings ?? []
+    : [];
 
   const handleRunAudit = async () => {
     setRunning(true);

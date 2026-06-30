@@ -119,7 +119,7 @@ const LoginSchema = z.object({
 
 // ─── Seed Admin Account ─────────────────────────────────────────────────────
 
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@aigency.os';
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'antonio.reid@aigency.site';
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin123';
 const ADMIN_NAME = process.env.ADMIN_NAME || 'Antonio Reid';
 

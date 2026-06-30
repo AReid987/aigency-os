@@ -16,53 +16,6 @@ interface Mission {
   priority: 'low' | 'medium' | 'high' | 'critical';
 }
 
-const DEMO_MISSIONS: Mission[] = [
-  {
-    id: 'm1',
-    title: 'MVP Auth System',
-    agentCount: 2,
-    progress: 75,
-    status: 'running',
-    elapsed: '2h 14m',
-    costEstimate: '$12.40',
-    description: 'Implement JWT-based auth with role-based access control',
-    priority: 'high',
-  },
-  {
-    id: 'm2',
-    title: 'Market Research Report',
-    agentCount: 1,
-    progress: 45,
-    status: 'running',
-    elapsed: '45m',
-    costEstimate: '$4.20',
-    description: 'Competitive analysis and market sizing for SaaS vertical',
-    priority: 'medium',
-  },
-  {
-    id: 'm3',
-    title: 'Revenue Dashboard Build',
-    agentCount: 1,
-    progress: 100,
-    status: 'complete',
-    elapsed: '3h 2m',
-    costEstimate: '$18.60',
-    description: 'Build MRR/ARR tracking dashboard with Chart.js visualizations',
-    priority: 'high',
-  },
-  {
-    id: 'm4',
-    title: 'Security Audit Sprint',
-    agentCount: 3,
-    progress: 30,
-    status: 'running',
-    elapsed: '1h 8m',
-    costEstimate: '$8.90',
-    description: 'Run OWASP checklist, dependency audit, and penetration testing',
-    priority: 'critical',
-  },
-];
-
 const statusConfig: Record<Mission['status'], { variant: 'info' | 'success' | 'danger'; icon: typeof Play; label: string }> = {
   running: { variant: 'info', icon: Loader, label: 'Running' },
   complete: { variant: 'success', icon: CheckCircle, label: 'Complete' },
@@ -97,7 +50,7 @@ export function ConductorPage() {
         description: g.description ?? '',
         priority: g.priority ?? 'medium',
       }))
-    : DEMO_MISSIONS;
+    : [];
 
   const [showModal, setShowModal] = useState(false);
   const [newMission, setNewMission] = useState({ description: '', priority: 'medium' as Mission['priority'] });
@@ -161,6 +114,11 @@ export function ConductorPage() {
 
       {/* Mission Grid */}
       <div className="grid grid-cols-2 gap-4">
+        {missions.length === 0 && (
+          <div className="col-span-2 flex items-center justify-center p-8">
+            <p className="text-sm text-fg-muted">No active missions</p>
+          </div>
+        )}
         {missions.map((mission) => {
           const { variant, icon: StatusIcon, label } = statusConfig[mission.status];
           return (

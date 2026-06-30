@@ -14,13 +14,6 @@ interface CronJob {
   agent: string;
 }
 
-const demoJobs: CronJob[] = [
-  { id: 1, name: 'Heartbeat: All Agents', schedule: '0 */8 * * *', lastRun: '3h ago', nextRun: '5h from now', status: 'active', agent: 'hermes' },
-  { id: 2, name: 'Market Monitor', schedule: '0 9 * * 1', lastRun: '5d ago', nextRun: '2d from now', status: 'active', agent: 'claude' },
-  { id: 3, name: 'Budget Alert Check', schedule: '0 */4 * * *', lastRun: '1h ago', nextRun: '3h from now', status: 'active', agent: 'kimi' },
-  { id: 4, name: 'CRM Lead Enrichment', schedule: '0 10 * * 1-5', lastRun: '18h ago', nextRun: '6h from now', status: 'paused', agent: 'codex' },
-];
-
 const statusVariant: Record<string, 'success' | 'warning'> = {
   active: 'success',
   paused: 'warning',
@@ -28,7 +21,7 @@ const statusVariant: Record<string, 'success' | 'warning'> = {
 
 export function CronPage() {
   const [showModal, setShowModal] = useState(false);
-  const [jobs, setJobs] = useState(demoJobs);
+  const [jobs, setJobs] = useState<CronJob[]>([]);
 
   // Fetch heartbeats from Paperclip API
   useQuery({
@@ -94,6 +87,11 @@ export function CronPage() {
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
+            {jobs.length === 0 && (
+              <tr>
+                <td colSpan={7} className="px-4 py-8 text-center text-sm text-fg-muted">No scheduled jobs</td>
+              </tr>
+            )}
             {jobs.map((job) => (
               <tr key={job.id} className="hover:bg-elevated/30 transition-colors">
                 <td className="px-4 py-2.5 text-fg font-medium">{job.name}</td>

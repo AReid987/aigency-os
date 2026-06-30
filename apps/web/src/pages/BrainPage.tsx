@@ -7,30 +7,6 @@ import {
 import { gbrainApi } from '../api/services';
 import { useAuthStore } from '../stores/authStore';
 
-// ─── Demo fallback data ──────────────────────────────────────────────────────
-
-const DEMO_PAGES = [
-  { id: 'p1', title: 'Pricing Decision: $49/mo Pro Tier', type: 'decision', source: 'bmad', confidence: 0.92, recency: '2 days ago', tags: ['pricing', 'revenue'], scope: 'business' },
-  { id: 'p2', title: 'Auth System Architecture Plan', type: 'plan', source: 'paul', confidence: 0.88, recency: '1 week ago', tags: ['auth', 'architecture'], scope: 'technical' },
-  { id: 'p3', title: 'Security Audit: JWT Token Handling', type: 'audit', source: 'aegis', confidence: 0.95, recency: '3 days ago', tags: ['security', 'jwt'], scope: 'technical' },
-  { id: 'p4', title: 'Market Assumption: AI Note-taking TAM', type: 'assumption', source: 'bmad', confidence: 0.65, recency: '1 week ago', tags: ['market', 'tam'], scope: 'business' },
-  { id: 'p5', title: 'Sprint 1 Foundation Complete', type: 'fact', source: 'hcom', confidence: 1.0, recency: '2 weeks ago', tags: ['sprint', 'milestone'], scope: 'business' },
-];
-
-const DEMO_GRAPH_NODES = [
-  { id: 'p1', label: 'Pricing', x: 150, y: 120 },
-  { id: 'p2', label: 'Auth', x: 350, y: 80 },
-  { id: 'p3', label: 'Security', x: 300, y: 220 },
-  { id: 'p4', label: 'Market', x: 100, y: 250 },
-  { id: 'p5', label: 'Sprint 1', x: 450, y: 180 },
-];
-
-const DEMO_EDGES = [
-  { from: 'p3', to: 'p2' },
-  { from: 'p1', to: 'p4' },
-  { from: 'p5', to: 'p2' },
-];
-
 // ─── Type & source helpers ───────────────────────────────────────────────────
 
 const typeColors: Record<string, string> = {
@@ -215,29 +191,25 @@ export function BrainPage() {
     retry: false,
   });
 
-  // ── Resolve pages (API → demo fallback) ──────────────────────────────────
+  // ── Resolve pages (API only) ─────────────────────────────────────────────
 
   const apiPages: BrainPageItem[] = useMemo(() => {
     if (searchData && Array.isArray(searchData.results) && searchData.results.length > 0) {
       return searchData.results as BrainPageItem[];
     }
-    if (pagesData && Array.isArray(pagesData.pages) && pagesData.pages.length > 0) {
+    if (pagesData && Array.isArray(pagesData.pages)) {
       return pagesData.pages as BrainPageItem[];
     }
-    return DEMO_PAGES;
+    return [];
   }, [pagesData, searchData]);
 
   const graphNodes: GraphNode[] = useMemo(
-    () => (Array.isArray(graphData?.nodes) && graphData!.nodes.length > 0
-      ? (graphData!.nodes as GraphNode[])
-      : DEMO_GRAPH_NODES),
+    () => (Array.isArray(graphData?.nodes) ? (graphData!.nodes as GraphNode[]) : []),
     [graphData],
   );
 
   const graphEdges: GraphEdge[] = useMemo(
-    () => (Array.isArray(graphData?.edges) && graphData!.edges.length > 0
-      ? (graphData!.edges as GraphEdge[])
-      : DEMO_EDGES),
+    () => (Array.isArray(graphData?.edges) ? (graphData!.edges as GraphEdge[]) : []),
     [graphData],
   );
 
@@ -247,7 +219,7 @@ export function BrainPage() {
     return apiPages.filter((p) => {
       // Role-based scope filter
       if (!isTech && p.scope === 'technical') return false;
-      // Source filter (already handled server-side for API, but needed for demo fallback)
+      // Source filter
       if (sourceFilter !== 'all' && p.source !== sourceFilter) return false;
       // Local text search when no debounced query
       if (!debouncedQuery) return true;
@@ -330,6 +302,11 @@ export function BrainPage() {
             </h2>
           </div>
           <svg className="w-full h-[calc(100%-3rem)]">
+            {graphNodes.length === 0 && (
+              <text x="50%" y="50%" textAnchor="middle" fill="#9aa4b2" fontSize="12" fontFamily="Satoshi, system-ui">
+                No knowledge graph data
+              </text>
+            )}
             {graphEdges.map((edge, i) => {
               const from = graphNodes.find((n) => n.id === edge.from);
               const to = graphNodes.find((n) => n.id === edge.to);

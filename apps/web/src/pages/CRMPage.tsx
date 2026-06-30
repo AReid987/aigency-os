@@ -22,14 +22,6 @@ interface Deal {
   notes: string;
 }
 
-interface ActivityEntry {
-  id: string;
-  action: string;
-  detail: string;
-  agent: string;
-  timestamp: string;
-}
-
 // ─── Pipeline Stages ─────────────────────────────────────────────────────────
 
 const PIPELINE_STAGES = [
@@ -40,29 +32,6 @@ const PIPELINE_STAGES = [
   { key: 'closed_won', label: 'Won', color: 'success' },
   { key: 'closed_lost', label: 'Lost', color: 'danger' },
 ] as const;
-
-// ─── Demo Data (fallback) ────────────────────────────────────────────────────
-
-const DEMO_CONTACTS: Contact[] = [
-  { id: '1', name: 'Sarah Chen', email: 'sarah@startup.io', company: 'StartupIO', tags: ['founder', 'ai'] },
-  { id: '2', name: 'Marcus Johnson', email: 'marcus@enterprise.com', company: 'Enterprise Corp', tags: ['enterprise', 'cto'] },
-  { id: '3', name: 'Priya Patel', email: 'priya@devtools.co', company: 'DevTools Co', tags: ['developer'] },
-];
-
-const DEMO_DEALS: Deal[] = [
-  { id: '1', contactName: 'Sarah Chen', stage: 'proposal', value: 50000, notes: 'Enterprise plan for 20 seats' },
-  { id: '2', contactName: 'Marcus Johnson', stage: 'negotiation', value: 120000, notes: 'Annual contract' },
-  { id: '3', contactName: 'Priya Patel', stage: 'qualified', value: 25000, notes: 'Seed interest' },
-];
-
-const DEMO_ACTIVITY: ActivityEntry[] = [
-  { id: '1', action: 'Enriched contact', detail: 'Added LinkedIn profile & company data for Sarah Chen', agent: 'DenchClaw Agent', timestamp: '2 min ago' },
-  { id: '2', action: 'Moved deal stage', detail: 'Marcus Johnson deal: proposal → negotiation', agent: 'DenchClaw Agent', timestamp: '15 min ago' },
-  { id: '3', action: 'Created outreach sequence', detail: '3-step email sequence for new leads in AI vertical', agent: 'DenchClaw Agent', timestamp: '1 hr ago' },
-  { id: '4', action: 'Scored lead', detail: 'Priya Patel scored 82/100 based on engagement signals', agent: 'DenchClaw Agent', timestamp: '2 hr ago' },
-  { id: '5', action: 'Identified duplicate', detail: 'Merged "M. Johnson" and "Marcus J." into single contact', agent: 'DenchClaw Agent', timestamp: '3 hr ago' },
-  { id: '6', action: 'Generated report', detail: 'Weekly pipeline summary: $195k total, 3 active deals', agent: 'DenchClaw Agent', timestamp: '5 hr ago' },
-];
 
 // ─── Modal Components ────────────────────────────────────────────────────────
 
@@ -196,12 +165,12 @@ export function CRMPage() {
     staleTime: 30_000,
   });
 
-  // API returns { contacts: unknown[] } — cast items to Contact when present, else demo fallback
+  // API returns { contacts: unknown[] }
   const rawContacts = (contactsData as { contacts?: Contact[] } | undefined)?.contacts;
-  const contacts: Contact[] = rawContacts?.length ? rawContacts : DEMO_CONTACTS;
+  const contacts: Contact[] = rawContacts ?? [];
 
   const rawDeals = (dealsData as { deals?: Deal[] } | undefined)?.deals;
-  const deals: Deal[] = rawDeals?.length ? rawDeals : DEMO_DEALS;
+  const deals: Deal[] = rawDeals ?? [];
 
   // ─── Mutations ─────────────────────────────────────────────────────────────
 
@@ -266,6 +235,11 @@ export function CRMPage() {
 
       {/* Pipeline Tab */}
       {!isLoading && tab === 'pipeline' && (
+        deals.length === 0 ? (
+          <div className="flex items-center justify-center h-[calc(100%-5rem)]">
+            <p className="text-sm text-fg-muted">No deals yet</p>
+          </div>
+        ) : (
         <div className="grid grid-cols-6 gap-3 h-[calc(100%-5rem)]">
           {PIPELINE_STAGES.map((stage) => {
             const stageDeals = deals.filter((d) => d.stage === stage.key);
@@ -292,12 +266,18 @@ export function CRMPage() {
             );
           })}
         </div>
+        )
       )}
 
       {/* Contacts Tab */}
       {!isLoading && tab === 'contacts' && (
         <div className="bg-surface/70 backdrop-blur-md rounded-md border border-border">
           <div className="divide-y divide-border">
+            {contacts.length === 0 && (
+              <div className="flex items-center justify-center p-8">
+                <p className="text-sm text-fg-muted">No contacts yet</p>
+              </div>
+            )}
             {contacts.map((c) => (
               <div key={c.id} className="px-6 py-4 hover:bg-hover/30 flex items-center gap-4">
                 <div className="w-10 h-10 rounded-sm bg-primary-muted text-primary flex items-center justify-center font-bold text-sm">{c.name.charAt(0)}</div>
@@ -318,19 +298,11 @@ export function CRMPage() {
           <div className="px-4 py-3 border-b border-border bg-elevated/60 sticky top-0 flex items-center gap-2">
             <Activity size={14} className="text-primary" />
             <h3 className="text-xs font-semibold">Autonomous CRM Actions</h3>
-            <Badge variant="info">{DEMO_ACTIVITY.length}</Badge>
           </div>
           <div className="divide-y divide-border">
-            {DEMO_ACTIVITY.map((entry) => (
-              <div key={entry.id} className="px-6 py-4 hover:bg-hover/30">
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-sm font-medium">{entry.action}</span>
-                  <span className="text-[10px] text-fg-muted">{entry.timestamp}</span>
-                </div>
-                <p className="text-xs text-fg-muted">{entry.detail}</p>
-                <p className="text-[10px] text-fg-muted mt-1 opacity-60">by {entry.agent}</p>
-              </div>
-            ))}
+            <div className="flex items-center justify-center p-8">
+              <p className="text-sm text-fg-muted">No agent activity yet</p>
+            </div>
           </div>
         </div>
       )}

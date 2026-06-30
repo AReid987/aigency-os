@@ -31,22 +31,9 @@ const columnDot: Record<string, string> = {
   Done: 'bg-success',
 };
 
-const initialTasks: Task[] = [
-  { id: '1', title: 'Define pricing tiers', assignee: { name: 'Alice Chen', avatar: 'AC' }, priority: 'P1', goalAncestry: 'Mission → Growth → Pricing', createdAt: 'Jun 20', column: 'Backlog' },
-  { id: '2', title: 'Write API documentation', assignee: { name: 'Bob Rivera', avatar: 'BR' }, priority: 'P2', goalAncestry: 'Mission → Developer Experience', createdAt: 'Jun 18', column: 'Backlog' },
-  { id: '3', title: 'Set up monitoring', assignee: { name: 'Carol Wu', avatar: 'CW' }, priority: 'P1', goalAncestry: 'Mission → Infrastructure → Observability', createdAt: 'Jun 15', column: 'Backlog' },
-  { id: '4', title: 'Build revenue calculator', assignee: { name: 'Dan Park', avatar: 'DP' }, priority: 'P0', goalAncestry: 'Mission → Finance → Revenue', createdAt: 'Jun 19', column: 'Todo' },
-  { id: '5', title: 'Create competitor analysis', assignee: { name: 'Eve Santos', avatar: 'ES' }, priority: 'P1', goalAncestry: 'Mission → Growth → Market Intel', createdAt: 'Jun 17', column: 'Todo' },
-  { id: '6', title: 'Implement JWT auth', assignee: { name: 'Alice Chen', avatar: 'AC' }, priority: 'P0', goalAncestry: 'Mission → Auth → JWT', createdAt: 'Jun 14', column: 'In Progress' },
-  { id: '7', title: 'Design dashboard UI', assignee: { name: 'Frank Lee', avatar: 'FL' }, priority: 'P1', goalAncestry: 'Mission → Product → Dashboard', createdAt: 'Jun 16', column: 'In Progress' },
-  { id: '8', title: 'Database schema design', assignee: { name: 'Carol Wu', avatar: 'CW' }, priority: 'P0', goalAncestry: 'Mission → Infrastructure → Data Model', createdAt: 'Jun 12', column: 'Review' },
-  { id: '9', title: 'Project scaffolding', assignee: { name: 'Bob Rivera', avatar: 'BR' }, priority: 'P1', goalAncestry: 'Mission → Infrastructure → Foundation', createdAt: 'Jun 10', column: 'Done' },
-  { id: '10', title: 'CI/CD pipeline', assignee: { name: 'Dan Park', avatar: 'DP' }, priority: 'P0', goalAncestry: 'Mission → Infrastructure → DevOps', createdAt: 'Jun 11', column: 'Done' },
-];
-
 export function TasksPage() {
   const queryClient = useQueryClient();
-  const [localTasks, setLocalTasks] = useState<Task[]>(initialTasks);
+  const [localTasks, setLocalTasks] = useState<Task[]>([]);
 
   const { data: tasksData } = useQuery({
     queryKey: ['paperclip', 'tasks', 'default'],
@@ -65,7 +52,7 @@ export function TasksPage() {
         createdAt: t.createdAt ?? '',
         column: t.column ?? 'Backlog',
       }))
-    : localTasks;
+    : [];
 
   const updateStatusMutation = useMutation({
     mutationFn: ({ taskId, status }: { taskId: string; status: string }) =>

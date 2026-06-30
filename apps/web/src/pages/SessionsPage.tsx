@@ -15,82 +15,6 @@ interface Session {
   transcript: string[];
 }
 
-const demoSessions: Session[] = [
-  {
-    id: 1,
-    agent: 'hermes',
-    startTime: '2h ago',
-    duration: '45m',
-    task: 'Architecture review',
-    status: 'complete',
-    tokens: '12.5k',
-    transcript: [
-      '[hermes] Analyzing project structure...',
-      '[hermes] Reviewing dependency graph...',
-      '[hermes] Found 3 circular dependencies in services layer',
-      '[hermes] Suggested refactoring: extract shared types to @vscp/types',
-      '[hermes] Architecture review complete. Report saved.',
-    ],
-  },
-  {
-    id: 2,
-    agent: 'claude',
-    startTime: '1h ago',
-    duration: '30m',
-    task: 'Auth implementation',
-    status: 'active',
-    tokens: '8.2k',
-    transcript: [
-      '[claude] Setting up OAuth2 provider integration...',
-      '[claude] Implementing JWT token rotation...',
-      '[claude] Writing middleware for route protection...',
-    ],
-  },
-  {
-    id: 3,
-    agent: 'kimi',
-    startTime: '30m ago',
-    duration: '15m',
-    task: 'UI components',
-    status: 'active',
-    tokens: '5.1k',
-    transcript: [
-      '[kimi] Generating DashboardPage layout...',
-      '[kimi] Building ServiceStatusRow component...',
-      '[kimi] Adding responsive breakpoints...',
-    ],
-  },
-  {
-    id: 4,
-    agent: 'codex',
-    startTime: '4h ago',
-    duration: '1h',
-    task: 'API endpoints',
-    status: 'complete',
-    tokens: '22.3k',
-    transcript: [
-      '[codex] Scaffolding REST endpoints for /api/v1/...',
-      '[codex] Implementing CRUD for agents, sessions, cron...',
-      '[codex] Adding OpenAPI spec generation...',
-      '[codex] All 24 endpoints passing integration tests.',
-    ],
-  },
-  {
-    id: 5,
-    agent: 'qwen',
-    startTime: '3h ago',
-    duration: '—',
-    task: 'Blocked on spec',
-    status: 'failed',
-    tokens: '1.2k',
-    transcript: [
-      '[qwen] Attempting to parse spec document...',
-      '[qwen] ERROR: Ambiguous requirement in section 3.2',
-      '[qwen] Unable to proceed without clarification. Aborted.',
-    ],
-  },
-];
-
 const statusVariant: Record<string, 'success' | 'info' | 'danger'> = {
   active: 'info',
   complete: 'success',
@@ -107,7 +31,7 @@ export function SessionsPage() {
     staleTime: 30_000,
   });
 
-  // Map API agents to sessions, fall back to demo
+  // Map API agents to sessions
   const sessions: Session[] = agentsData && agentsData.length > 0
     ? (agentsData as Record<string, unknown>[]).map((agent, i) => ({
         id: Number(agent.id ?? i),
@@ -119,7 +43,7 @@ export function SessionsPage() {
         tokens: agent.tokens ? String(agent.tokens) : '—',
         transcript: Array.isArray(agent.transcript) ? (agent.transcript as string[]) : [],
       }))
-    : demoSessions;
+    : [];
 
   return (
     <div className="flex flex-col gap-4 p-4">
@@ -147,6 +71,11 @@ export function SessionsPage() {
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
+            {sessions.length === 0 && (
+              <tr>
+                <td colSpan={7} className="px-4 py-8 text-center text-sm text-fg-muted">No sessions recorded</td>
+              </tr>
+            )}
             {sessions.map((session) => (
               <Fragment key={session.id}>
                 <tr

@@ -50,7 +50,7 @@ export const useAuthStore = create<AuthState>()(
           set({ user: data.user, token: data.token, isAuthenticated: true });
           return { success: true };
         } catch (err) {
-          return { success: false, error: 'Cannot reach auth server. Is Paperclip API running on port 3001?' };
+          return { success: false, error: 'Cannot reach auth server. Please try again later.' };
         }
       },
 
@@ -71,7 +71,7 @@ export const useAuthStore = create<AuthState>()(
           set({ user: resData.user, token: resData.token, isAuthenticated: true });
           return { success: true };
         } catch (err) {
-          return { success: false, error: 'Cannot reach auth server. Is Paperclip API running on port 3001?' };
+          return { success: false, error: 'Cannot reach auth server. Please try again later.' };
         }
       },
 

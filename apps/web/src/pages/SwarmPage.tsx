@@ -27,29 +27,6 @@ interface WorkerAgent {
   budget: { limit: number; spent: number };
 }
 
-// ─── Demo Data ───────────────────────────────────────────────────────────────
-
-const INITIAL_TASKS: KanbanTask[] = [
-  { id: 't1', title: 'Implement OAuth2 flow', assignedTo: 'hermes', priority: 'high', timeInColumn: '2h 15m', column: 'in-progress' },
-  { id: 't2', title: 'Design landing page', assignedTo: 'kimi', priority: 'medium', timeInColumn: '4h 30m', column: 'in-progress' },
-  { id: 't3', title: 'Write API integration tests', assignedTo: 'claude', priority: 'high', timeInColumn: '1h 10m', column: 'review' },
-  { id: 't4', title: 'Setup CI/CD pipeline', assignedTo: 'hermes', priority: 'critical', timeInColumn: '30m', column: 'backlog' },
-  { id: 't5', title: 'Database migration scripts', assignedTo: 'codex', priority: 'medium', timeInColumn: '6h', column: 'in-progress' },
-  { id: 't6', title: 'User profile CRUD endpoints', assignedTo: 'claude', priority: 'high', timeInColumn: '1d 2h', column: 'done' },
-  { id: 't7', title: 'Error handling middleware', assignedTo: 'hermes', priority: 'low', timeInColumn: '45m', column: 'backlog' },
-  { id: 't8', title: 'Rate limiter implementation', assignedTo: 'codex', priority: 'medium', timeInColumn: '3h', column: 'review' },
-  { id: 't9', title: 'WebSocket event system', assignedTo: 'kimi', priority: 'high', timeInColumn: '20m', column: 'backlog' },
-  { id: 't10', title: 'Auth token refresh logic', assignedTo: 'hermes', priority: 'critical', timeInColumn: '5h', column: 'done' },
-  { id: 't11', title: 'Dashboard metrics API', assignedTo: 'claude', priority: 'low', timeInColumn: '2d', column: 'done' },
-];
-
-const DEMO_WORKERS: WorkerAgent[] = [
-  { id: 'w1', name: 'hermes', adapter: 'hermes', status: 'active', activeTask: 'Implement OAuth2 flow', budget: { limit: 60, spent: 22 } },
-  { id: 'w2', name: 'claude', adapter: 'claude', status: 'active', activeTask: 'Write API integration tests', budget: { limit: 50, spent: 14 } },
-  { id: 'w3', name: 'kimi', adapter: 'kimi', status: 'thinking', activeTask: 'Design landing page', budget: { limit: 30, spent: 18 } },
-  { id: 'w4', name: 'codex', adapter: 'codex', status: 'blocked', activeTask: 'Database migration scripts', budget: { limit: 20, spent: 17 } },
-];
-
 const COLUMNS: { id: ColumnId; label: string }[] = [
   { id: 'backlog', label: 'Backlog' },
   { id: 'in-progress', label: 'In Progress' },
@@ -173,7 +150,7 @@ export function SwarmPage() {
         activeTask: a.activeTask ?? '',
         budget: a.budget ?? { limit: 0, spent: 0 },
       }))
-    : DEMO_WORKERS;
+    : [];
 
   const apiTasks: KanbanTask[] = Array.isArray(tasksData)
     ? (tasksData as KanbanTask[]).map((t) => ({
@@ -184,7 +161,7 @@ export function SwarmPage() {
         timeInColumn: t.timeInColumn ?? '',
         column: t.column ?? 'backlog',
       }))
-    : INITIAL_TASKS;
+    : [];
 
   const [tasks, setTasks] = useState<KanbanTask[]>(apiTasks);
 
@@ -263,6 +240,11 @@ export function SwarmPage() {
             </span>
           </div>
           <div className="p-3 space-y-3">
+            {workers.length === 0 && (
+              <div className="flex items-center justify-center p-8">
+                <p className="text-sm text-fg-muted">No agents deployed</p>
+              </div>
+            )}
             {workers.map((agent) => (
               <WorkerCard key={agent.id} agent={agent} />
             ))}

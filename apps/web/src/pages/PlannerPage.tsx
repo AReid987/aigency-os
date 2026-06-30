@@ -5,32 +5,6 @@ import { FileText, ChevronDown, ChevronRight, Briefcase, Code, MessageSquare, Ch
 import { useAuthStore } from '../stores/authStore';
 import { plannotatorApi } from '../api/services';
 
-// ─── Demo fallback data ──────────────────────────────────────────────────────
-
-const DEMO_PLANS = [
-  {
-    id: 'plan-1', title: 'Auth System Implementation', version: 2, source: 'paperclip',
-    sections: [
-      { id: 's1', title: 'Business Requirements', type: 'business', content: 'Implement JWT-based authentication with role-based access control. Support domain expert and technical founder roles. Budget: $500, Timeline: 2 weeks.', access: ['domain_expert', 'technical_founder', 'admin'] },
-      { id: 's2', title: 'Technical Architecture', type: 'technical', content: 'Fastify middleware with JWT validation. SQLite sessions store. RBAC middleware checks role permissions per route.', access: ['technical_founder', 'admin'] },
-      { id: 's3', title: 'API Design', type: 'technical', content: 'POST /auth/login → JWT token\nPOST /auth/register → user creation\nGET /auth/me → current user', access: ['technical_founder', 'admin'] },
-    ],
-    annotations: [
-      { id: 'a1', sectionId: 's1', author: 'Sarah Chen', content: 'Can we add social login?', timestamp: new Date().toISOString() },
-    ],
-    status: 'pending' as const,
-  },
-  {
-    id: 'plan-2', title: 'Revenue Dashboard MVP', version: 1, source: 'paperclip',
-    sections: [
-      { id: 's4', title: 'Business Requirements', type: 'business', content: 'Build revenue tracking dashboard showing MRR, ARR, churn rate.', access: ['domain_expert', 'technical_founder', 'admin'] },
-      { id: 's5', title: 'Technical Architecture', type: 'technical', content: 'React dashboard with Zustand state. Chart.js for visualizations.', access: ['technical_founder', 'admin'] },
-    ],
-    annotations: [],
-    status: 'approved' as const,
-  },
-];
-
 // ─── Types ───────────────────────────────────────────────────────────────────
 
 interface PlanSection {
@@ -66,33 +40,22 @@ export function PlannerPage() {
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
   const [annotationText, setAnnotationText] = useState('');
   const [annotationSectionId, setAnnotationSectionId] = useState<string | null>(null);
-  const [usingDemo, setUsingDemo] = useState(false);
   const user = useAuthStore((s) => s.user);
   const queryClient = useQueryClient();
 
-  // ── Fetch plans from API, fallback to demo ────────────────────────────────
+  // ── Fetch plans from API ──────────────────────────────────────────────────
 
   const { data: plansData, isLoading } = useQuery({
     queryKey: ['plans'],
     queryFn: async () => {
-      try {
-        const res = await plannotatorApi.getPlans();
-        const plans = (res as any).plans ?? res;
-        if (Array.isArray(plans) && plans.length > 0) {
-          setUsingDemo(false);
-          return plans as Plan[];
-        }
-        setUsingDemo(true);
-        return DEMO_PLANS as Plan[];
-      } catch {
-        setUsingDemo(true);
-        return DEMO_PLANS as Plan[];
-      }
+      const res = await plannotatorApi.getPlans();
+      const plans = (res as any).plans ?? res;
+      return (Array.isArray(plans) ? plans : []) as Plan[];
     },
     staleTime: 30_000,
   });
 
-  const plans = plansData ?? DEMO_PLANS;
+  const plans: Plan[] = plansData ?? [];
 
   const selectedPlan = plans.find((p: Plan) => p.id === selectedPlanId) ?? plans[0];
 
@@ -120,7 +83,6 @@ export function PlannerPage() {
 
   // ── Derived ───────────────────────────────────────────────────────────────
 
-  const isTech = user?.role === 'admin' || user?.role === 'technical_founder';
   const filteredSections = (selectedPlan?.sections ?? []).filter((s: PlanSection) =>
     s.access.includes(user?.role || 'domain_expert')
   );
@@ -129,16 +91,11 @@ export function PlannerPage() {
 
   const handleApprove = () => {
     if (!selectedPlan) return;
-    if (usingDemo) {
-      // Demo mode — no API call
-      return;
-    }
     approveMutation.mutate(selectedPlan.id);
   };
 
   const handleReject = () => {
     if (!selectedPlan) return;
-    if (usingDemo) return;
     rejectMutation.mutate(selectedPlan.id);
   };
 
@@ -162,11 +119,7 @@ export function PlannerPage() {
         <div className="flex items-center gap-3">
           <FileText size={20} className="text-primary" />
           <h1 className="text-xl font-bold">Plan Review</h1>
-          {usingDemo && (
-            <Badge variant="warning">Demo Mode — API unreachable</Badge>
-          )}
         </div>
-        <Badge variant={isTech ? 'info' : 'warning'}>{isTech ? 'Full Access' : 'Business Only'}</Badge>
       </div>
 
       <div className="grid grid-cols-12 gap-6 h-[calc(100%-5rem)]">
@@ -179,6 +132,10 @@ export function PlannerPage() {
             {isLoading ? (
               <div className="flex items-center justify-center py-8">
                 <Loader size={20} className="animate-spin text-primary" />
+              </div>
+            ) : plans.length === 0 ? (
+              <div className="flex items-center justify-center py-8">
+                <p className="text-sm text-fg-muted">No plans yet</p>
               </div>
             ) : (
               plans.map((plan: Plan) => (
@@ -209,7 +166,7 @@ export function PlannerPage() {
                   <h2 className="text-lg font-bold">{selectedPlan.title}</h2>
                   <span className="text-xs text-fg-muted">Source: {selectedPlan.source}</span>
                 </div>
-                {selectedPlan.status === 'pending' && !usingDemo && (
+                {selectedPlan.status === 'pending' && (
                   <div className="flex gap-2">
                     <button
                       onClick={handleApprove}
@@ -257,7 +214,7 @@ export function PlannerPage() {
                           <div className="p-4 rounded-md bg-hover/40 border border-border">
                             <p className="text-sm text-fg-secondary whitespace-pre-wrap">{section.content}</p>
                           </div>
-                          {selectedPlan.status === 'pending' && isBusiness && !usingDemo && (
+                          {selectedPlan.status === 'pending' && isBusiness && (
                             <div className="flex gap-2 mt-3">
                               <button
                                 onClick={handleApprove}
@@ -298,39 +255,37 @@ export function PlannerPage() {
                 )}
 
                 {/* Add annotation form */}
-                {!usingDemo && (
-                  <div className="pt-4 border-t border-border">
-                    <h3 className="text-xs font-semibold text-fg-muted uppercase tracking-wider mb-3">
-                      Add Annotation
-                    </h3>
-                    <div className="flex gap-2">
-                      <select
-                        value={annotationSectionId || ''}
-                        onChange={(e) => setAnnotationSectionId(e.target.value || null)}
-                        className="px-3 py-2 bg-elevated/70 border border-border rounded-md text-sm"
-                      >
-                        <option value="">General</option>
-                        {selectedPlan.sections?.map((s: PlanSection) => (
-                          <option key={s.id} value={s.id}>{s.title}</option>
-                        ))}
-                      </select>
-                      <input
-                        value={annotationText}
-                        onChange={(e) => setAnnotationText(e.target.value)}
-                        placeholder="Write an annotation..."
-                        className="flex-1 px-3 py-2 bg-elevated/70 border border-border rounded-md text-sm"
-                        onKeyDown={(e) => e.key === 'Enter' && handleAddAnnotation()}
-                      />
-                      <button
-                        onClick={handleAddAnnotation}
-                        disabled={!annotationText.trim() || annotationMutation.isPending}
-                        className="px-3 py-2 bg-primary text-fg-inverse rounded-md hover:bg-primary-dark disabled:opacity-50"
-                      >
-                        {annotationMutation.isPending ? <Loader size={14} className="animate-spin" /> : <Send size={14} />}
-                      </button>
-                    </div>
+                <div className="pt-4 border-t border-border">
+                  <h3 className="text-xs font-semibold text-fg-muted uppercase tracking-wider mb-3">
+                    Add Annotation
+                  </h3>
+                  <div className="flex gap-2">
+                    <select
+                      value={annotationSectionId || ''}
+                      onChange={(e) => setAnnotationSectionId(e.target.value || null)}
+                      className="px-3 py-2 bg-elevated/70 border border-border rounded-md text-sm"
+                    >
+                      <option value="">General</option>
+                      {selectedPlan.sections?.map((s: PlanSection) => (
+                        <option key={s.id} value={s.id}>{s.title}</option>
+                      ))}
+                    </select>
+                    <input
+                      value={annotationText}
+                      onChange={(e) => setAnnotationText(e.target.value)}
+                      placeholder="Write an annotation..."
+                      className="flex-1 px-3 py-2 bg-elevated/70 border border-border rounded-md text-sm"
+                      onKeyDown={(e) => e.key === 'Enter' && handleAddAnnotation()}
+                    />
+                    <button
+                      onClick={handleAddAnnotation}
+                      disabled={!annotationText.trim() || annotationMutation.isPending}
+                      className="px-3 py-2 bg-primary text-fg-inverse rounded-md hover:bg-primary-dark disabled:opacity-50"
+                    >
+                      {annotationMutation.isPending ? <Loader size={14} className="animate-spin" /> : <Send size={14} />}
+                    </button>
                   </div>
-                )}
+                </div>
               </div>
             </>
           ) : (

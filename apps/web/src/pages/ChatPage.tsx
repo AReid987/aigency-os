@@ -18,20 +18,6 @@ interface Message {
   time: string;
 }
 
-const demoConversations: Conversation[] = [
-  { id: '1', name: 'hermes → claude', lastMessage: 'Auth middleware done. JWT-based, 15min expiry.', unread: 0 },
-  { id: '2', name: 'Group: Sprint Team', lastMessage: 'kimi: UI components ready for review', unread: 2 },
-  { id: '3', name: 'hermes → kimi', lastMessage: 'Start on the dashboard layout after auth', unread: 0 },
-];
-
-const demoMessages: Message[] = [
-  { id: 'm1', sender: 'hermes', text: 'Design the auth middleware for the platform. Use JWT with 15min expiry.', time: '2:30 PM' },
-  { id: 'm2', sender: 'claude', text: 'Working on it. Should I use Fastify decorators or middleware hooks?', time: '2:32 PM' },
-  { id: 'm3', sender: 'hermes', text: 'Middleware hooks. Keep it decoupled from route handlers.', time: '2:33 PM' },
-  { id: 'm4', sender: 'claude', text: 'Auth middleware done. JWT-based, 15min expiry. RBAC checks role per route.', time: '2:45 PM' },
-  { id: 'm5', sender: 'hermes', text: 'Excellent. Add refresh token endpoint too.', time: '2:46 PM' },
-];
-
 export function ChatPage() {
   const [activeConversation, setActiveConversation] = useState('1');
   const [inputValue, setInputValue] = useState('');
@@ -44,7 +30,7 @@ export function ChatPage() {
     staleTime: 30_000,
   });
 
-  // Map agents to conversations, fall back to demo
+  // Map agents to conversations
   const conversations: Conversation[] = agentsData && agentsData.length > 0
     ? (agentsData as Record<string, unknown>[]).map((agent, i) => ({
         id: String(agent.id ?? i),
@@ -52,7 +38,7 @@ export function ChatPage() {
         lastMessage: String(agent.status ?? ''),
         unread: 0,
       }))
-    : demoConversations;
+    : [];
 
   // Fetch messages for the active conversation/agent
   const { data: messagesData } = useQuery({
@@ -68,7 +54,7 @@ export function ChatPage() {
         text: String(msg.content ?? msg.text ?? ''),
         time: msg.timestamp ? new Date(String(msg.timestamp)).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '',
       }))
-    : demoMessages;
+    : [];
 
   // Send message mutation
   const sendMessage = useMutation({
@@ -100,6 +86,11 @@ export function ChatPage() {
           </div>
         </div>
         <div className="flex-1 overflow-y-auto">
+          {conversations.length === 0 && (
+            <div className="flex items-center justify-center p-8">
+              <p className="text-sm text-fg-muted">No conversations yet</p>
+            </div>
+          )}
           {conversations.map((conv) => (
             <button
               key={conv.id}
