@@ -25,12 +25,14 @@ import { TerminalPage } from './pages/TerminalPage';
 import { SessionsPage } from './pages/SessionsPage';
 import { CronPage } from './pages/CronPage';
 import { SettingsPage } from './pages/SettingsPage';
+import { ApiKeysPage } from './pages/ApiKeysPage';
+import { AgentConfigPage } from './pages/AgentConfigPage';
 import { Badge } from '@vscp/ui';
 import {
   Layout, Brain, Users, FileText, Shield, Terminal, Lightbulb,
   LogOut, ChevronLeft, ChevronRight, Plus, Layers, Bug, Radio,
   Network, MessageSquare, FolderOpen, CheckSquare, Monitor,
-  Clock, Settings, Trash2,
+  Clock, Settings, Key, Cpu, Trash2,
 } from 'lucide-react';
 import { usePresenceStore, usePresencePolling } from './stores/presenceStore';
 
@@ -80,6 +82,8 @@ const navGroups: NavGroup[] = [
       { path: '/sessions', icon: Monitor, label: 'Sessions', roles: ['admin', 'technical_founder'] },
       { path: '/cron', icon: Clock, label: 'Cron Jobs', roles: ['admin'] },
       { path: '/settings', icon: Settings, label: 'Settings', roles: ['admin'] },
+      { path: '/api-keys', icon: Key, label: 'API Keys', roles: ['admin', 'technical_founder', 'domain_expert'] },
+      { path: '/agent-config', icon: Cpu, label: 'Agent Config', roles: ['admin'] },
     ],
   },
 ];
@@ -336,6 +340,12 @@ export default function App() {
         } />
         <Route path="/settings" element={
           <AuthGuard roles={['admin']}><AppLayout><SettingsPage /></AppLayout></AuthGuard>
+        } />
+        <Route path="/api-keys" element={
+          <AuthGuard><AppLayout><ApiKeysPage /></AppLayout></AuthGuard>
+        } />
+        <Route path="/agent-config" element={
+          <AuthGuard roles={['admin']}><AppLayout><AgentConfigPage /></AppLayout></AuthGuard>
         } />
 
         {/* Venture creation */}

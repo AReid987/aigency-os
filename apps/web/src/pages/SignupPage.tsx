@@ -136,6 +136,7 @@ export function SignupPage({ onSwitchToLogin }: SignupPageProps) {
         <div className="mt-4 p-3 bg-elevated/50 rounded-md border border-border">
           <p className="text-[10px] text-fg-muted">
             Sign up creates a <strong>Domain Expert</strong> account with access to business views, plan review, and milestone approvals.
+            You can add LLM inference API keys after signing up via the API Keys page.
           </p>
         </div>
       </div>
