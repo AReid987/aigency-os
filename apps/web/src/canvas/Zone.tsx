@@ -1,12 +1,12 @@
 // ─── Zone Container — Draggable, Resizable, Scrollable ──────────────────────
 
 import React, { useMemo, useCallback, useRef, useState, useEffect } from 'react';
-import type { Zone as ZoneType } from '@vscp/shared-types';
+import type { Zone as ZoneType } from '@aigency-os/shared-types';
 import { useCanvasStore } from '../stores/canvasStore';
 import { useAuthStore } from '../stores/authStore';
 import { CanvasCard } from './Card';
 import { canEditZone, getZonePermissionLabel } from '../utils/permissions';
-import { Badge } from '@vscp/ui';
+import { Badge } from '@aigency-os/ui';
 import { Shield, Lock, Unlock, GripHorizontal } from 'lucide-react';
 
 interface ZoneProps {

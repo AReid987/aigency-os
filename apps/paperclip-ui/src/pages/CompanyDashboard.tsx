@@ -4,7 +4,7 @@ import { OrgChart } from '../components/OrgChart';
 import { TicketBoard } from '../components/TicketBoard';
 import { BudgetTracker } from '../components/BudgetTracker';
 import { BoardActions } from '../components/BoardActions';
-import type { Company, Agent, Ticket, Budget } from '@vscp/shared-types';
+import type { Company, Agent, Ticket, Budget } from '@aigency-os/shared-types';
 
 interface CompanyDashboardProps {
   company?: Company;

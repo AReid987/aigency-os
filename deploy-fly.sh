@@ -20,7 +20,7 @@ fi
 
 echo ""
 echo "→ Building frontend..."
-pnpm --filter @vscp/web run build
+pnpm --filter @aigency-os/web run build
 
 echo ""
 echo "→ Deploying to Fly.io..."

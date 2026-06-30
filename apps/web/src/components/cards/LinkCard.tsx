@@ -1,7 +1,7 @@
 // ─── Link Card Component ──────────────────────────────────────────────────────
 
 import React from 'react';
-import type { Card } from '@vscp/shared-types';
+import type { Card } from '@aigency-os/shared-types';
 import { ExternalLink, Globe } from 'lucide-react';
 
 interface LinkCardProps {

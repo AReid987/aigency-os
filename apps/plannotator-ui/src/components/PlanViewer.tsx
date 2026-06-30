@@ -1,5 +1,5 @@
 import React from 'react';
-import { Badge } from '@vscp/ui';
+import { Badge } from '@aigency-os/ui';
 import { ChevronDown, ChevronRight, Briefcase, Code, MessageSquare } from 'lucide-react';
 
 interface Section {

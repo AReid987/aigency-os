@@ -6,7 +6,7 @@ import { dealRoutes } from './routes/deals.js';
 import { sequenceRoutes } from './routes/sequences.js';
 import { leadRoutes } from './routes/leads.js';
 import { pipelineRoutes } from './routes/pipeline.js';
-import { registerMetrics } from '@vscp/shared-types/metrics-helper';
+import { registerMetrics } from '@aigency-os/shared-types/metrics-helper';
 
 const app = Fastify({ logger: true });
 

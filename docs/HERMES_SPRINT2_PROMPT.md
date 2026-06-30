@@ -64,7 +64,7 @@ Spawn each agent in a dedicated Hermes Workspace pane. Every agent must run insi
 | **Blackbox** | Free tier | Free | E3 | Babysitter gate enforcement: workflow state machine, human breakpoint API, milestone tracker | `feat/epic-3-babysitter` | Good at state machines |
 | **Rovo Dev** | GitHub Copilot | Free (included) | Shared | Tests for all new Epic 3/4/6 code, integration tests between S1 and S2 services | `feat/sprint2-tests` | IDE-native, excellent for test writing |
 | **Groq API** | Free tier | Free | Overflow | Documentation: README updates for new services, API endpoint docs, docker-compose additions | `feat/sprint2-docs` | Lightning fast for docs |
-| **Mistral** | Free tier | Free | Overflow | Shared package updates: new types for BMAD, PAUL, Gstack in `@vscp/shared-types` | `feat/sprint2-types` | Solid for type definitions |
+| **Mistral** | Free tier | Free | Overflow | Shared package updates: new types for BMAD, PAUL, Gstack in `@aigency-os/shared-types` | `feat/sprint2-types` | Solid for type definitions |
 
 **Budget Safety Rules:**
 - Claude Code (freemodel.dev): **Hard stop at $8.00/session.** If approaching, reassign to Opencode or Kimi.
@@ -78,9 +78,9 @@ Spawn each agent in a dedicated Hermes Workspace pane. Every agent must run insi
 ## TURBOREPO RULES (Sprint 2 Additions)
 
 1. **New apps/packages must follow existing patterns.** Copy `apps/web` or `apps/paperclip-ui` structure.
-2. **Workspace Protocol:** All new packages use `"@vscp/shared-types": "workspace:*"`.
+2. **Workspace Protocol:** All new packages use `"@aigency-os/shared-types": "workspace:*"`.
 3. **Pipeline:** Every new app/package must have `turbo.json` with `build`, `dev`, `lint`, `test`, `typecheck`.
-4. **Dependency Order:** If `@vscp/shared-types` changes, all dependent apps must rebuild.
+4. **Dependency Order:** If `@aigency-os/shared-types` changes, all dependent apps must rebuild.
 5. **Validation:** Before declaring any epic "done", run `turbo run build` at root. Zero errors.
 6. **No duplicate dependencies:** Check root `package.json` before adding new packages.
 
@@ -167,7 +167,7 @@ venture-spec-platform/
 
 ## SHARED PACKAGES (Mistral + Rovo)
 
-### `@vscp/shared-types` (Mistral)
+### `@aigency-os/shared-types` (Mistral)
 Add these types to `packages/shared-types/src/`:
 - `bmad.ts` — BusinessModel, RevenueModel, Milestone, GateStatus
 - `paul.ts` — Plan, Task, AcceptanceCriteria, UnifyResult
@@ -175,7 +175,7 @@ Add these types to `packages/shared-types/src/`:
 - `gstack.ts` — BuildJob, SkillInvocation, DesignOutput
 - Update `index.ts` to re-export all
 
-### `@vscp/api-client` (Rovo)
+### `@aigency-os/api-client` (Rovo)
 Add these clients to `packages/api-client/src/`:
 - `bmad.ts` — BMAD methodology API client
 - `paul.ts` — PAUL plan/apply/unify client

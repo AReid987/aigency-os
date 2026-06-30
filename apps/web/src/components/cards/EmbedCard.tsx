@@ -1,7 +1,7 @@
 // ─── Embed Card Component ─────────────────────────────────────────────────────
 
 import React from 'react';
-import type { Card } from '@vscp/shared-types';
+import type { Card } from '@aigency-os/shared-types';
 import { Code, AlertTriangle } from 'lucide-react';
 
 interface EmbedCardProps {

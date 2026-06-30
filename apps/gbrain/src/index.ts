@@ -6,7 +6,7 @@ import { queryRoutes } from './routes/query.js';
 import { graphRoutes } from './routes/graph.js';
 import { captureRoutes } from './routes/capture.js';
 import { synthesizeRoutes } from './routes/synthesize.js';
-import { registerMetrics } from '@vscp/shared-types/metrics-helper';
+import { registerMetrics } from '@aigency-os/shared-types/metrics-helper';
 
 const app = Fastify({ logger: true });
 

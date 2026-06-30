@@ -1,7 +1,7 @@
 // ─── Text Card Component ─────────────────────────────────────────────────────
 
 import React from 'react';
-import type { Card } from '@vscp/shared-types';
+import type { Card } from '@aigency-os/shared-types';
 import { FileText } from 'lucide-react';
 
 interface TextCardProps {

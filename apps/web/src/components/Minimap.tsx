@@ -1,7 +1,7 @@
 // ─── Canvas Minimap ─────────────────────────────────────────────────────────
 
 import React from 'react';
-import type { Card, Zone } from '@vscp/shared-types';
+import type { Card, Zone } from '@aigency-os/shared-types';
 
 interface MinimapProps {
   cards: Card[];

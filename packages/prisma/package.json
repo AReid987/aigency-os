@@ -1,5 +1,5 @@
 {
-  "name": "@vscp/prisma",
+  "name": "@aigency-os/prisma",
   "version": "0.0.0",
   "private": true,
   "type": "module",

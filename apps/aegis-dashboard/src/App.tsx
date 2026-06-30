@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Atmosphere } from './components/Atmosphere';
-import { Badge } from '@vscp/ui';
+import { Badge } from '@aigency-os/ui';
 import { Shield, AlertTriangle, CheckCircle, ChevronDown, ChevronRight, Zap } from 'lucide-react';
 
 const DOMAINS = [

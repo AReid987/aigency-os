@@ -1,7 +1,7 @@
 // ─── Draggable Card Component ───────────────────────────────────────────────
 
 import React, { useState, useRef, useCallback, useEffect } from 'react';
-import type { Card as CardData, ZoneType } from '@vscp/shared-types';
+import type { Card as CardData, ZoneType } from '@aigency-os/shared-types';
 import { useCanvasStore } from '../stores/canvasStore';
 import { useAuthStore } from '../stores/authStore';
 import { snapToGrid } from '../utils/canvasMath';

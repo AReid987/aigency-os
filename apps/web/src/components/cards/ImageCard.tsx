@@ -1,7 +1,7 @@
 // ─── Image Card Component ─────────────────────────────────────────────────────
 
 import React from 'react';
-import type { Card } from '@vscp/shared-types';
+import type { Card } from '@aigency-os/shared-types';
 import { Image as ImageIcon } from 'lucide-react';
 
 interface ImageCardProps {

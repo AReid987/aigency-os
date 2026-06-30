@@ -1,5 +1,5 @@
 import React from 'react';
-import type { Collision } from '@vscp/shared-types';
+import type { Collision } from '@aigency-os/shared-types';
 import { AlertTriangle } from 'lucide-react';
 
 interface CollisionAlertProps {

@@ -1,6 +1,6 @@
 import React from 'react';
-import type { Ticket } from '@vscp/shared-types';
-import { Badge } from '@vscp/ui';
+import type { Ticket } from '@aigency-os/shared-types';
+import { Badge } from '@aigency-os/ui';
 import { AlertCircle } from 'lucide-react';
 
 interface TicketBoardProps {

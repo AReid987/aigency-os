@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Badge } from '@vscp/ui';
+import { Badge } from '@aigency-os/ui';
 import { MessageSquare, Send } from 'lucide-react';
 
 interface Annotation {

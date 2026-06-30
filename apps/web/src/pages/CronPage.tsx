@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Badge } from '@vscp/ui';
+import { Badge } from '@aigency-os/ui';
 import { Clock, Play, Pause, Trash2, Zap, Plus, X } from 'lucide-react';
 import { paperclipApi } from '../api/services';
 

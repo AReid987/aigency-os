@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useAuthStore } from '../stores/authStore';
-import { Avatar, Badge } from '@vscp/ui';
+import { Avatar, Badge } from '@aigency-os/ui';
 
 export function Header() {
   const user = useAuthStore((s) => s.user);

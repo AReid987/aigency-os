@@ -1,10 +1,10 @@
 // ─── Floating Toolbar ───────────────────────────────────────────────────────
 
 import React, { useState, useCallback } from 'react';
-import type { CardType, ZoneType } from '@vscp/shared-types';
+import type { CardType, ZoneType } from '@aigency-os/shared-types';
 import { useCanvasStore } from '../stores/canvasStore';
 import { useAuthStore } from '../stores/authStore';
-import { Button } from '@vscp/ui';
+import { Button } from '@aigency-os/ui';
 import {
   Plus,
   FileText,

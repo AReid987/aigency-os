@@ -1,2 +1,2 @@
-declare module "@vscp/ui";
-declare module "@vscp/shared-types";
+declare module "@aigency-os/ui";
+declare module "@aigency-os/shared-types";

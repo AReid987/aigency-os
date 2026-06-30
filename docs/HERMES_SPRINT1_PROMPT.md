@@ -54,8 +54,8 @@ Spawn each agent in a dedicated Hermes Workspace pane. Every agent must run insi
 | **OMP** | Cerebras (free tier) | Free | E2 | Paperclip dashboard UI: org chart (D3/React Flow), ticket board, budget tracker, agent cards | `feat/epic-2-dashboard` | Fast inference, good for data viz |
 | **Mimo Code** | $20 API + free tier | Free tier first | E5 | HCOM dashboard React: agent list, message feed, status rings, terminal preview panes | `feat/epic-5-hcom-ui` | Free tier covers UI scaffolding |
 | **Command Code** | $1 plan (DeepSeek V4) | ~$0.20/task | E5 | HCOM backend: SQLite schema, message bus API, hook installation scripts, collision detection logic | `feat/epic-5-hcom-api` | Cheapest — perfect for infrastructure |
-| **Blackbox** | Free tier | Free | Shared | `@vscp/shared-types`: TypeScript interfaces for canvas, agent, user, brain, ticket, card, zone | `feat/shared-types` | Good at boilerplate TypeScript |
-| **Rovo Dev** | GitHub Copilot | Free (included) | Shared | `@vscp/api-client`: Fetch wrappers, WebSocket client, error handling, retry logic, tests | `feat/api-client` | IDE-native, excellent for test writing |
+| **Blackbox** | Free tier | Free | Shared | `@aigency-os/shared-types`: TypeScript interfaces for canvas, agent, user, brain, ticket, card, zone | `feat/shared-types` | Good at boilerplate TypeScript |
+| **Rovo Dev** | GitHub Copilot | Free (included) | Shared | `@aigency-os/api-client`: Fetch wrappers, WebSocket client, error handling, retry logic, tests | `feat/api-client` | IDE-native, excellent for test writing |
 | **Groq API** | Free tier | Free | Overflow | Documentation: README per app, docker-compose validation, root scripts | `feat/docs` | Lightning fast for docs |
 | **Mistral** | Free tier | Free | Overflow | Shared config: ESLint preset, Prettier config, root `package.json` scripts, `turbo.json` | `feat/config` | Solid for config files |
 
@@ -71,7 +71,7 @@ Spawn each agent in a dedicated Hermes Workspace pane. Every agent must run insi
 ## TURBOREPO RULES
 
 1. **Package Manager:** All agents use `pnpm`. Run `pnpm install` at root before any agent starts coding.
-2. **Workspace Protocol:** Local packages reference each other via `"@vscp/shared-types": "workspace:*"` — never relative paths.
+2. **Workspace Protocol:** Local packages reference each other via `"@aigency-os/shared-types": "workspace:*"` — never relative paths.
 3. **Pipeline:** Every app/package must have a `turbo.json` with these tasks: `build`, `dev`, `lint`, `test`, `typecheck`.
 4. **Dependency Order:** Shared packages (`shared-types`, `api-client`, `ui`, `config`) must build before apps. Use `dependsOn: ["^build"]`.
 5. **Validation:** Before declaring any epic "done", run `turbo run build` at root. Zero errors required.
@@ -172,7 +172,7 @@ venture-spec-platform/
 
 ## SHARED PACKAGES (Blackbox + Rovo + Mistral)
 
-### `@vscp/shared-types` (Blackbox)
+### `@aigency-os/shared-types` (Blackbox)
 Define these types in `packages/shared-types/src/`:
 - `canvas.ts` — Card, Zone, Position, CardType
 - `agent.ts` — Agent, Task, Ticket, AgentStatus, Message
@@ -181,7 +181,7 @@ Define these types in `packages/shared-types/src/`:
 - `company.ts` — Company, Goal, Budget, OrgChartNode
 - `index.ts` — Re-exports all
 
-### `@vscp/api-client` (Rovo)
+### `@aigency-os/api-client` (Rovo)
 Build these clients in `packages/api-client/src/`:
 - `agor.ts` — WebSocket client for canvas sync
 - `paperclip.ts` — REST client for company/agent/ticket CRUD
@@ -190,7 +190,7 @@ Build these clients in `packages/api-client/src/`:
 - `index.ts` — Re-exports all
 - Include tests for all clients using Vitest + MSW
 
-### `@vscp/config` (Mistral)
+### `@aigency-os/config` (Mistral)
 Create in `packages/config/`:
 - `eslint-preset.js` — Shared ESLint config (TypeScript, React, import sorting)
 - `tsconfig-base.json` — Shared TypeScript config (strict, esnext, jsx react-jsx)

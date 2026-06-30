@@ -9,7 +9,7 @@ import { heartbeatRoutes } from './routes/heartbeat.js';
 import { boardRoutes } from './routes/board.js';
 import { dashboardRoutes } from './routes/dashboard.js';
 import { authRoutes } from './routes/auth.js';
-import { registerMetrics } from '@vscp/shared-types/metrics-helper';
+import { registerMetrics } from '@aigency-os/shared-types/metrics-helper';
 
 const app = Fastify({ logger: true });
 

@@ -11,7 +11,7 @@ import type {
   AgentAdapter,
   AgentRole,
   HeartbeatSchedule,
-} from '@vscp/shared-types';
+} from '@aigency-os/shared-types';
 
 // ─── Board Decision ───────────────────────────────────────────────────────
 

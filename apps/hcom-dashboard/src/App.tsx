@@ -4,7 +4,7 @@ import { AgentList } from './components/AgentList';
 import { MessageFeed } from './components/MessageFeed';
 import { TerminalPreview } from './components/TerminalPreview';
 import { CollisionAlert } from './components/CollisionAlert';
-import type { HCOMAgent, HCOMMessage, Collision } from '@vscp/shared-types';
+import type { HCOMAgent, HCOMMessage, Collision } from '@aigency-os/shared-types';
 
 // Demo data
 const DEMO_AGENTS: HCOMAgent[] = [

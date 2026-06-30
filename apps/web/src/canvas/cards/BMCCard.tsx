@@ -1,5 +1,5 @@
 import React from 'react';
-import type { Card } from '@vscp/shared-types';
+import type { Card } from '@aigency-os/shared-types';
 import { LayoutGrid } from 'lucide-react';
 
 interface BMCCardProps {

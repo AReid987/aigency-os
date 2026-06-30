@@ -1,6 +1,6 @@
 import React from 'react';
-import type { HCOMAgent } from '@vscp/shared-types';
-import { Badge } from '@vscp/ui';
+import type { HCOMAgent } from '@aigency-os/shared-types';
+import { Badge } from '@aigency-os/ui';
 
 interface AgentListProps {
   agents: HCOMAgent[];

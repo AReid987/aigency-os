@@ -9,11 +9,11 @@ export default defineConfig({
   resolve: {
     alias: {
       // Resolve workspace packages from source (avoids dist dependency in builds)
-      '@vscp/shared-types': path.resolve(__dirname, '../../packages/shared-types/src'),
-      '@vscp/shared-types/metrics-helper': path.resolve(__dirname, '../../packages/shared-types/src/metrics-helper.ts'),
-      '@vscp/shared-types/metrics': path.resolve(__dirname, '../../packages/shared-types/src/metrics.ts'),
-      '@vscp/api-client': path.resolve(__dirname, '../../packages/api-client/src'),
-      '@vscp/ui': path.resolve(__dirname, '../../packages/ui/src'),
+      '@aigency-os/shared-types': path.resolve(__dirname, '../../packages/shared-types/src'),
+      '@aigency-os/shared-types/metrics-helper': path.resolve(__dirname, '../../packages/shared-types/src/metrics-helper.ts'),
+      '@aigency-os/shared-types/metrics': path.resolve(__dirname, '../../packages/shared-types/src/metrics.ts'),
+      '@aigency-os/api-client': path.resolve(__dirname, '../../packages/api-client/src'),
+      '@aigency-os/ui': path.resolve(__dirname, '../../packages/ui/src'),
     },
   },
   test: {

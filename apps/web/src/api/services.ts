@@ -3,7 +3,7 @@
 // Set VITE_UNIFIED_MODE=true for unified deployment (single backend).
 // All pages import from this file — no code changes needed across modes.
 
-import { createAPIClient } from '@vscp/api-client';
+import { createAPIClient } from '@aigency-os/api-client';
 
 // ─── Mode Detection ──────────────────────────────────────────────────────────
 

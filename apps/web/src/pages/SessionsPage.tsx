@@ -1,6 +1,6 @@
 import { useState, Fragment } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Badge } from '@vscp/ui';
+import { Badge } from '@aigency-os/ui';
 import { Bot, Clock, ChevronDown, ChevronUp, Zap } from 'lucide-react';
 import { hcomApi } from '../api/services';
 

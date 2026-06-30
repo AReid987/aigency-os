@@ -241,12 +241,12 @@ venture-spec-platform/
 
 ## SHARED PACKAGES (Mistral + Rovo)
 
-### `@vscp/shared-types` (Mistral)
+### `@aigency-os/shared-types` (Mistral)
 - **Cleanup:** Remove any unused types from S1/S2 that were superseded
 - **Finalization:** Ensure all 9 services have types defined
 - **Validation:** `tsc --noEmit` passes with zero errors
 
-### `@vscp/api-client` (Rovo)
+### `@aigency-os/api-client` (Rovo)
 - **Cleanup:** Remove unused clients
 - **Finalization:** All 9 services have corresponding API clients
 - **Tests:** 100% client coverage with Vitest + MSW

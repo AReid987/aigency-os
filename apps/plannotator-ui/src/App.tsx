@@ -4,7 +4,7 @@ import { PlanViewer } from './components/PlanViewer';
 
 import { DiffViewer } from './components/DiffViewer';
 import { SectionToggle } from './components/SectionToggle';
-import { Badge } from '@vscp/ui';
+import { Badge } from '@aigency-os/ui';
 import { FileText, GitCompare, MessageSquare, Shield } from 'lucide-react';
 
 // Demo plans

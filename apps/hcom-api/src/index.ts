@@ -6,7 +6,7 @@ import { collisionRoutes } from './routes/collisions.js';
 import { lifecycleRoutes } from './routes/lifecycle.js';
 import { subscriptionRoutes } from './routes/subscriptions.js';
 import { dashboardRoutes } from './routes/dashboard.js';
-import { registerMetrics } from '@vscp/shared-types/metrics-helper';
+import { registerMetrics } from '@aigency-os/shared-types/metrics-helper';
 
 const app = Fastify({
   logger: {

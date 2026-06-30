@@ -2,7 +2,7 @@
 // Reads role from authStore for permission checks.
 
 import { create } from 'zustand';
-import type { UserRole } from '@vscp/shared-types';
+import type { UserRole } from '@aigency-os/shared-types';
 
 interface UserData {
   id: string;

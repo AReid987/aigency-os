@@ -1,5 +1,5 @@
 import React from 'react';
-import { Badge } from '@vscp/ui';
+import { Badge } from '@aigency-os/ui';
 import { Terminal, MessageSquare, Shield, Zap, Pause, Play } from 'lucide-react';
 
 const DEMO_AGENTS = [

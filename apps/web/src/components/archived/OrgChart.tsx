@@ -1,6 +1,6 @@
 import React from 'react';
-import type { Agent } from '@vscp/shared-types';
-import { Avatar, Badge } from '@vscp/ui';
+import type { Agent } from '@aigency-os/shared-types';
+import { Avatar, Badge } from '@aigency-os/ui';
 
 interface OrgChartProps {
   agents: Agent[];

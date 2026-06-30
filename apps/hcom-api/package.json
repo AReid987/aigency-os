@@ -1,5 +1,5 @@
 {
-  "name": "@vscp/hcom-api",
+  "name": "@aigency-os/hcom-api",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -12,7 +12,7 @@
     "clean": "rm -rf dist .turbo"
   },
   "dependencies": {
-    "@vscp/shared-types": "workspace:*",
+    "@aigency-os/shared-types": "workspace:*",
     "fastify": "^5.0.0",
     "@fastify/cors": "^10.0.0",
     "better-sqlite3": "^11.0.0",

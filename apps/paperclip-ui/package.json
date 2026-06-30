@@ -1,5 +1,5 @@
 {
-  "name": "@vscp/paperclip-ui",
+  "name": "@aigency-os/paperclip-ui",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -12,9 +12,9 @@
     "clean": "rm -rf dist .turbo"
   },
   "dependencies": {
-    "@vscp/shared-types": "workspace:*",
-    "@vscp/api-client": "workspace:*",
-    "@vscp/ui": "workspace:*",
+    "@aigency-os/shared-types": "workspace:*",
+    "@aigency-os/api-client": "workspace:*",
+    "@aigency-os/ui": "workspace:*",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "zustand": "^5.0.0",

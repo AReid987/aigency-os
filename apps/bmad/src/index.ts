@@ -4,7 +4,7 @@ import { canvasRoutes } from './routes/canvas.js';
 import { revenueRoutes } from './routes/revenue.js';
 import { milestoneRoutes } from './routes/milestones.js';
 import { competitiveRoutes } from './routes/competitive.js';
-import { registerMetrics } from '@vscp/shared-types/metrics-helper';
+import { registerMetrics } from '@aigency-os/shared-types/metrics-helper';
 
 const app = Fastify({ logger: true });
 

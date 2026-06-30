@@ -1,12 +1,12 @@
 // ─── Zone Container ─────────────────────────────────────────────────────────
 
 import React, { useMemo, useState, useRef, useEffect } from 'react';
-import type { Zone as ZoneData } from '@vscp/shared-types';
+import type { Zone as ZoneData } from '@aigency-os/shared-types';
 import { useCanvasStore } from '../stores/canvasStore';
 import { useAuthStore } from '../stores/authStore';
 import { Card } from './Card';
 import { canEditZone, getZonePermissionLabel } from '../utils/permissions';
-import { Badge } from '@vscp/ui';
+import { Badge } from '@aigency-os/ui';
 import { Shield, Lock, Unlock, Move, Maximize2 } from 'lucide-react';
 
 interface ZoneProps {

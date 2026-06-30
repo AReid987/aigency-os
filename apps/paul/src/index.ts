@@ -4,7 +4,7 @@ import { planRoutes } from './routes/plan.js';
 import { applyRoutes } from './routes/apply.js';
 import { unifyRoutes } from './routes/unify.js';
 import { criteriaRoutes } from './routes/criteria.js';
-import { registerMetrics } from '@vscp/shared-types/metrics-helper';
+import { registerMetrics } from '@aigency-os/shared-types/metrics-helper';
 
 const app = Fastify({ logger: true });
 

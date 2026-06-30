@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button } from '@vscp/ui';
+import { Button } from '@aigency-os/ui';
 import { Check, X, MessageSquare } from 'lucide-react';
 
 interface BoardActionsProps {

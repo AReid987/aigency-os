@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Atmosphere } from './components/Atmosphere';
-import { Badge } from '@vscp/ui';
+import { Badge } from '@aigency-os/ui';
 import { Brain, Search, GitBranch, FileText, ChevronRight, Shield, Eye, EyeOff } from 'lucide-react';
 
 const DEMO_PAGES = [

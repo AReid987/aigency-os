@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { Badge } from '@vscp/ui';
+import { Badge } from '@aigency-os/ui';
 import {
   Terminal, Ticket, Radio, Brain, Users,
   Activity, ArrowRight, Layers, CheckSquare, Zap,

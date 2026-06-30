@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Badge } from '@vscp/ui';
+import { Badge } from '@aigency-os/ui';
 import { FileText, ChevronDown, ChevronRight, Briefcase, Code, MessageSquare, CheckCircle, XCircle, Send, Loader } from 'lucide-react';
 import { useAuthStore } from '../stores/authStore';
 import { plannotatorApi } from '../api/services';

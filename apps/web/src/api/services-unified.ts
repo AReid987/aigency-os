@@ -6,7 +6,7 @@
 // The frontend will automatically point all services to the same origin.
 // ─────────────────────────────────────────────────────────────────────────────
 
-import { createAPIClient } from '@vscp/api-client';
+import { createAPIClient } from '@aigency-os/api-client';
 
 // ─── Base URL ────────────────────────────────────────────────────────────────
 // In unified mode, all services are served from the same origin.

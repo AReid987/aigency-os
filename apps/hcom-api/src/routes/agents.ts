@@ -1,7 +1,7 @@
 import type { FastifyInstance } from 'fastify';
 import { z } from 'zod';
 import db from '../db.js';
-import type { AgentAdapter, AgentStatus, HCOMAgent } from '@vscp/shared-types';
+import type { AgentAdapter, AgentStatus, HCOMAgent } from '@aigency-os/shared-types';
 
 // ─── Schemas ────────────────────────────────────────────────────────────────
 

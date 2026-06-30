@@ -7,8 +7,8 @@
     "moduleResolution": "bundler",
     "skipLibCheck": true,
     "paths": {
-      "@vscp/shared-types": ["../../packages/shared-types/src/index.ts"],
-      "@vscp/shared-types/*": ["../../packages/shared-types/src/*"]
+      "@aigency-os/shared-types": ["../../packages/shared-types/src/index.ts"],
+      "@aigency-os/shared-types/*": ["../../packages/shared-types/src/*"]
     }
   },
   "include": [

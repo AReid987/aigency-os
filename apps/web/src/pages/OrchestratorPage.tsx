@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Badge, ProgressBar } from '@vscp/ui';
+import { Badge, ProgressBar } from '@aigency-os/ui';
 import {
   Network, Users, DollarSign, Plus, Play, Pause, UserPlus,
   ChevronDown, Cpu, Zap, Terminal,

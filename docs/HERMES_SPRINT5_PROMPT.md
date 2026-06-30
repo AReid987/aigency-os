@@ -74,7 +74,7 @@ inside an HCOM-wrapped session.
 | **Blackbox**     | Free tier             | Free                    | E17      | Observability: Prometheus metrics endpoints, Grafana dashboard JSON, distributed tracing middleware               | `feat/epic-17-observability`    | Good at metrics + dashboard config              |
 | **Rovo Dev**     | GitHub Copilot        | Free (included)         | Shared   | Migration tests: database migration validation, data integrity checks, rollback tests, performance benchmarks     | `feat/sprint5-tests`            | IDE-native, excellent for test infrastructure   |
 | **Groq API**     | Free tier             | Free                    | Overflow | Documentation: v0.2.0 changelog, migration guide, architecture updates, API versioning docs                       | `feat/sprint5-docs`             | Lightning fast for docs                         |
-| **Mistral**      | Free tier             | Free                    | Overflow | Shared package updates: Prisma client types, Redis types, metrics types in `@vscp/shared-types`                   | `feat/sprint5-types`            | Solid for type definitions                      |
+| **Mistral**      | Free tier             | Free                    | Overflow | Shared package updates: Prisma client types, Redis types, metrics types in `@aigency-os/shared-types`                   | `feat/sprint5-types`            | Solid for type definitions                      |
 
 **Budget Safety Rules:**
 
@@ -90,13 +90,13 @@ inside an HCOM-wrapped session.
 
 ## TURBOREPO RULES (Sprint 5)
 
-1. **New packages allowed:** `@vscp/prisma` (shared Prisma client),
-   `@vscp/redis` (shared Redis client).
+1. **New packages allowed:** `@aigency-os/prisma` (shared Prisma client),
+   `@aigency-os/redis` (shared Redis client).
 2. **Workspace Protocol:** All new packages use
-   `"@vscp/shared-types": "workspace:*"`.
+   `"@aigency-os/shared-types": "workspace:*"`.
 3. **Pipeline:** Every new package must have `turbo.json` with `build`, `dev`,
    `lint`, `test`, `typecheck`, `db:migrate`, `db:seed`.
-4. **Dependency Order:** `@vscp/prisma` must build before any service that uses
+4. **Dependency Order:** `@aigency-os/prisma` must build before any service that uses
    it.
 5. **Validation:** Before declaring any epic "done", run `turbo run build` at
    root. Zero errors.
@@ -279,7 +279,7 @@ venture-spec-platform/
 
 ## SHARED PACKAGES (Mistral + Rovo)
 
-### `@vscp/shared-types` (Mistral)
+### `@aigency-os/shared-types` (Mistral)
 
 Add these types to `packages/shared-types/src/`:
 
@@ -290,7 +290,7 @@ Add these types to `packages/shared-types/src/`:
 - `mobile.ts` — PushNotification, OfflineSync, PWAEvent
 - Update `index.ts` to re-export all
 
-### `@vscp/prisma` (NEW — Claude)
+### `@aigency-os/prisma` (NEW — Claude)
 
 - `schema.prisma` — Unified database schema with `@@schema` annotations per
   service
@@ -298,13 +298,13 @@ Add these types to `packages/shared-types/src/`:
 - `migrate.ts` — Migration runner script
 - `seed.ts` — Development seed data
 
-### `@vscp/redis` (NEW — Opencode)
+### `@aigency-os/redis` (NEW — Opencode)
 
 - `client.ts` — ioredis client factory with cluster support
 - `streams.ts` — `XADD`, `XREADGROUP`, `XACK` wrappers with TypeScript types
 - `pubsub.ts` — Legacy pub/sub fallback for simple use cases
 
-### `@vscp/api-client` (Rovo)
+### `@aigency-os/api-client` (Rovo)
 
 Add these clients to `packages/api-client/src/`:
 
@@ -327,8 +327,8 @@ Update `infra/docker/docker-compose.yml` to add:
 
 All services must:
 
-- Connect to PostgreSQL via `@vscp/prisma`
-- Connect to Redis via `@vscp/redis`
+- Connect to PostgreSQL via `@aigency-os/prisma`
+- Connect to Redis via `@aigency-os/redis`
 - Expose Prometheus metrics at `/metrics`
 - Use internal Docker network for service-to-service
 - Health checks include database connectivity
@@ -378,7 +378,7 @@ Every task must satisfy ALL of these before moving to "Done":
    - Each agent checks out its own branch: `git checkout -b feat/epic-XX-name`
    - **CRITICAL ORDER:** Mistral (types) → Claude (Prisma schema) → All other
      agents
-   - Wait for `@vscp/prisma` package before any service migration begins
+   - Wait for `@aigency-os/prisma` package before any service migration begins
 
 4. **Execution Phase (Ongoing):**
    - Monitor HCOM TUI every 15 minutes

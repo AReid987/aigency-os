@@ -12,7 +12,7 @@
 
 ## Phase 1: Shared Types & API Clients (No dependencies)
 
-### Task 1: Add Sprint 2 types to @vscp/shared-types
+### Task 1: Add Sprint 2 types to @aigency-os/shared-types
 
 **Objective:** Define TypeScript interfaces for BMAD, PAUL, CARL, and Gstack domains.
 
@@ -54,7 +54,7 @@ gstack.ts:
 
 **Verification:** `cd packages/shared-types && pnpm build` compiles with zero errors.
 
-### Task 2: Add Sprint 2 API clients to @vscp/api-client
+### Task 2: Add Sprint 2 API clients to @aigency-os/api-client
 
 **Objective:** Create typed fetch wrappers for all new services.
 

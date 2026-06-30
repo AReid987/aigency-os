@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import type { Card } from '@vscp/shared-types';
+import type { Card } from '@aigency-os/shared-types';
 import { FileCode, ChevronDown, ChevronRight } from 'lucide-react';
 
 interface SpecCardProps {

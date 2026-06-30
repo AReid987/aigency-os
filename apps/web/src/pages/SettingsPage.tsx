@@ -1,6 +1,6 @@
 import { useState, type ReactNode } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Badge } from '@vscp/ui';
+import { Badge } from '@aigency-os/ui';
 import { Settings, Server, Key, Monitor, Moon, Sun, Globe } from 'lucide-react';
 import { checkAllServices } from '../api/services';
 

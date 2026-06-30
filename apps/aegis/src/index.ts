@@ -5,7 +5,7 @@ import { transformRoutes } from './routes/transform.js';
 import { summaryRoutes } from './routes/summary.js';
 import { personaRoutes } from './routes/personas.js';
 import { continuousRoutes } from './routes/continuous.js';
-import { registerMetrics } from '@vscp/shared-types/metrics-helper';
+import { registerMetrics } from '@aigency-os/shared-types/metrics-helper';
 
 const app = Fastify({ logger: true });
 

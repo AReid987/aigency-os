@@ -1,7 +1,7 @@
 import React from 'react';
-import type { Card } from '@vscp/shared-types';
+import type { Card } from '@aigency-os/shared-types';
 import { Shield, CheckCircle, XCircle, Clock } from 'lucide-react';
-import { Badge } from '@vscp/ui';
+import { Badge } from '@aigency-os/ui';
 
 interface GateCardProps {
   card: Card;

@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import type { Card } from '@vscp/shared-types';
+import type { Card } from '@aigency-os/shared-types';
 import { DollarSign } from 'lucide-react';
 
 interface RevenueCardProps {

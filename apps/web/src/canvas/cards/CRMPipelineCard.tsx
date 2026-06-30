@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import type { Card } from '@vscp/shared-types';
+import type { Card } from '@aigency-os/shared-types';
 import { TrendingUp } from 'lucide-react';
 
 interface CRMPipelineCardProps {

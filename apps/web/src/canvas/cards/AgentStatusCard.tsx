@@ -1,5 +1,5 @@
 import React from 'react';
-import type { Card, Agent, AgentStatus } from '@vscp/shared-types';
+import type { Card, Agent, AgentStatus } from '@aigency-os/shared-types';
 import { Users } from 'lucide-react';
 
 interface AgentStatusCardProps {

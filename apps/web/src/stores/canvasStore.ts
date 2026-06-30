@@ -1,7 +1,7 @@
 // ─── Canvas Zustand Store ───────────────────────────────────────────────────
 
 import { create } from 'zustand';
-import type { Card, CardType, Position, Size, Zone, ZoneType } from '@vscp/shared-types';
+import type { Card, CardType, Position, Size, Zone, ZoneType } from '@aigency-os/shared-types';
 import { snapToGrid, clampZoom } from '../utils/canvasMath';
 
 interface MultiplayerCursor {

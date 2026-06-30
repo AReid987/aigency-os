@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Atmosphere } from './components/Atmosphere';
-import { Badge } from '@vscp/ui';
+import { Badge } from '@aigency-os/ui';
 import { Users, DollarSign, Mail, Plus, ChevronRight, TrendingUp } from 'lucide-react';
 
 const PIPELINE_STAGES = [

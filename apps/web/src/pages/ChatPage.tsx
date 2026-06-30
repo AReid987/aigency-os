@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Badge } from '@vscp/ui';
+import { Badge } from '@aigency-os/ui';
 import { MessageSquare, Send, Paperclip, Search } from 'lucide-react';
 import { hcomApi } from '../api/services';
 

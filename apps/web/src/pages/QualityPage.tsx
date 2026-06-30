@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Badge } from '@vscp/ui';
+import { Badge } from '@aigency-os/ui';
 import { Shield, AlertTriangle, CheckCircle, Zap, Loader } from 'lucide-react';
 import { aegisApi } from '../api/services';
 

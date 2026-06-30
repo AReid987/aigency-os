@@ -1,5 +1,5 @@
 {
-  "name": "@vscp/shared-types",
+  "name": "@aigency-os/shared-types",
   "version": "0.0.0",
   "private": true,
   "type": "module",

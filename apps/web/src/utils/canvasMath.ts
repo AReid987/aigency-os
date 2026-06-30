@@ -1,6 +1,6 @@
 // ─── Canvas Math Utilities ──────────────────────────────────────────────────
 
-import type { Position, Size } from '@vscp/shared-types';
+import type { Position, Size } from '@aigency-os/shared-types';
 
 const GRID_SIZE = 20;
 const MIN_ZOOM = 0.1;

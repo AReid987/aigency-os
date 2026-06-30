@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCanvasStore } from '../stores/canvasStore';
 import { useAuthStore } from '../stores/authStore';
-import { Badge } from '@vscp/ui';
+import { Badge } from '@aigency-os/ui';
 import { FileUpload } from '../components/FileUpload';
 import {
   Lightbulb, ArrowRight, ArrowLeft, CheckCircle, MessageSquare,

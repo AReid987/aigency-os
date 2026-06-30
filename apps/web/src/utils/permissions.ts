@@ -1,6 +1,6 @@
 // ─── RBAC Permissions ───────────────────────────────────────────────────────
 
-import type { UserRole, ZoneType } from '@vscp/shared-types';
+import type { UserRole, ZoneType } from '@aigency-os/shared-types';
 
 /**
  * Check if a user role can edit cards in a given zone.

@@ -1,5 +1,5 @@
 import React from 'react';
-import type { HCOMMessage } from '@vscp/shared-types';
+import type { HCOMMessage } from '@aigency-os/shared-types';
 import { Check, CheckCheck, Clock } from 'lucide-react';
 
 interface MessageFeedProps {

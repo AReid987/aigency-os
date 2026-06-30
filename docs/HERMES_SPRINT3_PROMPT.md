@@ -78,7 +78,7 @@ Spawn each agent in a dedicated Hermes Workspace pane. Every agent must run insi
 | **Blackbox** | Free tier | Free | E9 | Gbrain search + graph: hybrid search (vector + BM25), self-wiring knowledge graph, query interface | `feat/epic-9-search` | Good at search algorithms |
 | **Rovo Dev** | GitHub Copilot | Free (included) | Shared | Integration tests for all Epic 7/8/9 code, cross-epic integration tests (AEGIS → PAUL, DenchClaw → Paperclip, Gbrain → all) | `feat/sprint3-tests` | IDE-native, excellent for integration tests |
 | **Groq API** | Free tier | Free | Overflow | Documentation: README updates, API endpoint docs, docker-compose additions, architecture diagram updates | `feat/sprint3-docs` | Lightning fast for docs |
-| **Mistral** | Free tier | Free | Overflow | Shared package updates: new types for AEGIS, DenchClaw, Gbrain in `@vscp/shared-types` | `feat/sprint3-types` | Solid for type definitions |
+| **Mistral** | Free tier | Free | Overflow | Shared package updates: new types for AEGIS, DenchClaw, Gbrain in `@aigency-os/shared-types` | `feat/sprint3-types` | Solid for type definitions |
 
 **Budget Safety Rules:**
 - Claude Code (freemodel.dev): **Hard stop at $8.00/session.** If approaching, reassign to Opencode or Kimi.
@@ -92,9 +92,9 @@ Spawn each agent in a dedicated Hermes Workspace pane. Every agent must run insi
 ## TURBOREPO RULES (Sprint 3)
 
 1. **New apps/packages must follow existing S1/S2 patterns.**
-2. **Workspace Protocol:** All new packages use `"@vscp/shared-types": "workspace:*"`.
+2. **Workspace Protocol:** All new packages use `"@aigency-os/shared-types": "workspace:*"`.
 3. **Pipeline:** Every new app/package must have `turbo.json` with `build`, `dev`, `lint`, `test`, `typecheck`.
-4. **Dependency Order:** If `@vscp/shared-types` changes, all dependent apps must rebuild.
+4. **Dependency Order:** If `@aigency-os/shared-types` changes, all dependent apps must rebuild.
 5. **Validation:** Before declaring any epic "done", run `turbo run build` at root. Zero errors.
 6. **No duplicate dependencies:** Check root `package.json` before adding new packages.
 
@@ -192,14 +192,14 @@ venture-spec-platform/
 
 ## SHARED PACKAGES (Mistral + Rovo)
 
-### `@vscp/shared-types` (Mistral)
+### `@aigency-os/shared-types` (Mistral)
 Add these types to `packages/shared-types/src/`:
 - `aegis.ts` — AuditDomain, Finding, Persona, ConfidenceScore, RemediationPlan
 - `denchclaw.ts` — Contact, Deal, PipelineStage, OutreachSequence, Lead
 - `gbrain.ts` — KnowledgePage, PageType, QueryResult, GraphData, Frontmatter
 - Update `index.ts` to re-export all
 
-### `@vscp/api-client` (Rovo)
+### `@aigency-os/api-client` (Rovo)
 Add these clients to `packages/api-client/src/`:
 - `aegis.ts` — Audit trigger, findings retrieval, executive summary
 - `denchclaw.ts` — Contact CRUD, deal pipeline, outreach automation

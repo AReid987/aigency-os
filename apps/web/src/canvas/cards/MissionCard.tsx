@@ -1,5 +1,5 @@
 import React from 'react';
-import type { Card } from '@vscp/shared-types';
+import type { Card } from '@aigency-os/shared-types';
 import { Target, Play, CheckCircle } from 'lucide-react';
 
 interface MissionCardProps {

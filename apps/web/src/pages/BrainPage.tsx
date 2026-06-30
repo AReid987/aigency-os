@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useCallback, useRef, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Badge } from '@vscp/ui';
+import { Badge } from '@aigency-os/ui';
 import {
   Brain, Search, GitBranch, FileText, Plus, X, Loader2,
   ZoomIn, ZoomOut, Maximize2, Minimize2,

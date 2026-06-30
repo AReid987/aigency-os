@@ -6,7 +6,7 @@
     "build": "turbo run build",
     "build:all": "turbo run build",
     "build:services": "turbo run build --filter='./apps/*'",
-    "build:unified": "turbo run build && pnpm --filter @vscp/web build",
+    "build:unified": "turbo run build && pnpm --filter @aigency-os/web build",
     "start": "node apps/server/unified-server.mjs",
     "start:unified": "node apps/server/unified-server.mjs",
     "dev": "turbo run dev",

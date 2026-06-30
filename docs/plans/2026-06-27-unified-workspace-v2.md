@@ -6,7 +6,7 @@
 
 **Architecture:** The existing `apps/web` absorbs all functionality currently split across `paperclip-ui`, `hcom-dashboard`, `denchclaw-ui`, `gbrain-dashboard`, `plannotator-ui`, and `aegis-dashboard`. Services stay as-is (Fastify microservices). The UI gets new pages/tabs in the sidebar. The canvas remains the main view but the sidebar expands to cover all workspace surfaces.
 
-**Tech Stack:** React 19, TypeScript, Tailwind CSS 4, Zustand 5, TanStack Query 5, Lucide React, @vscp/ui, wterm (embedded terminal), existing Fastify services on ports 3001-3015.
+**Tech Stack:** React 19, TypeScript, Tailwind CSS 4, Zustand 5, TanStack Query 5, Lucide React, @aigency-os/ui, wterm (embedded terminal), existing Fastify services on ports 3001-3015.
 
 ---
 
@@ -42,7 +42,7 @@
 - `apps/plannotator-ui` — PlanViewer, AnnotationThread, DiffViewer, SectionToggle + Atmosphere
 - `apps/aegis-dashboard` — Atmosphere only (empty shell)
 
-### Shared UI Package (@vscp/ui)
+### Shared UI Package (@aigency-os/ui)
 - Button, Card, Avatar, Badge, ProgressBar
 
 ---
@@ -190,13 +190,13 @@ The Office page shows a grid of cards summarizing:
 - Upcoming cron jobs
 - System health (service statuses)
 
-Each card links to its full page. Uses `@vscp/ui` Card, Badge, ProgressBar components.
+Each card links to its full page. Uses `@aigency-os/ui` Card, Badge, ProgressBar components.
 
 Pattern: uses TanStack Query to fetch from service endpoints, falls back to demo data when services are unreachable (capability gates — graceful placeholders).
 
 ```tsx
 import { useQuery } from '@tanstack/react-query';
-import { Card, Badge, ProgressBar } from '@vscp/ui';
+import { Card, Badge, ProgressBar } from '@aigency-os/ui';
 import { Users, Ticket, Radio, Brain, DollarSign, Clock, Activity } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 

@@ -4,10 +4,10 @@
 
 ## Phase 1: New Packages + Types (parallel)
 
-### Task 1: @vscp/prisma package
+### Task 1: @aigency-os/prisma package
 Shared Prisma schema, client singleton, migration runner, seed data.
 
-### Task 2: @vscp/redis package
+### Task 2: @aigency-os/redis package
 ioredis client factory, Redis Streams helpers (XADD/XREADGROUP/XACK), pub/sub fallback.
 
 ### Task 3: Sprint 5 types in shared-types

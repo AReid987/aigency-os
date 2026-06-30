@@ -27,7 +27,7 @@ import { CronPage } from './pages/CronPage';
 import { SettingsPage } from './pages/SettingsPage';
 import { ApiKeysPage } from './pages/ApiKeysPage';
 import { AgentConfigPage } from './pages/AgentConfigPage';
-import { Badge } from '@vscp/ui';
+import { Badge } from '@aigency-os/ui';
 import {
   Layout, Brain, Users, FileText, Shield, Terminal, Lightbulb,
   LogOut, ChevronLeft, ChevronRight, Plus, Layers, Bug, Radio,

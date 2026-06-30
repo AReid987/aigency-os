@@ -1,5 +1,5 @@
 {
-  "name": "@vscp/api-client",
+  "name": "@aigency-os/api-client",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -19,7 +19,7 @@
     "clean": "rm -rf dist .turbo"
   },
   "dependencies": {
-    "@vscp/shared-types": "workspace:*"
+    "@aigency-os/shared-types": "workspace:*"
   },
   "devDependencies": {
     "typescript": "^5.5.0",

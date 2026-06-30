@@ -1,5 +1,5 @@
 import React from 'react';
-import type { Budget, Agent } from '@vscp/shared-types';
+import type { Budget, Agent } from '@aigency-os/shared-types';
 import { AlertTriangle, OctagonAlert } from 'lucide-react';
 
 interface BudgetTrackerProps {

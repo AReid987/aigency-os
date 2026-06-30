@@ -4,7 +4,7 @@ import { store } from './store.js';
 import { planRoutes } from './routes/plans.js';
 import { annotationRoutes } from './routes/annotations.js';
 import { diffRoutes } from './routes/diffs.js';
-import { registerMetrics } from '@vscp/shared-types/metrics-helper';
+import { registerMetrics } from '@aigency-os/shared-types/metrics-helper';
 
 const app = Fastify({ logger: true });
 

@@ -5,7 +5,7 @@ import { shipRoutes } from './routes/ship.js';
 import { qaRoutes } from './routes/qa.js';
 import { designRoutes } from './routes/design.js';
 import { jobRoutes } from './routes/jobs.js';
-import { registerMetrics } from '@vscp/shared-types/metrics-helper';
+import { registerMetrics } from '@aigency-os/shared-types/metrics-helper';
 
 const app = Fastify({ logger: true });
 

@@ -3,7 +3,7 @@ import cors from '@fastify/cors';
 import { store } from './store.js';
 import { skillRoutes } from './routes/skills.js';
 import { ratingRoutes } from './routes/ratings.js';
-import { registerMetrics } from '@vscp/shared-types/metrics-helper';
+import { registerMetrics } from '@aigency-os/shared-types/metrics-helper';
 
 const app = Fastify({ logger: true });
 

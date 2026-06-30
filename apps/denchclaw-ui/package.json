@@ -1,5 +1,5 @@
 {
-  "name": "@vscp/denchclaw-ui",
+  "name": "@aigency-os/denchclaw-ui",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -13,8 +13,8 @@
     "clean": "rm -rf dist .turbo"
   },
   "dependencies": {
-    "@vscp/shared-types": "workspace:*",
-    "@vscp/ui": "workspace:*",
+    "@aigency-os/shared-types": "workspace:*",
+    "@aigency-os/ui": "workspace:*",
     "lucide-react": "^0.400.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

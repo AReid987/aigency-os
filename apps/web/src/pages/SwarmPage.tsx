@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { Badge } from '@vscp/ui';
+import { Badge } from '@aigency-os/ui';
 import { Bug, Plus, Zap, Play, Pause, Terminal } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { paperclipApi } from '../api/services';

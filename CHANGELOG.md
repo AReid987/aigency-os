@@ -16,8 +16,8 @@ Sprint 5 transforms Aigency OS from a working MVP into a production-grade platfo
 ### Added
 
 **New Packages:**
-- `@vscp/prisma` — Shared Prisma schema with unified models for all 9 services, PostgreSQL provider, migration runner, seed data
-- `@vscp/redis` — Shared Redis client with ioredis, Redis Streams helpers (XADD/XREADGROUP/XACK), pub/sub fallback
+- `@aigency-os/prisma` — Shared Prisma schema with unified models for all 9 services, PostgreSQL provider, migration runner, seed data
+- `@aigency-os/redis` — Shared Redis client with ioredis, Redis Streams helpers (XADD/XREADGROUP/XACK), pub/sub fallback
 
 **New Service:**
 - `services/skills` (port 3017) — Agent skill marketplace with skill discovery, installation, validation, and rating

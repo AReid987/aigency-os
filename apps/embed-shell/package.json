@@ -1,5 +1,5 @@
 {
-  "name": "@vscp/embed-shell",
+  "name": "@aigency-os/embed-shell",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -11,7 +11,7 @@
     "clean": "rm -rf dist .turbo"
   },
   "dependencies": {
-    "@vscp/shared-types": "workspace:*",
+    "@aigency-os/shared-types": "workspace:*",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },

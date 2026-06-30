@@ -9,10 +9,10 @@ cmds = ["pnpm install --frozen-lockfile"]
 
 [phases.build]
 cmds = [
-  "pnpm --filter @vscp/shared-types build",
-  "pnpm --filter @vscp/ui build",
-  "pnpm --filter @vscp/api-client build",
-  "pnpm --filter @vscp/paperclip-api build",
+  "pnpm --filter @aigency-os/shared-types build",
+  "pnpm --filter @aigency-os/ui build",
+  "pnpm --filter @aigency-os/api-client build",
+  "pnpm --filter @aigency-os/paperclip-api build",
   "cd apps/web && npx vite build"
 ]
 

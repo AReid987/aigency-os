@@ -238,7 +238,7 @@ const FILE_CONTENTS: Record<string, { content: string; language: string }> = {
   },
   'src/api/services.ts': {
     content: [
-      "import { createAPIClient } from '@vscp/api-client';",
+      "import { createAPIClient } from '@aigency-os/api-client';",
       '',
       "const PAPERCLIP_URL = import.meta.env.VITE_PAPERCLIP_URL || 'http://localhost:3001';",
       'const paperclipRaw = createAPIClient({ baseUrl: PAPERCLIP_URL });',
@@ -448,7 +448,7 @@ const FILE_CONTENTS: Record<string, { content: string; language: string }> = {
   'package.json': {
     content: [
       '{',
-      '  "name": "@vscp/web",',
+      '  "name": "@aigency-os/web",',
       '  "version": "0.2.0",',
       '  "private": true,',
       '  "scripts": {',
@@ -463,8 +463,8 @@ const FILE_CONTENTS: Record<string, { content: string; language: string }> = {
       '    "zustand": "^5.0.0",',
       '    "@tanstack/react-query": "^5.0.0",',
       '    "lucide-react": "^0.400.0",',
-      '    "@vscp/ui": "workspace:*",',
-      '    "@vscp/api-client": "workspace:*"',
+      '    "@aigency-os/ui": "workspace:*",',
+      '    "@aigency-os/api-client": "workspace:*"',
       '  },',
       '  "devDependencies": {',
       '    "typescript": "^5.5.0",',
