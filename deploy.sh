@@ -126,7 +126,7 @@ fi
 pm2 delete aigency-os 2>/dev/null || true
 
 # Start the production server
-pm2 start services/paperclip-api/dist/server.js \
+pm2 start apps/server/unified-server.mjs \
   --name aigency-os \
   --max-memory-restart 512M \
   --env production

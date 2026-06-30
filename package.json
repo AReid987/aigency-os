@@ -3,24 +3,18 @@
   "private": true,
   "packageManager": "pnpm@9.15.0",
   "scripts": {
-    "build": "pnpm --filter @vscp/shared-types build && pnpm --filter @vscp/ui build && pnpm --filter @vscp/api-client build && pnpm --filter @vscp/paperclip-api build && pnpm --filter @vscp/web build",
-    "build:all": "pnpm build && pnpm build:services",
-    "build:services": "pnpm --filter @vscp/hcom-api build && pnpm --filter @vscp/bmad build && pnpm --filter @vscp/paul build && pnpm --filter @vscp/gstack build && pnpm --filter @vscp/plannotator build && pnpm --filter @vscp/aegis build && pnpm --filter @vscp/denchclaw build && pnpm --filter @vscp/gbrain build && pnpm --filter @vscp/skills build",
-    "build:unified": "pnpm build:all && pnpm --filter @vscp/web build",
-    "start": "node unified-server.mjs",
-    "start:unified": "node unified-server.mjs",
+    "build": "turbo run build",
+    "build:all": "turbo run build",
+    "build:services": "turbo run build --filter='./apps/*'",
+    "build:unified": "turbo run build && pnpm --filter @vscp/web build",
+    "start": "node apps/server/unified-server.mjs",
+    "start:unified": "node apps/server/unified-server.mjs",
     "dev": "turbo run dev",
     "lint": "turbo run lint",
     "test": "turbo run test",
     "typecheck": "turbo run typecheck",
     "clean": "turbo run clean",
     "deploy": "bash deploy.sh"
-  },
-  "dependencies": {
-    "fastify": "^5.0.0",
-    "@fastify/cors": "^10.0.0",
-    "@fastify/static": "^8.0.0",
-    "@fastify/jwt": "^9.0.0"
   },
   "devDependencies": {
     "turbo": "^2.5.0",

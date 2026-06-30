@@ -1,5 +1,5 @@
 # aigency-os infrastructure services
-# Usage: docker compose -f infra/docker/docker-compose.yml up -d
+# Usage: docker compose -f packages/infra/docker/docker-compose.yml up -d
 
 x-service-defaults: &service-defaults
   image: node:22-alpine
@@ -62,7 +62,7 @@ services:
   paperclip-api:
     <<: *service-defaults
     container_name: aigency-paperclip-api
-    working_dir: /app/services/paperclip-api
+    working_dir: /app/apps/paperclip-api
     command: ["npx", "tsx", "src/index.ts"]
     ports:
       - "3001:3001"
@@ -75,13 +75,13 @@ services:
       REDIS_HOST: redis
       REDIS_PORT: "6379"
     volumes:
-      - ../../services/paperclip-api:/app/services/paperclip-api:cached
+      - ../../apps/paperclip-api:/app/apps/paperclip-api:cached
       - ../../packages:/app/packages:cached
 
   bmad:
     <<: *service-defaults
     container_name: aigency-bmad
-    working_dir: /app/services/bmad
+    working_dir: /app/apps/bmad
     command: ["npx", "tsx", "src/index.ts"]
     ports:
       - "3010:3010"
@@ -94,13 +94,13 @@ services:
       REDIS_HOST: redis
       REDIS_PORT: "6379"
     volumes:
-      - ../../services/bmad:/app/services/bmad:cached
+      - ../../apps/bmad:/app/apps/bmad:cached
       - ../../packages:/app/packages:cached
 
   paul:
     <<: *service-defaults
     container_name: aigency-paul
-    working_dir: /app/services/paul
+    working_dir: /app/apps/paul
     command: ["npx", "tsx", "src/index.ts"]
     ports:
       - "3011:3011"
@@ -113,13 +113,13 @@ services:
       REDIS_HOST: redis
       REDIS_PORT: "6379"
     volumes:
-      - ../../services/paul:/app/services/paul:cached
+      - ../../apps/paul:/app/apps/paul:cached
       - ../../packages:/app/packages:cached
 
   gstack:
     <<: *service-defaults
     container_name: aigency-gstack
-    working_dir: /app/services/gstack
+    working_dir: /app/apps/gstack
     command: ["npx", "tsx", "src/index.ts"]
     ports:
       - "3012:3012"
@@ -132,13 +132,13 @@ services:
       REDIS_HOST: redis
       REDIS_PORT: "6379"
     volumes:
-      - ../../services/gstack:/app/services/gstack:cached
+      - ../../apps/gstack:/app/apps/gstack:cached
       - ../../packages:/app/packages:cached
 
   plannotator:
     <<: *service-defaults
     container_name: aigency-plannotator
-    working_dir: /app/services/plannotator
+    working_dir: /app/apps/plannotator
     command: ["npx", "tsx", "src/index.ts"]
     ports:
       - "3013:3013"
@@ -151,13 +151,13 @@ services:
       REDIS_HOST: redis
       REDIS_PORT: "6379"
     volumes:
-      - ../../services/plannotator:/app/services/plannotator:cached
+      - ../../apps/plannotator:/app/apps/plannotator:cached
       - ../../packages:/app/packages:cached
 
   aegis:
     <<: *service-defaults
     container_name: aigency-aegis
-    working_dir: /app/services/aegis
+    working_dir: /app/apps/aegis
     command: ["npx", "tsx", "src/index.ts"]
     ports:
       - "3014:3014"
@@ -170,13 +170,13 @@ services:
       REDIS_HOST: redis
       REDIS_PORT: "6379"
     volumes:
-      - ../../services/aegis:/app/services/aegis:cached
+      - ../../apps/aegis:/app/apps/aegis:cached
       - ../../packages:/app/packages:cached
 
   denchclaw:
     <<: *service-defaults
     container_name: aigency-denchclaw
-    working_dir: /app/services/denchclaw
+    working_dir: /app/apps/denchclaw
     command: ["npx", "tsx", "src/index.ts"]
     ports:
       - "3015:3015"
@@ -189,13 +189,13 @@ services:
       REDIS_HOST: redis
       REDIS_PORT: "6379"
     volumes:
-      - ../../services/denchclaw:/app/services/denchclaw:cached
+      - ../../apps/denchclaw:/app/apps/denchclaw:cached
       - ../../packages:/app/packages:cached
 
   gbrain:
     <<: *service-defaults
     container_name: aigency-gbrain
-    working_dir: /app/services/gbrain
+    working_dir: /app/apps/gbrain
     command: ["npx", "tsx", "src/index.ts"]
     ports:
       - "3016:3016"
@@ -208,13 +208,13 @@ services:
       REDIS_HOST: redis
       REDIS_PORT: "6379"
     volumes:
-      - ../../services/gbrain:/app/services/gbrain:cached
+      - ../../apps/gbrain:/app/apps/gbrain:cached
       - ../../packages:/app/packages:cached
 
   hcom-api:
     <<: *service-defaults
     container_name: aigency-hcom-api
-    working_dir: /app/services/hcom-api
+    working_dir: /app/apps/hcom-api
     command: ["npx", "tsx", "src/index.ts"]
     ports:
       - "3007:3007"
@@ -227,7 +227,7 @@ services:
       REDIS_HOST: redis
       REDIS_PORT: "6379"
     volumes:
-      - ../../services/hcom-api:/app/services/hcom-api:cached
+      - ../../apps/hcom-api:/app/apps/hcom-api:cached
       - ../../packages:/app/packages:cached
 
 volumes:

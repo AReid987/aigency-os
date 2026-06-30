@@ -25,69 +25,69 @@ const PORT = Number(process.env.PORT) || 3001;
 const HOST = process.env.HOST || '0.0.0.0';
 const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret-change-me';
 const CORS_ORIGIN = process.env.CORS_ORIGIN || '*';
-const FRONTEND_PATH = process.env.FRONTEND_PATH || path.resolve(__root, 'apps/web/dist');
+const FRONTEND_PATH = process.env.FRONTEND_PATH || path.resolve(__root, '../web/dist');
 const LOG_LEVEL = process.env.LOG_LEVEL || 'warn';
 
 // ─── Load Compiled Service Modules ───────────────────────────────────────────
 // All services must be built first (pnpm build:all).
 
-const { authRoutes } = await import('./services/paperclip-api/dist/routes/auth.js');
-const { companyRoutes } = await import('./services/paperclip-api/dist/routes/companies.js');
-const { agentRoutes } = await import('./services/paperclip-api/dist/routes/agents.js');
-const { goalRoutes } = await import('./services/paperclip-api/dist/routes/goals.js');
-const { ticketRoutes } = await import('./services/paperclip-api/dist/routes/tickets.js');
-const { budgetRoutes } = await import('./services/paperclip-api/dist/routes/budgets.js');
-const { boardRoutes } = await import('./services/paperclip-api/dist/routes/board.js');
-const { dashboardRoutes } = await import('./services/paperclip-api/dist/routes/dashboard.js');
-const { heartbeatRoutes } = await import('./services/paperclip-api/dist/routes/heartbeat.js');
+const { authRoutes } = await import('../paperclip-api/dist/routes/auth.js');
+const { companyRoutes } = await import('../paperclip-api/dist/routes/companies.js');
+const { agentRoutes } = await import('../paperclip-api/dist/routes/agents.js');
+const { goalRoutes } = await import('../paperclip-api/dist/routes/goals.js');
+const { ticketRoutes } = await import('../paperclip-api/dist/routes/tickets.js');
+const { budgetRoutes } = await import('../paperclip-api/dist/routes/budgets.js');
+const { boardRoutes } = await import('../paperclip-api/dist/routes/board.js');
+const { dashboardRoutes } = await import('../paperclip-api/dist/routes/dashboard.js');
+const { heartbeatRoutes } = await import('../paperclip-api/dist/routes/heartbeat.js');
 
-const { canvasRoutes } = await import('./services/bmad/dist/routes/canvas.js');
-const { revenueRoutes } = await import('./services/bmad/dist/routes/revenue.js');
-const { milestoneRoutes } = await import('./services/bmad/dist/routes/milestones.js');
-const { competitiveRoutes } = await import('./services/bmad/dist/routes/competitive.js');
+const { canvasRoutes } = await import('../bmad/dist/routes/canvas.js');
+const { revenueRoutes } = await import('../bmad/dist/routes/revenue.js');
+const { milestoneRoutes } = await import('../bmad/dist/routes/milestones.js');
+const { competitiveRoutes } = await import('../bmad/dist/routes/competitive.js');
 
-const { planRoutes } = await import('./services/paul/dist/routes/plan.js');
-const { applyRoutes } = await import('./services/paul/dist/routes/apply.js');
-const { unifyRoutes } = await import('./services/paul/dist/routes/unify.js');
-const { criteriaRoutes } = await import('./services/paul/dist/routes/criteria.js');
+const { planRoutes } = await import('../paul/dist/routes/plan.js');
+const { applyRoutes } = await import('../paul/dist/routes/apply.js');
+const { unifyRoutes } = await import('../paul/dist/routes/unify.js');
+const { criteriaRoutes } = await import('../paul/dist/routes/criteria.js');
 
-const { autoplanRoutes } = await import('./services/gstack/dist/routes/autoplan.js');
-const { shipRoutes } = await import('./services/gstack/dist/routes/ship.js');
-const { qaRoutes } = await import('./services/gstack/dist/routes/qa.js');
-const { designRoutes } = await import('./services/gstack/dist/routes/design.js');
-const { jobRoutes } = await import('./services/gstack/dist/routes/jobs.js');
+const { autoplanRoutes } = await import('../gstack/dist/routes/autoplan.js');
+const { shipRoutes } = await import('../gstack/dist/routes/ship.js');
+const { qaRoutes } = await import('../gstack/dist/routes/qa.js');
+const { designRoutes } = await import('../gstack/dist/routes/design.js');
+const { jobRoutes } = await import('../gstack/dist/routes/jobs.js');
 
-const { contactRoutes } = await import('./services/denchclaw/dist/routes/contacts.js');
-const { dealRoutes } = await import('./services/denchclaw/dist/routes/deals.js');
-const { leadRoutes } = await import('./services/denchclaw/dist/routes/leads.js');
-const { pipelineRoutes } = await import('./services/denchclaw/dist/routes/pipeline.js');
-const { sequenceRoutes } = await import('./services/denchclaw/dist/routes/sequences.js');
+const { contactRoutes } = await import('../denchclaw/dist/routes/contacts.js');
+const { dealRoutes } = await import('../denchclaw/dist/routes/deals.js');
+const { leadRoutes } = await import('../denchclaw/dist/routes/leads.js');
+const { pipelineRoutes } = await import('../denchclaw/dist/routes/pipeline.js');
+const { sequenceRoutes } = await import('../denchclaw/dist/routes/sequences.js');
 
-const { agentRoutes: hcomAgentRoutes } = await import('./services/hcom-api/dist/routes/agents.js');
-const { messageRoutes } = await import('./services/hcom-api/dist/routes/messages.js');
-const { collisionRoutes } = await import('./services/hcom-api/dist/routes/collisions.js');
-const { lifecycleRoutes } = await import('./services/hcom-api/dist/routes/lifecycle.js');
-const { subscriptionRoutes } = await import('./services/hcom-api/dist/routes/subscriptions.js');
-const { dashboardRoutes: hcomDashboardRoutes } = await import('./services/hcom-api/dist/routes/dashboard.js');
+const { agentRoutes: hcomAgentRoutes } = await import('../hcom-api/dist/routes/agents.js');
+const { messageRoutes } = await import('../hcom-api/dist/routes/messages.js');
+const { collisionRoutes } = await import('../hcom-api/dist/routes/collisions.js');
+const { lifecycleRoutes } = await import('../hcom-api/dist/routes/lifecycle.js');
+const { subscriptionRoutes } = await import('../hcom-api/dist/routes/subscriptions.js');
+const { dashboardRoutes: hcomDashboardRoutes } = await import('../hcom-api/dist/routes/dashboard.js');
 
-const { pageRoutes } = await import('./services/gbrain/dist/routes/pages.js');
-const { queryRoutes } = await import('./services/gbrain/dist/routes/query.js');
-const { graphRoutes } = await import('./services/gbrain/dist/routes/graph.js');
-const { captureRoutes } = await import('./services/gbrain/dist/routes/capture.js');
-const { synthesizeRoutes } = await import('./services/gbrain/dist/routes/synthesize.js');
+const { pageRoutes } = await import('../gbrain/dist/routes/pages.js');
+const { queryRoutes } = await import('../gbrain/dist/routes/query.js');
+const { graphRoutes } = await import('../gbrain/dist/routes/graph.js');
+const { captureRoutes } = await import('../gbrain/dist/routes/capture.js');
+const { synthesizeRoutes } = await import('../gbrain/dist/routes/synthesize.js');
 
-const { auditRoutes } = await import('./services/aegis/dist/routes/audit.js');
-const { continuousRoutes } = await import('./services/aegis/dist/routes/continuous.js');
-const { personaRoutes } = await import('./services/aegis/dist/routes/personas.js');
-const { summaryRoutes } = await import('./services/aegis/dist/routes/summary.js');
-const { transformRoutes } = await import('./services/aegis/dist/routes/transform.js');
+const { auditRoutes } = await import('../aegis/dist/routes/audit.js');
+const { continuousRoutes } = await import('../aegis/dist/routes/continuous.js');
+const { personaRoutes } = await import('../aegis/dist/routes/personas.js');
+const { summaryRoutes } = await import('../aegis/dist/routes/summary.js');
+const { transformRoutes } = await import('../aegis/dist/routes/transform.js');
 
-const { planRoutes: plannotatorPlanRoutes } = await import('./services/plannotator/dist/routes/plans.js');
-const { annotationRoutes } = await import('./services/plannotator/dist/routes/annotations.js');
-const { diffRoutes } = await import('./services/plannotator/dist/routes/diffs.js');
+const { planRoutes: plannotatorPlanRoutes } = await import('../plannotator/dist/routes/plans.js');
+const { annotationRoutes } = await import('../plannotator/dist/routes/annotations.js');
+const { diffRoutes } = await import('../plannotator/dist/routes/diffs.js');
 
-const { skillRoutes } = await import('./services/skills/dist/routes/skills.js');
-const { ratingRoutes } = await import('./services/skills/dist/routes/ratings.js');
+const { skillRoutes } = await import('../skills/dist/routes/skills.js');
+const { ratingRoutes } = await import('../skills/dist/routes/ratings.js');
 
 // ─── Build App ───────────────────────────────────────────────────────────────
 const app = Fastify({

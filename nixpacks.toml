@@ -17,4 +17,4 @@ cmds = [
 ]
 
 [start]
-cmd = "node services/paperclip-api/dist/server.js"
+cmd = "node apps/server/unified-server.mjs"
