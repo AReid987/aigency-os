@@ -6,6 +6,8 @@ import type { UserRole, ZoneType } from '@vscp/shared-types';
  * Check if a user role can edit cards in a given zone.
  */
 export function canEditZone(role: UserRole, zoneType: ZoneType): boolean {
+  // Admin can edit everything
+  if (role === 'admin') return true;
   // Technical founder can edit everything
   if (role === 'technical_founder') return true;
   // Agents can edit everything
@@ -29,6 +31,7 @@ export function canViewZone(_role: UserRole, _zoneType: ZoneType): boolean {
  * Check if a user role can view a section type.
  */
 export function canViewSection(role: UserRole, sectionType: 'business' | 'technical'): boolean {
+  if (role === 'admin') return true;
   if (role === 'technical_founder') return true;
   if (role === 'agent') return true;
   if (role === 'domain_expert') return sectionType === 'business';

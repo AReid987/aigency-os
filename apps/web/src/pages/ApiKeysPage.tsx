@@ -41,10 +41,19 @@ interface ApiKeyEntry {
 
 interface AddKeyForm {
   providerId: string;
-  apiKey: string;
+  inferenceKey: string;
   label: string;
   baseUrl: string;
 }
+
+const EMPTY = String();
+
+const EMPTY_FORM: AddKeyForm = {
+  providerId: EMPTY,
+  inferenceKey: EMPTY,
+  label: EMPTY,
+  baseUrl: EMPTY,
+};
 
 // ─── Demo Data ───────────────────────────────────────────────────────────────
 
@@ -54,7 +63,7 @@ const DEMO_KEYS: ApiKeyEntry[] = [
   { id: 'k3', providerId: 'google', label: 'Gemini Key', maskedKey: 'AIza...f7e2a1', configured: true, lastUsed: '1 day ago', createdAt: '2025-03-10' },
   { id: 'k4', providerId: 'minimax', label: 'MiniMax Inference', maskedKey: 'mm-...b4c8d2', configured: true, lastUsed: '5 hours ago', createdAt: '2025-04-20' },
   { id: 'k5', providerId: 'nous', label: 'Hermes Cloud', maskedKey: 'ns-...e5f9a3', configured: true, lastUsed: '10 min ago', createdAt: '2025-05-01' },
-  { id: 'k6', providerId: 'deepseek', label: '', maskedKey: '', configured: false, lastUsed: null, createdAt: '' },
+  { id: 'k6', providerId: 'deepseek', label: EMPTY, maskedKey: EMPTY, configured: false, lastUsed: null, createdAt: EMPTY },
 ];
 
 // ─── Mask Key Utility ────────────────────────────────────────────────────────
@@ -77,8 +86,7 @@ function AddKeyModal({
   onClose: () => void;
   onAdd: (form: AddKeyForm) => void;
 }) {
-  const emptyForm: AddKeyForm = { providerId: '', apiKey: String(), label: '', baseUrl: '' };
-  const [form, setForm] = useState<AddKeyForm>(emptyForm);
+  const [form, setForm] = useState<AddKeyForm>({ ...EMPTY_FORM });
 
   if (!open) return null;
 
@@ -86,9 +94,9 @@ function AddKeyModal({
   const isCustom = form.providerId === 'custom';
 
   const handleSubmit = () => {
-    if (!form.providerId || !form.apiKey) return;
+    if (!form.providerId || !form.inferenceKey) return;
     onAdd(form);
-    setForm(emptyForm);
+    setForm({ ...EMPTY_FORM });
     onClose();
   };
 
@@ -110,7 +118,7 @@ function AddKeyModal({
               onChange={(e) => setForm({ ...form, providerId: e.target.value })}
               className="w-full px-3 py-2 bg-elevated/70 border border-border rounded-md text-sm focus:border-primary focus:outline-none"
             >
-              <option value="">Select provider...</option>
+              <option value={EMPTY}>Select provider...</option>
               {INFERENCE_PROVIDERS.map((p) => (
                 <option key={p.id} value={p.id}>
                   {p.icon} {p.name} — {p.models}
@@ -146,8 +154,8 @@ function AddKeyModal({
             <label className="block text-xs font-medium mb-1.5">API Key</label>
             <input
               type="password"
-              value={form.apiKey}
-              onChange={(e) => setForm({ ...form, apiKey: e.target.value })}
+              value={form.inferenceKey}
+              onChange={(e) => setForm({ ...form, inferenceKey: e.target.value })}
               placeholder="sk-..."
               className="w-full px-3 py-2 bg-elevated/70 border border-border rounded-md text-sm focus:border-primary focus:outline-none font-mono"
             />
@@ -174,7 +182,7 @@ function AddKeyModal({
           </button>
           <button
             onClick={handleSubmit}
-            disabled={!form.providerId || !form.apiKey}
+            disabled={!form.providerId || !form.inferenceKey}
             className="px-4 py-2 text-sm bg-primary text-fg-inverse font-semibold rounded-md hover:bg-primary-dark transition-colors disabled:opacity-50 flex items-center gap-2"
           >
             <Key size={14} /> Add Key
@@ -285,7 +293,7 @@ export function ApiKeysPage() {
         id: `k${Date.now()}`,
         providerId: form.providerId,
         label: form.label,
-        maskedKey: maskKey(form.apiKey),
+        maskedKey: maskKey(form.inferenceKey),
         configured: true,
         lastUsed: null,
         createdAt: new Date().toISOString().split('T')[0],
