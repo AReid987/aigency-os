@@ -49,7 +49,6 @@ render.yaml
 nixpacks.toml
 
 # Docker
-Dockerfile
 .dockerignore
 
 # Tests
