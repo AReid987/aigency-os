@@ -1,6 +1,7 @@
 # ─── Aigency OS — Production Dockerfile (512MB RAM Optimized) ─────────────────
 # Multi-stage build for the unified monolith.
-# All 11 services run in one Node.js process. ~200-300MB RAM at idle.
+# Only includes the 10 backend services + 1 frontend that the unified server serves.
+# ~200-300MB RAM at idle. Fits in 512MB VPS.
 #
 # Build:  docker build -t aigency-os .
 # Run:    docker run -p 3001:3001 -e JWT_SECRET=... -e ADMIN_PASSWORD=... aigency-os
@@ -14,8 +15,9 @@ WORKDIR /app
 
 # Copy workspace configuration
 COPY package.json pnpm-workspace.yaml pnpm-lock.yaml turbo.json ./
+COPY tsconfig.base.json ./tsconfig.base.json
 
-# Copy all package.json files (needed for pnpm workspace resolution)
+# Copy packages package.json files (needed for pnpm workspace resolution)
 COPY packages/api-client/package.json ./packages/api-client/
 COPY packages/config/package.json ./packages/config/
 COPY packages/infra/package.json ./packages/infra/
@@ -24,6 +26,9 @@ COPY packages/redis/package.json ./packages/redis/
 COPY packages/scripts/package.json ./packages/scripts/
 COPY packages/shared-types/package.json ./packages/shared-types/
 COPY packages/ui/package.json ./packages/ui/
+
+# Copy apps package.json files (only backend services + web + server)
+# NOTE: bmad-dashboard does NOT exist — do NOT include it
 COPY apps/server/package.json ./apps/server/
 COPY apps/web/package.json ./apps/web/
 COPY apps/paperclip-api/package.json ./apps/paperclip-api/
@@ -36,14 +41,6 @@ COPY apps/gbrain/package.json ./apps/gbrain/
 COPY apps/aegis/package.json ./apps/aegis/
 COPY apps/plannotator/package.json ./apps/plannotator/
 COPY apps/skills/package.json ./apps/skills/
-COPY apps/aegis-dashboard/package.json ./apps/aegis-dashboard/
-COPY apps/bmad-dashboard/package.json ./apps/bmad-dashboard/
-COPY apps/denchclaw-ui/package.json ./apps/denchclaw-ui/
-COPY apps/embed-shell/package.json ./apps/embed-shell/
-COPY apps/gbrain-dashboard/package.json ./apps/gbrain-dashboard/
-COPY apps/hcom-dashboard/package.json ./apps/hcom-dashboard/
-COPY apps/paperclip-ui/package.json ./apps/paperclip-ui/
-COPY apps/plannotator-ui/package.json ./apps/plannotator-ui/
 
 # Install all dependencies (layer cached if package.json files don't change)
 RUN pnpm install --frozen-lockfile
@@ -61,15 +58,26 @@ COPY --from=deps /app/package.json ./package.json
 COPY --from=deps /app/pnpm-workspace.yaml ./pnpm-workspace.yaml
 COPY --from=deps /app/pnpm-lock.yaml ./pnpm-lock.yaml
 COPY --from=deps /app/turbo.json ./turbo.json
+COPY --from=deps /app/tsconfig.base.json ./tsconfig.base.json
 
-# Copy all package.json files (to maintain workspace structure)
-COPY packages/*/package.json ./packages/*/
-COPY apps/*/package.json ./apps/*/
+# Copy package.json files to maintain workspace structure
+COPY --from=deps /app/packages ./packages
+COPY --from=deps /app/apps ./apps
 
-# Copy all source code
+# Copy all source code (only packages + backend services + web + server)
 COPY packages ./packages
-COPY apps ./apps
-COPY tsconfig.base.json ./tsconfig.base.json
+COPY apps/server ./apps/server
+COPY apps/web ./apps/web
+COPY apps/paperclip-api ./apps/paperclip-api
+COPY apps/bmad ./apps/bmad
+COPY apps/paul ./apps/paul
+COPY apps/gstack ./apps/gstack
+COPY apps/denchclaw ./apps/denchclaw
+COPY apps/hcom-api ./apps/hcom-api
+COPY apps/gbrain ./apps/gbrain
+COPY apps/aegis ./apps/aegis
+COPY apps/plannotator ./apps/plannotator
+COPY apps/skills ./apps/skills
 
 # Build everything (turbo handles dependency order)
 RUN pnpm build
@@ -87,13 +95,14 @@ RUN addgroup -g 1001 -S nodejs && adduser -S aigency -u 1001
 
 WORKDIR /app
 
-# Copy package files for workspace resolution
+# Copy workspace files
 COPY --from=builder --chown=aigency:nodejs /app/package.json ./package.json
 COPY --from=builder --chown=aigency:nodejs /app/pnpm-workspace.yaml ./pnpm-workspace.yaml
 COPY --from=builder --chown=aigency:nodejs /app/pnpm-lock.yaml ./pnpm-lock.yaml
 COPY --from=builder --chown=aigency:nodejs /app/turbo.json ./turbo.json
+COPY --from=builder --chown=aigency:nodejs /app/tsconfig.base.json ./tsconfig.base.json
 
-# Copy all package.json files (needed for pnpm --prod to resolve)
+# Copy packages package.json files (needed for pnpm --prod to resolve)
 COPY --from=builder --chown=aigency:nodejs /app/packages/api-client/package.json ./packages/api-client/package.json
 COPY --from=builder --chown=aigency:nodejs /app/packages/config/package.json ./packages/config/package.json
 COPY --from=builder --chown=aigency:nodejs /app/packages/infra/package.json ./packages/infra/package.json
@@ -102,6 +111,8 @@ COPY --from=builder --chown=aigency:nodejs /app/packages/redis/package.json ./pa
 COPY --from=builder --chown=aigency:nodejs /app/packages/scripts/package.json ./packages/scripts/package.json
 COPY --from=builder --chown=aigency:nodejs /app/packages/shared-types/package.json ./packages/shared-types/package.json
 COPY --from=builder --chown=aigency:nodejs /app/packages/ui/package.json ./packages/ui/package.json
+
+# Copy apps package.json files (only backend services + web + server)
 COPY --from=builder --chown=aigency:nodejs /app/apps/server/package.json ./apps/server/package.json
 COPY --from=builder --chown=aigency:nodejs /app/apps/web/package.json ./apps/web/package.json
 COPY --from=builder --chown=aigency:nodejs /app/apps/paperclip-api/package.json ./apps/paperclip-api/package.json
@@ -114,16 +125,8 @@ COPY --from=builder --chown=aigency:nodejs /app/apps/gbrain/package.json ./apps/
 COPY --from=builder --chown=aigency:nodejs /app/apps/aegis/package.json ./apps/aegis/package.json
 COPY --from=builder --chown=aigency:nodejs /app/apps/plannotator/package.json ./apps/plannotator/package.json
 COPY --from=builder --chown=aigency:nodejs /app/apps/skills/package.json ./apps/skills/package.json
-COPY --from=builder --chown=aigency:nodejs /app/apps/aegis-dashboard/package.json ./apps/aegis-dashboard/package.json
-COPY --from=builder --chown=aigency:nodejs /app/apps/bmad-dashboard/package.json ./apps/bmad-dashboard/package.json
-COPY --from=builder --chown=aigency:nodejs /app/apps/denchclaw-ui/package.json ./apps/denchclaw-ui/package.json
-COPY --from=builder --chown=aigency:nodejs /app/apps/embed-shell/package.json ./apps/embed-shell/package.json
-COPY --from=builder --chown=aigency:nodejs /app/apps/gbrain-dashboard/package.json ./apps/gbrain-dashboard/package.json
-COPY --from=builder --chown=aigency:nodejs /app/apps/hcom-dashboard/package.json ./apps/hcom-dashboard/package.json
-COPY --from=builder --chown=aigency:nodejs /app/apps/paperclip-ui/package.json ./apps/paperclip-ui/package.json
-COPY --from=builder --chown=aigency:nodejs /app/apps/plannotator-ui/package.json ./apps/plannotator-ui/package.json
 
-# Copy built artifacts from all packages and apps
+# Copy built artifacts from packages (needed for runtime imports)
 COPY --from=builder --chown=aigency:nodejs /app/packages/api-client/dist ./packages/api-client/dist
 COPY --from=builder --chown=aigency:nodejs /app/packages/config/dist ./packages/config/dist
 COPY --from=builder --chown=aigency:nodejs /app/packages/infra/dist ./packages/infra/dist
@@ -132,7 +135,8 @@ COPY --from=builder --chown=aigency:nodejs /app/packages/redis/dist ./packages/r
 COPY --from=builder --chown=aigency:nodejs /app/packages/scripts/dist ./packages/scripts/dist
 COPY --from=builder --chown=aigency:nodejs /app/packages/shared-types/dist ./packages/shared-types/dist
 COPY --from=builder --chown=aigency:nodejs /app/packages/ui/dist ./packages/ui/dist
-COPY --from=builder --chown=aigency:nodejs /app/apps/web/dist ./apps/web/dist
+
+# Copy built artifacts from backend services (needed for unified server imports)
 COPY --from=builder --chown=aigency:nodejs /app/apps/paperclip-api/dist ./apps/paperclip-api/dist
 COPY --from=builder --chown=aigency:nodejs /app/apps/bmad/dist ./apps/bmad/dist
 COPY --from=builder --chown=aigency:nodejs /app/apps/paul/dist ./apps/paul/dist
@@ -143,14 +147,9 @@ COPY --from=builder --chown=aigency:nodejs /app/apps/gbrain/dist ./apps/gbrain/d
 COPY --from=builder --chown=aigency:nodejs /app/apps/aegis/dist ./apps/aegis/dist
 COPY --from=builder --chown=aigency:nodejs /app/apps/plannotator/dist ./apps/plannotator/dist
 COPY --from=builder --chown=aigency:nodejs /app/apps/skills/dist ./apps/skills/dist
-COPY --from=builder --chown=aigency:nodejs /app/apps/aegis-dashboard/dist ./apps/aegis-dashboard/dist
-COPY --from=builder --chown=aigency:nodejs /app/apps/bmad-dashboard/dist ./apps/bmad-dashboard/dist
-COPY --from=builder --chown=aigency:nodejs /app/apps/denchclaw-ui/dist ./apps/denchclaw-ui/dist
-COPY --from=builder --chown=aigency:nodejs /app/apps/embed-shell/dist ./apps/embed-shell/dist
-COPY --from=builder --chown=aigency:nodejs /app/apps/gbrain-dashboard/dist ./apps/gbrain-dashboard/dist
-COPY --from=builder --chown=aigency:nodejs /app/apps/hcom-dashboard/dist ./apps/hcom-dashboard/dist
-COPY --from=builder --chown=aigency:nodejs /app/apps/paperclip-ui/dist ./apps/paperclip-ui/dist
-COPY --from=builder --chown=aigency:nodejs /app/apps/plannotator-ui/dist ./apps/plannotator-ui/dist
+
+# Copy the web frontend dist (served by unified server)
+COPY --from=builder --chown=aigency:nodejs /app/apps/web/dist ./apps/web/dist
 
 # Copy the unified server entry point
 COPY --from=builder --chown=aigency:nodejs /app/apps/server/unified-server.mjs ./apps/server/unified-server.mjs
