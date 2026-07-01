@@ -1,5 +1,12 @@
 {
   "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@aigency-os/shared-types": ["./packages/shared-types/src/index.ts"],
+      "@aigency-os/shared-types/*": ["./packages/shared-types/src/*.ts"],
+      "@aigency-os/api-client": ["./packages/api-client/src/index.ts"],
+      "@aigency-os/ui": ["./packages/ui/src/index.ts"]
+    },
     "target": "ES2022",
     "module": "ESNext",
     "moduleResolution": "bundler",

@@ -7,6 +7,16 @@ dist/
 .next/
 .turbo/
 
+# Leaked tsc artifacts in src/ (from prior builds without outDir)
+apps/*/src/**/*.js
+apps/*/src/**/*.js.map
+apps/*/src/**/*.d.ts
+apps/*/src/**/*.d.ts.map
+packages/*/src/**/*.js
+packages/*/src/**/*.js.map
+packages/*/src/**/*.d.ts
+packages/*/src/**/*.d.ts.map
+
 # Environment
 .env
 .env.local
@@ -43,3 +53,4 @@ data/
 *.db-wal
 data/
 .env
+.soulforge

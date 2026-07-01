@@ -5,11 +5,7 @@
     "rootDir": "./src",
     "module": "ESNext",
     "moduleResolution": "bundler",
-    "skipLibCheck": true,
-    "paths": {
-      "@aigency-os/shared-types": ["../../packages/shared-types/src/index.ts"],
-      "@aigency-os/shared-types/*": ["../../packages/shared-types/src/*"]
-    }
+    "skipLibCheck": true
   },
   "include": [
     "src"

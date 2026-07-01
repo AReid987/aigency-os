@@ -20,7 +20,8 @@ COPY . .
 RUN pnpm install --frozen-lockfile
 
 # Delete stale tsbuildinfo files to force tsc to emit
-RUN find . -name "*.tsbuildinfo" -type f -delete
+RUN find . -name "*.tsbuildinfo" -type f -delete \
+    && find apps \( -path '*/src/*.js' -o -path '*/src/*.js.map' -o -path '*/src/*.d.ts' -o -path '*/src/*.d.ts.map' \) -not -name 'declarations.d.ts' -delete
 
 # Build everything in dependency order
 RUN pnpm build
