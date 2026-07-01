@@ -116,7 +116,7 @@ export function OfficePage() {
   const pageData = pages as { pages?: unknown[] } | undefined;
   const brainCount = pageData?.pages?.length ?? 0;
   const onlineServices = services?.filter((s) => s.status === 'up').length ?? 0;
-  const totalServices = services?.length ?? 7;
+  const totalServices = services?.length ?? 10;
 
   return (
     <div className="p-6 h-full overflow-auto">

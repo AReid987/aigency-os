@@ -7,7 +7,7 @@ import { createAPIClient } from '@aigency-os/api-client';
 
 // ─── Mode Detection ──────────────────────────────────────────────────────────
 
-const isUnified = import.meta.env.VITE_UNIFIED_MODE === 'true' || import.meta.env.VITE_UNIFIED_MODE === '1';
+const isUnified = import.meta.env.VITE_UNIFIED_MODE === 'true' || import.meta.env.VITE_UNIFIED_MODE === '1' || !['localhost', '127.0.0.1'].includes(window.location.hostname);
 
 // ─── Base URLs ───────────────────────────────────────────────────────────────
 // In unified mode, all services share the same origin.
